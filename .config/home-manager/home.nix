@@ -34,6 +34,12 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+
+    (pkgs.writeShellScriptBin "docker-stop" ''
+      #!/bin/bash
+      docker stop $(docker ps -q)
+    '')
+
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
