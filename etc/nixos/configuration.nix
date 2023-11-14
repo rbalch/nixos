@@ -24,6 +24,13 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  networking = {
+    # don't wait for dhcp to finish boot
+    dhcpcd.wait = "background";
+    # don't wait for IP conflict check to boot
+    dhcpcd.extraConfig = "noarp";
+  };
+
   # Set your time zone.
   time.timeZone = "America/New_York";
 
@@ -85,9 +92,14 @@
     extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [
     firefox
+    google-chrome
     #  thunderbird
     ];
   };
+
+  nix.settings.allowed-users = [
+    "ryan"
+  ];
 
   fonts.fonts = with pkgs; [
     meslo-lgs-nf
@@ -105,6 +117,8 @@
     docker-client
     meslo-lgs-nf
     python311
+    zip
+    unzip
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
