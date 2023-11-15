@@ -90,12 +90,15 @@
     isNormalUser = true;
     description = "Ryan Balch";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
+    shell = pkgs.zsh;
     packages = with pkgs; [
     firefox
     google-chrome
     #  thunderbird
     ];
   };
+
+  programs.zsh.enable = true;
 
   nix.settings.allowed-users = [
     "ryan"

@@ -1,10 +1,14 @@
 { config, pkgs, ... }:
-
+let
+  configThemeNormal = ./p10k-config/p10k.zsh;
+in
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "ryan";
   home.homeDirectory = "/home/ryan";
+
+  fonts.fontconfig.enable = true;
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -19,8 +23,11 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    slack
     fzf
+    git
+    meslo-lgs-nf
+    slack
+    thefuck
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -84,6 +91,36 @@
       };
     };
 
+  };
+
+  # zsh config
+  programs.zsh = {
+    enable = true;
+    shellAliases = {
+      ll = "ls -l";
+      nix-update = "sudo nixos-rebuild switch";
+    };
+    initExtra = ''
+        [[ ! -f ${configThemeNormal} ]] || source ${configThemeNormal}
+    '';
+    plugins = [
+      {
+        # A prompt will appear the first time to configure it properly
+        # make sure to select MesloLGS NF as the font in Konsole
+        name = "powerlevel10k";
+        src = pkgs.zsh-powerlevel10k;
+        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      }
+    ];
+    oh-my-zsh = {
+        enable = true;
+        plugins = [ "git" "thefuck" "history"];
+      };
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
   };
 
 }
