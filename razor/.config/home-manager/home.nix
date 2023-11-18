@@ -1,18 +1,39 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./zsh.nix ];
+
+  # first we allow unfree and add unstable as packages
+  # this allows unstable packages to be installed later
+  nixpkgs.config = {
+    allowUnfree = true;
+
+    packageOverrides = pkgs:
+    {
+      unstable = import <unstable>
+        {
+          config = config.nixpkgs.config;
+        };
+    };
+  };
+
+  imports = [
+    ./modules/vscode
+    ./zsh.nix
+    ./ssh.nix
+  ];
 
   home.username = "ryan";
   home.homeDirectory = "/home/ryan";
 
   fonts.fontconfig.enable = true;
   home.stateVersion = "23.05"; # Please read the comment before changing.
-  nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
+    dig
     fzf
     git
+    gnumake
+    jq
     lastpass-cli
     meslo-lgs-nf
     slack
@@ -57,23 +78,10 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  programs.ssh = {
+  programs.git = {
     enable = true;
-    forwardAgent = false; # play with later - using local ssh keys on when on server
-    hashKnownHosts = true;
-    controlMaster = "auto";
-    controlPath = "~/.ssh/master-%r@%h:%p";
-    controlPersist = "10s";
-    
-    matchBlocks = {
-      "izxrbzx"  = {
-        hostname = "192.168.12.194";
-        user = "ryan";
-        identityFile = "~/.ssh/zxrbzx";
-        identitiesOnly = true;
-      };
-    };
-
+    userEmail = "ryan@balch.io";
+    userName = "Ryan Balch";
   };
 
 }
