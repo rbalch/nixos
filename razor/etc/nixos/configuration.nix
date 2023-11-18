@@ -5,6 +5,21 @@
 { config, pkgs, ... }:
 
 {
+
+  # first we allow unfree and add unstable as packages
+  # this allows unstable packages to be installed later
+  nixpkgs.config = {
+    allowUnfree = true;
+
+    packageOverrides = pkgs:
+    {
+      unstable = import <unstable>
+        {
+          config = config.nixpkgs.config;
+        };
+    };
+  };
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -89,6 +104,7 @@
   users.users.ryan = {
     isNormalUser = true;
     description = "Ryan Balch";
+    initialHashedPassword = "$y$j9T$e0hvL3cRjYfyGom96HDyI1$DY9RWIn/YkKuSTLrDFa2YQRJ4PvSMQdxxgV4CBmWsH5";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
     shell = pkgs.zsh;
     packages = with pkgs; [
@@ -108,21 +124,17 @@
     meslo-lgs-nf
   ];
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   # Allow flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    vim
     wget
-    vscode #-fhs
     docker-client
     meslo-lgs-nf
-    python311
+    python3
     zip
     unzip
   ];
