@@ -9,6 +9,7 @@ in
       ll = "ls -l";
       nix-update = "sudo nixos-rebuild switch";
     };
+    history.size = 10000;
 
     initExtra = ''
       [[ ! -f ${configThemeNormal} ]] || source ${configThemeNormal}

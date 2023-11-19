@@ -137,6 +137,7 @@
     python3
     zip
     unzip
+    htop
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
