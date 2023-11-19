@@ -2,8 +2,8 @@
 
 {
 
-  # first we allow unfree and add unstable as packages
-  # this allows unstable packages to be installed later
+  # this allows unstable packages to be used
+  # from pkgs.unstable.<package>
   nixpkgs.config = {
     allowUnfree = true;
 
@@ -25,17 +25,16 @@
   home.username = "ryan";
   home.homeDirectory = "/home/ryan";
 
-  fonts.fontconfig.enable = true;
+  # fonts.fontconfig.enable = true;
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
     dig
     fzf
-    git
     gnumake
     jq
     lastpass-cli
-    meslo-lgs-nf
+    # meslo-lgs-nf
     slack
     thefuck
 
@@ -82,6 +81,27 @@
     enable = true;
     userEmail = "ryan@balch.io";
     userName = "Ryan Balch";
+  };
+
+  fonts = {
+      fonts = with pkgs; [
+        noto-fonts
+        noto-fonts-cjk
+        noto-fonts-emoji
+        font-awesome
+        source-han-sans
+        source-han-sans-japanese
+        source-han-serif-japanese
+        (nerdfonts.override { fonts = [ "Meslo" ]; })
+      ];
+      fontconfig = {
+        enable = true;
+        defaultFonts = {
+          monospace = [ "Meslo LG M Regular Nerd Font Complete Mono" ];
+          serif = [ "Noto Serif" "Source Han Serif" ];
+          sansSerif = [ "Noto Sans" "Source Han Sans" ];
+        };
+      };
   };
 
 }

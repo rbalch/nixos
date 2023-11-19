@@ -29,7 +29,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -37,9 +37,14 @@
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
-  networking.networkmanager.enable = true;
+  #networking.networkmanager.enable = true;
 
   networking = {
+    hostName = "nixos";
+    enableIPv6 = false;
+    networkmanager = {
+        enable = true;
+    };
     # don't wait for dhcp to finish boot
     dhcpcd.wait = "background";
     # don't wait for IP conflict check to boot
@@ -106,8 +111,8 @@
     description = "Ryan Balch";
     initialHashedPassword = "$y$j9T$e0hvL3cRjYfyGom96HDyI1$DY9RWIn/YkKuSTLrDFa2YQRJ4PvSMQdxxgV4CBmWsH5";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
-    shell = pkgs.zsh;
-    packages = with pkgs; [
+    shell = pkgs.unstable.zsh;
+    packages = with pkgs.unstable; [
     firefox
     google-chrome
     #  thunderbird
@@ -120,9 +125,9 @@
     "ryan"
   ];
 
-  fonts.fonts = with pkgs; [
-    meslo-lgs-nf
-  ];
+  #fonts.fonts = with pkgs; [
+  #  meslo-lgs-nf
+  #];
 
   # Allow flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -130,14 +135,15 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    docker-client
+    git
+    htop
+    # meslo-lgs-nf
+    python3
+    unzip
     vim
     wget
-    docker-client
-    meslo-lgs-nf
-    python3
     zip
-    unzip
-    htop
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
