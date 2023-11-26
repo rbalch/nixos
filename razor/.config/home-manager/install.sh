@@ -40,8 +40,8 @@ get_doc() {
 }
 
 get_lpass() {
-    status=$(echo lpass status)
-    if [ "$status" == "Not logged in." ]; then
+    status=$(lpass status)
+    if [ "$status" == *"Not logged in."* ]; then
         lpass login --trust ryan@balch.io
     else
         info "lpass already authenticated [skip]"
@@ -63,5 +63,5 @@ add_unstable() {
 }
 
 # add_unstable
-# get_lpass
+get_lpass
 get_ssh
