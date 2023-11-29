@@ -7,4 +7,4 @@ install:
 	nixos-install --no-write-lock-file --flake github:rbalch/nixos#razor
 
 garbage:
-	nix-collect-garbate --delete-old
+	nix-collect-garbage --delete-old

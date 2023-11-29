@@ -5,5 +5,5 @@
         hostName = "razor";
         wireless.enable = true;
         networkmanager.enable = true;
-    }
+    };
 }
