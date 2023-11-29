@@ -1,9 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
     home.username = "ryan";
-    home.homeDirectory = lib.mkForce "/home/ryan";
-    home.stateVersion = "23.05";
+    home.homeDirectory = "/home/ryan";
 
     imports = [
         ./ssh.nix

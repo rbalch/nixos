@@ -8,3 +8,6 @@ install:
 
 garbage:
 	nix-collect-garbage --delete-old
+
+get-config:
+	curl -OL https://raw.githubusercontent.com/rbalch/nixos/main/configuration.nix

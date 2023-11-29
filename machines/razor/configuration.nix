@@ -3,6 +3,7 @@
 {
     imports = [
         ./hardware-configuration.nix
+        ../ryan.nix
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -21,6 +22,7 @@
             enable = true;
         };
         dhcpcd.wait = "background";
+        firewall.enable = true;
     };
 
     environment.variables.EDITOR = "vim";
