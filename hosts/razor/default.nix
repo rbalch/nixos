@@ -12,5 +12,7 @@
         efi.canTouchEfiVariables = true;
     };
 
+    system.stateVersion = "23.05";
+
     time.timeZone = "America/New_York";
 }
