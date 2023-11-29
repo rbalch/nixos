@@ -6,8 +6,6 @@
         experimental-features = [ "nix-command" "flakes" ];
     };
 
-    nix.settings.trusted-users = [ "ryan" ];
-
     inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
         home-manager = {
