@@ -1,5 +1,3 @@
-{ config, pkgs, ... }:
-
 {
     description = "NixOS configuration";
 
