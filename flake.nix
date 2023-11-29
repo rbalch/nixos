@@ -20,7 +20,7 @@
             razor = nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
                 modules = [
-                    ./hardware-configuration.nix
+                    /etc/nixos/hardware-configuration.nix
                     ./hosts/razor
                     ./common
 
