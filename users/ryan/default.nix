@@ -11,9 +11,10 @@
     ];
 
     home.packages = with pkgs; [
-        lpass
+        lastpass-cli
+        neofetch
         thefuck
-        
+
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
             docker stop $(docker ps -q)

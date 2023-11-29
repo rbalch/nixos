@@ -9,9 +9,8 @@
         shell = pkgs.zsh;
     };
 
-    fonts.packages = with pkgs; [
-        (nerdfonts.override { fonts = [ "Meslo" ]; })
-    ];
+    # fonts.packages = with pkgs; [
+    #     (nerdfonts.override { fonts = [ "Meslo" ]; })
+    # ];
 
-    console.font = "Meslo";
 }
