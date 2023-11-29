@@ -21,6 +21,7 @@
             description = "Ryan Balch";
             name = "ryan";
             home = "/home/ryan";
+            group = "users";
             extraGroups = [ "wheel" "docker" ];
             shell = nixpkgs.zsh;
         };
