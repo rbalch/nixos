@@ -16,6 +16,9 @@
     };
 
     outputs = { self, nixpkgs, home-manager, ... }@inputs: {
+        users.groups = {
+            users = { };
+        };
         users.users.ryan = {
             isNormalUser = true;
             description = "Ryan Balch";
