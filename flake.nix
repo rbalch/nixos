@@ -21,6 +21,7 @@
                 system = "x86_64-linux";
                 modules = [
                     ./hardware-configuration.nix
+                    ./hosts/razor
                     ./common
 
                     home-manager.nixosModules.home-manager
