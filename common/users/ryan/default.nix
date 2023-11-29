@@ -1,11 +1,6 @@
-{ config, pkgs, lib, users, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-    users.users.ryan = {
-        isNormalUser = true;
-        extraGroups = [ "wheel" "docker" ];
-        shell = pkgs.zsh;
-    };
     home.username = "ryan";
     home.homeDirectory = lib.mkForce "/home/ryan";
     home.stateVersion = "23.05";
