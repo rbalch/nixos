@@ -7,6 +7,7 @@
 
     imports = [
         ./ssh.nix
+        ./zsh.nix
     ];
 
     home.packages = with pkgs; [
