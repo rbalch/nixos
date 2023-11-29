@@ -10,15 +10,6 @@
 
     nix.settings.trusted-users = [ "ryan" ];
 
-    environment.systemPackages = with pkgs; [
-        dig
-        git
-        fzf
-        jq
-        networkmanager
-        thefuck
-    ];
-
     inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
         home-manager = {
@@ -34,6 +25,7 @@
                 system = "x86_64-linux";
                 modules = [
                     ./hardware-configuration.nix
+                    ./common
 
                     home-manager.nixosModules.home-manager
                     {
