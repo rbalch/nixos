@@ -1,0 +1,47 @@
+{
+    description = "NixOS configuration";
+
+    nixConfig = {
+        allowUnfree = true;
+        experimental-features = [ "nix-command" "flakes" ];
+    };
+
+    nix.settings.trusted-users = [ "ryan" ];
+
+    environment.systemPackages = with pkgs; [
+        dig
+        git
+        fzf
+        jq
+        networkmanager
+        thefuck
+    ];
+
+    inputs = {
+        nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+        home-manager = {
+            url = "github:nix-community/home-manager";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
+        nixos-hardware.url = "github:NixOS/nixos-hardware";
+    }
+
+    outputs = { self, nixpkgs, ... }@inputs: {
+        nixosConfigurations = {
+            razer = nixpkgs.lib.nixosSystem {
+                system = "x86_64-linux";
+                modules = [
+                    ./hardware-configuration.nix
+
+                    home-manager.nixosModules.home-manager
+                    {
+                        home-manager.useGlobalPkgs = true;
+                        home-manager.useUserPackages = true;
+                        home-manager.users.ryan = import ./common/users/ryan;
+                    }
+                ];
+            };
+        };
+    }
+
+}
