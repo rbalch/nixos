@@ -3,6 +3,7 @@
 {
     home.username = "ryan";
     home.homeDirectory = "/home/ryan";
+    home.stateVersion = "23.05";
 
     imports = [
         ./ssh.nix
