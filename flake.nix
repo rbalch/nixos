@@ -16,14 +16,14 @@
     };
 
     outputs = { self, nixpkgs, home-manager, ... }@inputs: {
-    users.users.ryan = {
-        isNormalUser = true;
-        description = "Ryan Balch";
-        name = "ryan";
-        home = "/home/ryan";
-        extraGroups = [ "wheel" "docker" ];
-        shell = pkgs.zsh;
-    };
+        users.users.ryan = {
+            isNormalUser = true;
+            description = "Ryan Balch";
+            name = "ryan";
+            home = "/home/ryan";
+            extraGroups = [ "wheel" "docker" ];
+            shell = nixpkgs.zsh;
+        };
         nixosConfigurations = {
             razor = nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
