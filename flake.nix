@@ -26,7 +26,7 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware";
     };
 
-    outputs = { self, nixpkgs, ... }@inputs: {
+    outputs = { self, nixpkgs, home-manager, ... }@inputs: {
         nixosConfigurations = {
             razer = nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
