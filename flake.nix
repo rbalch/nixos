@@ -17,7 +17,7 @@
 
     outputs = { self, nixpkgs, home-manager, ... }@inputs: {
         nixosConfigurations = {
-            razer = nixpkgs.lib.nixosSystem {
+            razor = nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
                 modules = [
                     ./hardware-configuration.nix
