@@ -11,15 +11,22 @@
     ];
 
     home.packages = with pkgs; [
+        google-chrome
         lastpass-cli
         neofetch
+        slack
         thefuck
+        vscode
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
             docker stop $(docker ps -q)
         '')
     ];
+
+    home.file = {
+        ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
+    }
 
     programs.git = {
         enable = true;

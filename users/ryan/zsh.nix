@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  configThemeNormal = ./p10k.zsh;
+  configThemeNormal = configs/p10k.zsh;
 in
 {
   programs.zsh = {
