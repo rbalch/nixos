@@ -12,6 +12,7 @@
 
     home.packages = with pkgs; [
         google-chrome
+        kitty
         lastpass-cli
         neofetch
         slack
@@ -26,7 +27,7 @@
 
     home.file = {
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
-    }
+    };
 
     programs.git = {
         enable = true;

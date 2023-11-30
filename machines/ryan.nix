@@ -5,12 +5,35 @@
 
     users.users.ryan = {
         isNormalUser = true;
-        extraGroups = [ "wheel" ];
+        extraGroups = [ "wheel" "networkmanager" "docker" ];
         shell = pkgs.zsh;
     };
 
-    # fonts.packages = with pkgs; [
-    #     (nerdfonts.override { fonts = [ "Meslo" ]; })
-    # ];
+    environment.variables.EDITOR = "vim";
+
+    i18n.defaultLocale = "en_US.UTF-8";
+    console = {
+        packages = [ pkgs.terminus_font ];
+        font = "${pkgs.terminus_font}/share/consolefonts/ter-i28b.psf.gz";
+        useXkbConfig = true;
+    };
+
+    fonts = {
+        packages = with pkgs; [
+            noto-fonts
+            noto-fonts-cjk
+            noto-fonts-emoji
+            font-awesome
+            (nerdfonts.override { fonts = [ "Meslo" ]; })
+        ];
+        fontconfig = {
+            enable = true;
+            defaultFonts = {
+                monospace = [ "Meslo LG M Regular Nerd Font Complete Mono" ];
+                serif = [ "Noto Serif" ];
+                sansSerif = [ "Noto Sans" ];
+            };
+        };
+    };
 
 }

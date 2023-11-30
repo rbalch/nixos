@@ -20,7 +20,7 @@
     ];
 
     networking = {
-        hostName = "razor";
+        hostName = "pixelNixer";
         enableIPv6 = false;
         networkmanager = {
             enable = true;
@@ -28,6 +28,13 @@
         dhcpcd.wait = "background";
         firewall.enable = true;
     };
+
+    # stop google-chrome vscode scaling (looks blurry otherwise)
+    environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+    # Sound
+    sound.enable = true;
+    hardware.pulseaudio.enable = true;
 
     # Bootloader.
     boot.loader.systemd-boot.enable = true;
