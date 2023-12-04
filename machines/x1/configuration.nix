@@ -15,12 +15,13 @@
         fzf
         git
         jq
+        lastpass-cli
         vim
         wget
     ];
 
     networking = {
-        hostName = "pixelNixer";
+        hostName = "nix1";
         enableIPv6 = false;
         networkmanager = {
             enable = true;
@@ -40,5 +41,5 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    system.stateVersion = "23.05";
+    system.stateVersion = "23.11";
 }

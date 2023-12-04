@@ -1,30 +1,50 @@
 # nixos
 
-## System Wide
+## Installation
 
-To apply changes:
+### WiFi
 
 ```bash
-sudo nixos-rebuild switch
+systemctl start wpa_supplicant
+wpa_cli
+
+add_network
+set_network 0 ssid ""
+set_network 0 psk ""
+set_network 0 key_mgmt WPA-PSK
+enable_network 0
 ```
 
-## Home Manager
+### Partitioning
 
-Nixpkgs version 23.05 channel you can do initial setup:
+Setup your paritions however you want. 2 drives, 1 for boot and 1 for root.
 
 ```bash
-sudo nix-channel --add https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz home-manager
-sudo nix-channel --update
+blkid # show hardware info
+
+lsblk # see mountings
 ```
 
-Then to install it:
+### Format
+
+Going to create our 2 drives and give them labels of "boot" and "nixos".
+This will make mounting, etc, easier.
 
 ```bash
-nix-shell '<home-manager>' -A install
+mkfs.fat -F 32 -n boot /dev/...
+mkfs.ext4 -L nixos /dev/...
 ```
 
-After that to apply any changes run:
+### Mount
 
 ```bash
-home-manager switch
+mount /dev/disk/by-label/nixos /mnt
+mkdir /mnt/boot
+mount /dev/disk/by-label/boot /mnt/boot
+```
+
+### Install
+
+```bash
+nixos-install --no-write-lock-file --flake github:rbalch/nixos#{machine}
 ```

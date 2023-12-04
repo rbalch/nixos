@@ -3,7 +3,7 @@
 {
     home.username = "ryan";
     home.homeDirectory = "/home/ryan";
-    home.stateVersion = "23.05";
+    home.stateVersion = "23.11";
 
     imports = [
         ./ssh.nix
@@ -13,11 +13,12 @@
     home.packages = with pkgs; [
         google-chrome
         kitty
-        lastpass-cli
         neofetch
         slack
         thefuck
+        udiskie
         vscode
+        wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
