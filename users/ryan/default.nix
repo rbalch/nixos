@@ -8,6 +8,7 @@
     imports = [
         ./ssh.nix
         ./zsh.nix
+        ../../modules/kitty
     ];
 
     home.packages = with pkgs; [
