@@ -5,7 +5,7 @@
 
     users.users.ryan = {
         isNormalUser = true;
-        extraGroups = [ "wheel" "networkmanager" "docker" ];
+        extraGroups = [ "wheel" "networkmanager" "docker" "input"];
         shell = pkgs.zsh;
     };
 

@@ -1,6 +1,13 @@
 { config, pkgs, ... }:
 
 {
+
+    environment.systemPackages = with pkgs; [
+        brightnessctl
+        hyprpaper
+        pavucontrol
+    ];
+
     programs.hyprland = {
         enable = true;
         xwayland.enable = true;

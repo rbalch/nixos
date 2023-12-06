@@ -7,6 +7,7 @@
 
     imports = [
         ./ssh.nix
+        ./waybar.nix
         ./zsh.nix
         ../../modules/kitty
     ];
@@ -21,7 +22,7 @@
         thefuck
         udiskie
         vscode
-        waybar
+        # waybar
         wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -32,6 +33,8 @@
 
     home.file = {
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
+        ".config/hypr/hyprpaper.conf".source = configs/hyprpaper.conf;
+        "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
     };
 
     home.pointerCursor = {
@@ -47,4 +50,12 @@
         userEmail = "ryan@balch.io";
         userName = "Ryan Balch";
     };
+
+    programs.password-store = {
+        enable = true;
+        settings = {
+        PASSWORD_STORE_DIR = "${config.xdg.dataHome}/password-store";
+        };
+    };
+
 }
