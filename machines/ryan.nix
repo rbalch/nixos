@@ -2,6 +2,7 @@
 
 {
     programs.zsh.enable = true;
+    time.timeZone = "America/New_York";
 
     users.users.ryan = {
         isNormalUser = true;
