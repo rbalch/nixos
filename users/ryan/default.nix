@@ -22,7 +22,6 @@
         thefuck
         udiskie
         vscode
-        # waybar
         wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -35,6 +34,7 @@
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/hypr/hyprpaper.conf".source = configs/hyprpaper.conf;
         ".config/waybar/config".source = configs/waybar.json;
+        #".vimrc".source = configs/vimrc;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
     };
 
@@ -50,6 +50,9 @@
         enable = true;
         userEmail = "ryan@balch.io";
         userName = "Ryan Balch";
+        extraConfig = {
+            core = { editor = "vim"; };
+        };
     };
 
     programs.password-store = {

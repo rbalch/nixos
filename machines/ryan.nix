@@ -10,8 +10,6 @@
         shell = pkgs.zsh;
     };
 
-    environment.variables.EDITOR = "vim";
-
     i18n.defaultLocale = "en_US.UTF-8";
     console = {
         packages = [ pkgs.terminus_font ];

@@ -5,6 +5,7 @@
         ./hardware-configuration.nix
         ../ryan.nix
         ../desktop-hyprland.nix
+        ../vim.nix
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
