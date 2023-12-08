@@ -6,6 +6,7 @@
         brightnessctl
         hyprpaper
         pavucontrol
+        wl-clipboard
     ];
 
     programs.hyprland = {

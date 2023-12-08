@@ -1,4 +1,4 @@
-{ config, pkgs, ...}:
+{ config, pkgs, lib, hostName, ...}:
 
 {
     imports = [
@@ -9,19 +9,20 @@
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
-    nixpkgs.config.allowUnfree = true;
+    nixpkgs.config.allowUnfree = lib.mkDefault true;
 
     environment.systemPackages = with pkgs; [
         curl
         fzf
         git
+        gnumake
         jq
         lastpass-cli
         wget
     ];
 
     networking = {
-        hostName = "nix1";
+        hostName = hostName;
         enableIPv6 = false;
         networkmanager = {
             enable = true;
@@ -47,6 +48,18 @@
     # Bootloader.
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
+    # limit number of boot options
+    boot.loader.systemd-boot.configurationLimit = 5;
+
+    # perform garbage collection weekly
+    nix.gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than 1w";
+    };
+
+    # optimize store (ie: remove duplicates)
+    nix.settings.auto-optimise-store = true;
 
     system.stateVersion = "23.11";
 }

@@ -15,9 +15,9 @@
         curl
         fzf
         git
+        gnumake
         jq
         lastpass-cli
-        vim
         wget
     ];
 

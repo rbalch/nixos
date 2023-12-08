@@ -48,3 +48,13 @@ mount /dev/disk/by-label/boot /mnt/boot
 ```bash
 nixos-install --no-write-lock-file --flake github:rbalch/nixos#{machine}
 ```
+
+## Useage
+
+### Look at a function
+
+```bash
+nix repl '<nixpkgs>'
+
+:e pkgs.{name}
+```

@@ -11,3 +11,12 @@ garbage:
 
 get-config:
 	curl -OL https://raw.githubusercontent.com/rbalch/nixos/main/configuration.nix
+
+list-historical-versions:
+	nix profile history --profile /nix/var/nix/profiles/system
+
+cleanup:
+	# delete all historical versions older than 7 days
+	sudo nix profile wipe-history --older-than 7d --profile /nix/var/nix/profiles/system
+	# then run garbage collection
+	sudo nix store gc --debug

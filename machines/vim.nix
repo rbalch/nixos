@@ -21,6 +21,8 @@
             vimrcConfig.customRC = ''
                 set tabstop=4
                 set mouse=a "allow mouse in vim"
+                set number relativenumber
+                set clipboard=unnamedplus "remaps to system clipboard"
                 syntax on
                 filetype on
                 nmap <F2> :NERDTreeToggle<CR>

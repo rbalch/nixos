@@ -8,6 +8,7 @@
 
     inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+        # nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
         home-manager = {
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows = "nixpkgs";
@@ -30,8 +31,11 @@
                     }
                 ];
             };
-            x1 = nixpkgs.lib.nixosSystem {
+            nix1 = nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
+                specialArgs = {
+                    hostName = "nix1";
+                };
                 modules = [
                     nixos-hardware.nixosModules.lenovo-thinkpad-x1-11th-gen
                     ./machines/x1/configuration.nix
