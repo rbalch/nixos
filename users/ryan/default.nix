@@ -7,6 +7,7 @@
 
     imports = [
         ./ssh.nix
+        ./vscode.nix
         ./waybar.nix
         ./zsh.nix
         ../../modules/kitty
@@ -21,7 +22,6 @@
         slack
         thefuck
         udiskie
-        vscode
         wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
