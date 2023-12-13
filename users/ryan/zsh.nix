@@ -5,6 +5,7 @@ in
 {
   programs.zsh = {
     enable = true;
+    enableAutosuggestions = true;
     shellAliases = {
       ll = "ls -l";
       nix-update = "sudo nixos-rebuild switch";
@@ -13,6 +14,7 @@ in
 
     initExtra = ''
       [[ ! -f ${configThemeNormal} ]] || source ${configThemeNormal}
+      tabs -4
     '';
 
     plugins = [
@@ -27,6 +29,7 @@ in
       enable = true;
       plugins = [ "git" "thefuck" "history"];
     };
+
   };
 
   programs.fzf = {

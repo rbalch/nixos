@@ -9,6 +9,7 @@
             "editor.fontSize" = 14;
             "terminal.integrated.fontFamily" = "MesloLGS Nerd Font Mono";
             "workbench.colorTheme" = "Dracula";
+            files.autoSave = "afterDelay";
         };
         # don't use ~/.vscode/extensions (ie: false here means you cannot install from vscode b/c of permissions)
         mutableExtensionsDir = false;

@@ -27,6 +27,7 @@
                 filetype on
                 nmap <F2> :NERDTreeToggle<CR>
                 nnoremap <F5> :UndotreeToggle<CR>
+                xnoremap <silent> <C-@> :w !wl-copy<CR><CR>
             '';
         }
         )];
