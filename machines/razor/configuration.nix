@@ -17,6 +17,7 @@
         git
         gnumake
         jq
+        killall
         lastpass-cli
         wget
     ];

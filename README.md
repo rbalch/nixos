@@ -49,6 +49,12 @@ mount /dev/disk/by-label/boot /mnt/boot
 nixos-install --no-write-lock-file --flake github:rbalch/nixos#{machine}
 ```
 
+### Update
+
+```bash
+nixos-rebuild --flake ./nixos#{machine} switch
+```
+
 ## Useage
 
 ### Look at a function

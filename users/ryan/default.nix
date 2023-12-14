@@ -14,6 +14,7 @@
     ];
 
     home.packages = with pkgs; [
+        font-manager
         google-chrome
         google-cursor
         kitty

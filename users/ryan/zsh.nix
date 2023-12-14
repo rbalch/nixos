@@ -15,6 +15,7 @@ in
     initExtra = ''
       [[ ! -f ${configThemeNormal} ]] || source ${configThemeNormal}
       tabs -4
+      [ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
     '';
 
     plugins = [
