@@ -3,6 +3,7 @@
 {
     programs.zsh.enable = true;
     time.timeZone = "America/New_York";
+    services.udisks2.enable = true;
 
     users.users.ryan = {
         isNormalUser = true;

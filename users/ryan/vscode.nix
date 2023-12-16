@@ -5,11 +5,12 @@
         enable = true;
         userSettings = {
             fontFamily = "MesloLGS NF";
-            "editor.fontFamily" = "MesloLGS Nerd Font";
-            "editor.fontSize" = 14;
-            "terminal.integrated.fontFamily" = "MesloLGS Nerd Font Mono";
-            "workbench.colorTheme" = "Dracula";
+            editor.fontFamily = "MesloLGS Nerd Font";
+            editor.fontSize = 14;
+            terminal.integrated.fontFamily = "MesloLGS Nerd Font Mono";
+            workbench.colorTheme = "Dracula";
             files.autoSave = "afterDelay";
+			window.titleBarStyle = "custom";
         };
         # don't use ~/.vscode/extensions (ie: false here means you cannot install from vscode b/c of permissions)
         mutableExtensionsDir = false;
