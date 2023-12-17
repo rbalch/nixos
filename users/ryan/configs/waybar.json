@@ -11,10 +11,16 @@
 	"modules-right": [
 		"cpu",
         "memory",
+		"backlight",
         "battery",
 		"wireplumber",
         "network"
 	],
+	"backlight": {
+		"device": "intel_backlight",
+		"format": "{percent}% {icon}",
+		"format-icons": ["", ""]
+	},
     "battery": {
 		"format": "{capacity}% {icon}",
 		"format-icons": [ "", "", "", "", "" ]
@@ -56,7 +62,7 @@
 		"format": "{}% 󰑹"
 	},
 	"network": {
-		"format-wifi": "{essid} ({signalStrength}%) ",
+		"format-wifi": "{signalStrength}% ",
 		"format-ethernet": "{ifname}: {ipaddr}/{cidr} ethernet",
 		"format-disconnected": "⚠"
 	},

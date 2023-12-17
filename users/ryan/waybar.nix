@@ -8,6 +8,11 @@
     style = ''
       ${builtins.readFile "${pkgs.waybar}/etc/xdg/waybar/style.css"}
 
+      #backlight {
+        background: transparent;
+        color: white;
+      }
+
       #battery {
         color: white;
         background: transparent;
