@@ -18,6 +18,22 @@
 
     outputs = { self, nixpkgs, home-manager, nixos-hardware, ... }@inputs: {
         nixosConfigurations = {
+            brain-dongle = nixpkgs.lib.nixosSystem {
+                system = "x86_64-linux";
+                specialArgs = {
+                    hostName = "brain-dongle";
+                };
+                modules = [
+                    ./machines/brain-dongle/configuration.nix
+
+                    home-manager.nixosModules.home-manager
+                    {
+                        home-manager.useGlobalPkgs = true;
+                        home-manager.useUserPackages = true;
+                        home-manager.users.ryan = import ./users/ryan;
+                    }
+                ];
+            };
             razor = nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
                 modules = [
