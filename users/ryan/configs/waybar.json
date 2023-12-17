@@ -62,9 +62,10 @@
 		"format": "{}% 󰑹"
 	},
 	"network": {
-		"format-wifi": "{signalStrength}% ",
+		"format-wifi": "{signalStrength}% {icon}",
 		"format-ethernet": "{ifname}: {ipaddr}/{cidr} ethernet",
-		"format-disconnected": "⚠"
+		"format-disconnected": "⚠",
+		"format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"]
 	},
 	"wireplumber": {
     	"format": "{volume}% {icon}",

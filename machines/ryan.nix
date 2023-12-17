@@ -18,6 +18,16 @@
         useXkbConfig = true;
     };
 
+    security.sudo.extraRules= [
+        {  users = [ "ryan" ];
+            commands = [
+            { command = "ALL" ;
+                options= [ "NOPASSWD" ];
+            }
+            ];
+        }
+    ];
+
     fonts = {
         fontDir.enable = true;
         packages = with pkgs; [
