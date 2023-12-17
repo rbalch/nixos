@@ -9,7 +9,8 @@
             # plugins
             vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
                 start = [
-                    nerdtree
+                    copilot-vim
+					nerdtree
                     python-syntax
                     undotree
                     vim-airline
@@ -28,6 +29,11 @@
                 nmap <F2> :NERDTreeToggle<CR>
                 nnoremap <F5> :UndotreeToggle<CR>
                 xnoremap <silent> <C-@> :w !wl-copy<CR><CR>
+				" Use ctrl-[hjkl] to select the active split!
+				nmap <silent> <c-k> :wincmd k<CR>
+				nmap <silent> <c-j> :wincmd j<CR>
+				nmap <silent> <c-h> :wincmd h<CR>
+				nmap <silent> <c-l> :wincmd l<CR>
             '';
         }
         )];

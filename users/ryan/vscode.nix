@@ -7,6 +7,8 @@
             fontFamily = "MesloLGS NF";
             editor.fontFamily = "MesloLGS Nerd Font";
             editor.fontSize = 14;
+			extensions.autoCheckUpdates = false;
+			extensions.autoUpdate = false;
             terminal.integrated.fontFamily = "MesloLGS Nerd Font Mono";
             workbench.colorTheme = "Dracula";
             files.autoSave = "afterDelay";

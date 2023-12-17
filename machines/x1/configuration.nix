@@ -16,6 +16,7 @@
         fzf
         git
         gnumake
+		htop
         jq
         killall
         lastpass-cli
