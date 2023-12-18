@@ -14,9 +14,10 @@
             inputs.nixpkgs.follows = "nixpkgs";
         };
         nixos-hardware.url = "github:NixOS/nixos-hardware";
+		vscode-server.url = "github:nix-community/nixos-vscode-server";
     };
 
-    outputs = { self, nixpkgs, home-manager, nixos-hardware, ... }@inputs: {
+    outputs = { self, nixpkgs, home-manager, nixos-hardware, vscode-server, ... }@inputs: {
         nixosConfigurations = {
             brain-dongle = nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
@@ -25,6 +26,11 @@
                 };
                 modules = [
                     ./machines/brain-dongle/configuration.nix
+
+					vscode-server.nixosModules.default
+					({ config, nixpkgs, ...}: {
+						services.vscode-server.enable = true;
+					})
 
                     home-manager.nixosModules.home-manager
                     {
