@@ -6,6 +6,7 @@
         brightnessctl
         hyprpaper
         pavucontrol
+        wayland-logout
         wl-clipboard
     ];
 

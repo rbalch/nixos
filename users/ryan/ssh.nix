@@ -8,7 +8,7 @@
     controlPersist = "10s";
     
     matchBlocks = {
-      "izxrbzx"  = {
+      "bd"  = {
         hostname = "192.168.12.194";
         user = "ryan";
         identityFile = "~/.ssh/zxrbzx";
