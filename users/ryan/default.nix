@@ -25,6 +25,10 @@
         udiskie
         wofi
 
+        #(pkgs.vscode.overrideAttrs(old: rec {
+        #    version = "1.85.1";
+        #}))
+
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
             docker stop $(docker ps -q)
