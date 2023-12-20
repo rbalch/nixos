@@ -51,8 +51,22 @@ nixos-install --no-write-lock-file --flake github:rbalch/nixos#{machine}
 
 ### Update
 
+When you have changed configs:
+
 ```bash
 nixos-rebuild --flake ./nixos#{machine} switch
+```
+
+To update existing system:
+
+```bash
+nix flake update
+```
+
+After that you probably want to run update again:
+
+```bash
+sudo nixos-rebuild switch
 ```
 
 ## Useage
