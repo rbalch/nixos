@@ -4,7 +4,7 @@
     imports = [
         ./hardware-configuration.nix
         ../docker.nix
-		../nvidia.nix
+        ../nvidia.nix
         # ../podman.nix
         ../ryan.nix
         ../sshd.nix
