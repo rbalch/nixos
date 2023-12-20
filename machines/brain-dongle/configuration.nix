@@ -3,7 +3,9 @@
 {
     imports = [
         ./hardware-configuration.nix
+        ../docker.nix
 		../nvidia.nix
+        # ../podman.nix
         ../ryan.nix
         ../sshd.nix
         ../desktop-hyprland.nix
@@ -68,13 +70,4 @@
     nix.settings.auto-optimise-store = true;
 
     system.stateVersion = "23.11";
-
-	# docker
-	virtualisation.docker.enable = true;
-	users.extraGroups.docker.members = [ "ryan"];
-
-	virtualisation.docker.rootless = {
-		enable = true;
-		setSocketVariable = true;
-	};
 }

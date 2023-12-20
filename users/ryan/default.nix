@@ -16,6 +16,7 @@
     home.packages = with pkgs; [
         font-manager
         google-chrome
+		google-cloud-sdk
         google-cursor
         kitty
         neofetch
@@ -24,10 +25,6 @@
         thefuck
         udiskie
         wofi
-
-        #(pkgs.vscode.overrideAttrs(old: rec {
-        #    version = "1.85.1";
-        #}))
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
@@ -44,7 +41,6 @@
 
     home.pointerCursor = {
         gtk.enable = true;
-        # x11.enable = true;
         package = pkgs.google-cursor;
         name = "GoogleDot-Blue";
         size = 28;
