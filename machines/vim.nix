@@ -4,6 +4,8 @@
     environment.variables.EDITOR = "vim";
 
     environment.systemPackages = with pkgs; [
+        universal-ctags 
+
         ((vim_configurable.override { }).customize{
             name = "vim";
             # plugins
@@ -12,6 +14,7 @@
                     copilot-vim
 					nerdtree
                     python-syntax
+                    tagbar
                     undotree
                     vim-airline
                     vim-lastplace
@@ -28,6 +31,7 @@
                 filetype on
                 nmap <F2> :NERDTreeToggle<CR>
                 nnoremap <F5> :UndotreeToggle<CR>
+                nmap <F8> :TagbarToggle<CR>
                 xnoremap <silent> <C-@> :w !wl-copy<CR><CR>
 				" Use ctrl-[hjkl] to select the active split!
 				nmap <silent> <c-k> :wincmd k<CR>
