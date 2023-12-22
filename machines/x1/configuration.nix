@@ -20,6 +20,7 @@
         jq
         killall
         lastpass-cli
+        python3Full
         wget
     ];
 
