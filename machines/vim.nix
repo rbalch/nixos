@@ -12,6 +12,7 @@
             vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
                 start = [
                     copilot-vim
+                    vim-devicons
 					nerdtree
                     python-syntax
                     tagbar
