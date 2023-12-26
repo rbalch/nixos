@@ -15,11 +15,12 @@
                     vim-devicons
 					nerdtree
                     python-syntax
-                    tagbar
+                    #tagbar
                     undotree
                     vim-airline
                     vim-lastplace
                     vim-nix
+					vista-vim
                 ];
                 opt = [ ];
             };

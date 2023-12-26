@@ -15,6 +15,9 @@ get-config:
 list-historical-versions:
 	nix profile history --profile /nix/var/nix/profiles/system
 
+update:
+	sudo nix flake update
+
 cleanup:
 	# delete all historical versions older than 7 days
 	sudo nix profile wipe-history --older-than 7d --profile /nix/var/nix/profiles/system
