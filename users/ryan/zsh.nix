@@ -9,6 +9,7 @@ in
     shellAliases = {
       ll = "ls -l";
       nix-update = "sudo nixos-rebuild switch";
+      bd = "ssh bd";
     };
     history.size = 10000;
 
