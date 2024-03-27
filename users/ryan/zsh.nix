@@ -5,7 +5,7 @@ in
 {
   programs.zsh = {
     enable = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     shellAliases = {
       ll = "ls -l";
       nix-update = "sudo nixos-rebuild switch";

@@ -4,9 +4,9 @@
     programs.vscode = {
         enable = true;
         package = (pkgs.vscode).overrideAttrs (oldAttrs: rec {
-                    version = "1.85.1";
+                    version = "1.87.1";
                     src = (builtins.fetchTarball {
-                        url = "https://update.code.visualstudio.com/1.85.1/linux-x64/stable";
+                        url = "https://update.code.visualstudio.com/1.87.1/linux-x64/stable";
                         sha256 = "089ppxqvs29082dx6d2rd5wcwi4hk009hjxlb6ldbac1rhrxv19w";
                     });
                 });
