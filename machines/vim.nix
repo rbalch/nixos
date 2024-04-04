@@ -13,14 +13,14 @@
                 start = [
                     copilot-vim
                     vim-devicons
-					nerdtree
+                    nerdtree
                     python-syntax
                     #tagbar
                     undotree
                     vim-airline
                     vim-lastplace
                     vim-nix
-					vista-vim
+                    vista-vim
                 ];
                 opt = [ ];
             };
