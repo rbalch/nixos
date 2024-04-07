@@ -13,6 +13,7 @@
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows = "nixpkgs";
         };
+        hyprland.url = "github:hyprwm/Hyprland";
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         vscode-server.url = "github:nix-community/nixos-vscode-server";
     };
