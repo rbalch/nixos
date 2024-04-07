@@ -23,7 +23,9 @@
         jq
         killall
         lastpass-cli
+        ngrok
         python3Full
+        tmux
         wget
     ];
 
