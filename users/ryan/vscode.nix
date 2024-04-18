@@ -4,10 +4,10 @@
     programs.vscode = {
         enable = true;
         package = (pkgs.vscode).overrideAttrs (oldAttrs: rec {
-                    version = "1.87.1";
+                    version = "1.88.1";
                     src = (builtins.fetchTarball {
-                        url = "https://update.code.visualstudio.com/1.87.1/linux-x64/stable";
-                        sha256 = "089ppxqvs29082dx6d2rd5wcwi4hk009hjxlb6ldbac1rhrxv19w";
+                        url = "https://update.code.visualstudio.com/1.88.1/linux-x64/stable";
+                        sha256 = "0nr1dh50skq0qfxxfz6kk6ic9xgqnjh06kaj4mizh774l1apg6ln";
                     });
                 });
         userSettings = {
