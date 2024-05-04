@@ -46,6 +46,23 @@
     enableZshIntegration = true;
   };
 
+  git = {
+    enable = true;
+    ignores = [
+      "*.swp"
+    ];
+    userName = "Ryan Balch";
+    userEmail = "ryan@balch.io";
+    extraConfig = {
+      init.defaultBranch = "main";
+      core = {
+        editor = "vim";
+      };
+      pull.rebase = true;
+      rebase.authStash = true;
+    };
+  };
+
   # direnv = {
   #   enable = true;
   #   enableZshIntegration = true;
