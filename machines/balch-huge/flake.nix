@@ -20,6 +20,7 @@
       # $ nix-env -qaP | grep wget
       environment.systemPackages = with pkgs; [
           fzf
+          google-cloud-sdk
           killall
           ngrok
           python3Full
