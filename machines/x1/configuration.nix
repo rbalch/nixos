@@ -65,4 +65,15 @@
     nix.settings.auto-optimise-store = true;
 
     system.stateVersion = "23.11";
+
+	virtualisation.docker = {
+		enable = true;
+		enableOnBoot = false;
+
+		rootless = {
+			enable = true;
+			setSocketVariable = true;
+		};
+	};
+	users.extraGroups.docker.members = [ "ryan" ];
 }
