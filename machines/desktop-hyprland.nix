@@ -18,8 +18,9 @@
     services.xserver = {
         enable = true;
         xkb.layout = "us";
-        displayManager.sddm.enable = true;
     };
+
+    services.displayManager.sddm.enable = true;
 
     xdg.portal = {
         enable = true;
