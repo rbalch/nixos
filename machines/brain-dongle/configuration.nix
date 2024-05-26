@@ -38,7 +38,7 @@
         dhcpcd.wait = "background";
         firewall = {
             enable = true;
-            allowedTCPPorts = [ 22 ];
+            allowedTCPPorts = [ 22 32400 ];
         };
     };
 
