@@ -1,10 +1,11 @@
 { config, pkgs, ... }:
 
 {
+	hardware.nvidia-container-toolkit.enable = true;
+
 	virtualisation.docker = {
 		enable = true;
 		enableOnBoot = false;
-		enableNvidia = true;
 
 		rootless = {
 			enable = true;

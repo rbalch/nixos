@@ -26,3 +26,6 @@ cleanup:
 	sudo nix profile wipe-history --older-than 7d --profile /nix/var/nix/profiles/system
 	# then run garbage collection
 	sudo nix store gc --debug
+
+check-docker:
+	docker info | grep -i runtime
