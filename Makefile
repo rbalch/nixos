@@ -29,3 +29,8 @@ cleanup:
 
 check-docker:
 	docker info | grep -i runtime
+
+fix-vscode:
+	# patch vscode and cursor for the javascript server
+	systemctl --user enable auto-fix-vscode-server.service
+	systemctl --user restart auto-fix-vscode-server.service
