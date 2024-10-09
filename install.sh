@@ -51,10 +51,12 @@ get_lpass() {
 get_ssh() {
     mkdir -p "$HOME/.ssh" && info "-> Ensuring .ssh folder is present"
     chmod 700 "$HOME/.ssh" && success '--> Setting permissions for the .ssh folder'
+    mkdir -p "$HOME/.config/ngrok" && info "-> Ensuring ngrok folder is present"
 
     get_doc "ssh/zxrbzx" "$HOME/.ssh/zxrbzx" 600
     get_doc "ssh/github-eviltandem" "$HOME/.ssh/github-eviltandem" 600
     get_doc "ssh/github-huge" "$HOME/.ssh/github-huge" 600
+    get_doc "ssh/ngrok.yml" "$HOME/.config/ngrok/ngrok.yml"
 }
 
 get_lpass
