@@ -52,6 +52,7 @@
 
     programs.git = {
         enable = true;
+        lfs.enable = true;
         userEmail = "ryan@balch.io";
         userName = "Ryan Balch";
         extraConfig = {

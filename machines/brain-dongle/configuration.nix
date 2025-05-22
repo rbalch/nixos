@@ -21,6 +21,7 @@
         curl
         fzf
         git
+        git-lfs
         gnumake
         jq
         killall
