@@ -5,11 +5,11 @@
 
 	virtualisation.docker = {
 		enable = true;
-		enableOnBoot = false;
+		enableOnBoot = false; # false
 
 		rootless = {
 			enable = true;
-			setSocketVariable = false;
+			setSocketVariable = false; # false
 			daemon.settings = {
 				runtimes = {
 					nvidia = {

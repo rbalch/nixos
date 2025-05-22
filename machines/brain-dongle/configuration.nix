@@ -14,6 +14,8 @@
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
     nixpkgs.config.allowUnfree = lib.mkDefault true;
+    programs.nix-ld.enable = true;
+    programs.mtr.enable = true;
 
     environment.systemPackages = with pkgs; [
         curl
@@ -69,7 +71,9 @@
         options = "--delete-older-than 1w";
     };
 
-    # optimize store (ie: remove duplicates)
+    virtualisation.docker.enableNvidia = true;
+    
+	# optimize store (ie: remove duplicates)
     nix.settings.auto-optimise-store = true;
 
     system.stateVersion = "23.11";

@@ -32,10 +32,11 @@
         fontDir.enable = true;
         packages = with pkgs; [
             noto-fonts
-            noto-fonts-cjk
+            noto-fonts-cjk-sans
             noto-fonts-emoji
             font-awesome
-            (nerdfonts.override { fonts = [ "Meslo" ]; })
+            # (nerdfonts.override { fonts = [ "Meslo" ]; })
+            nerd-fonts.meslo-lg
         ];
         fontconfig = {
             enable = true;

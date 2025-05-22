@@ -26,6 +26,12 @@
         identityFile = "~/.ssh/github-huge";
         identitiesOnly = true;
       };
+      "huggingface" = {
+        hostname = "hf.co";
+        user = "git";
+        identityFile = "~/.ssh/huggingface";
+        identitiesOnly = true;
+      };
     };
 
   };

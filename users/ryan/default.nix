@@ -14,6 +14,8 @@
     ];
 
     home.packages = with pkgs; [
+        awscli2
+        code-cursor
         font-manager
         google-chrome
 		google-cloud-sdk
@@ -22,6 +24,7 @@
         neofetch
         nwg-look
         slack
+		terraform
         thefuck
         udiskie
         wofi

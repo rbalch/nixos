@@ -78,3 +78,13 @@ nix repl '<nixpkgs>'
 
 :e pkgs.{name}
 ```
+
+### Docker
+
+In my latest build docker and nvidia are still angry at each other. While it complains about deprecation without:
+
+```code
+virtualisation.docker.enableNvidia = true;
+```
+
+... in machines/brain-dongle/configuration.nix the docker->nvidia stuff won't work.
