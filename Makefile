@@ -30,6 +30,12 @@ cleanup:
 check-docker:
 	docker info | grep -i runtime
 
+restart-docker:
+	sudo systemctl restart docker && systemctl --user restart docker
+
+test-docker:
+	docker run --runtime=nvidia --device nvidia.com/gpu=all nvidia/cuda:12.8.1-base-ubuntu22.04 nvidia-smi
+
 fix-vscode:
 	# patch vscode and cursor for the javascript server
 	systemctl --user enable auto-fix-vscode-server.service

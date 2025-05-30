@@ -1,11 +1,12 @@
 { config, pkgs, ... }:
 
 {
-	hardware.nvidia-container-toolkit.enable = true;
-
 	virtualisation.docker = {
 		enable = true;
 		enableOnBoot = false; # false
+
+		# Enable NVIDIA runtime using the deprecated setting as well for compatibility
+		# enableNvidia = true;
 
 		rootless = {
 			enable = true;
@@ -16,6 +17,8 @@
 						path = "${pkgs.nvidia-docker}/bin/nvidia-container-runtime";
 					};
 				};
+				# Explicitly set the default runtime to use NVIDIA
+				# default-runtime = "nvidia";
 			};
 		};
 	};
