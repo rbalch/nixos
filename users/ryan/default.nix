@@ -36,7 +36,7 @@
     ];
 
     home.file = {
-        ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
+        # ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/hypr/hyprpaper.conf".source = configs/hyprpaper.conf;
         ".config/waybar/config".source = configs/waybar.json;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
