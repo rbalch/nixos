@@ -32,12 +32,26 @@
         wget
     ];
 
+    # networking = {
+    #     hostName = hostName;
+    #     enableIPv6 = false;
+    #     networkmanager = {
+    #         enable = true;
+    #     };
+    #     dhcpcd.wait = "background";
+    #     firewall = {
+    #         enable = true;
+    #         allowedTCPPorts = [ 22 32400 ];
+    #     };
+    # };
+
     networking = {
         hostName = hostName;
         enableIPv6 = false;
-        networkmanager = {
-            enable = true;
-        };
+        networkmanager.enable = false;
+        interfaces.eno1.useDHCP = true;
+        interfaces.eno2.useDHCP = true;
+
         dhcpcd.wait = "background";
         firewall = {
             enable = true;
