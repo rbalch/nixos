@@ -19,6 +19,8 @@
 
     environment.systemPackages = with pkgs; [
         curl
+        dig
+        direnv
         fzf
         git
         git-lfs
