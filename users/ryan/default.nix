@@ -23,9 +23,9 @@
         kitty
         neofetch
         nwg-look
+        pay-respects
         slack
 		terraform
-        thefuck
         udiskie
         wofi
 

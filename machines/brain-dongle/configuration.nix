@@ -1,4 +1,4 @@
-{ config, pkgs, lib, hostName, ...}:
+{ config, pkgs, lib, hostName, pkgsunstable, ...}:
 
 {
     imports = [
@@ -12,27 +12,37 @@
         ../vim.nix
     ];
 
-    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    nix.settings = {
+        download-buffer-size = 16777216; # 16 MiB
+        experimental-features = [ "nix-command" "flakes" ];
+    };
+
+    # nix.settings.download-buffer-size = 16777216; # 16 MiB
+    # nix.settings.experimental-features = [ "nix-command" "flakes" ];
     nixpkgs.config.allowUnfree = lib.mkDefault true;
     programs.nix-ld.enable = true;
     programs.mtr.enable = true;
 
-    environment.systemPackages = with pkgs; [
-        curl
-        dig
-        direnv
-        fzf
-        git
-        git-lfs
-        gnumake
-        jq
-        killall
-        lastpass-cli
-        ngrok
-        python3Full
-        tmux
-        wget
-    ];
+    environment.systemPackages =
+        (with pkgs; [
+            cmatrix
+            curl
+            dig
+            direnv
+            fzf
+            git
+            git-lfs
+            gnumake
+            jq
+            killall
+            lastpass-cli
+            ngrok
+            python3Full
+            tmux
+            wget
+        ]) ++ (with pkgsunstable; [
+            gemini-cli
+        ]);
 
     # networking = {
     #     hostName = hostName;
