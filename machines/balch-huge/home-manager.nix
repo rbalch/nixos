@@ -18,7 +18,6 @@ in
         users.${user} = {pkgs, config, lib, ...}: {
             home.packages = with pkgs; [
                 lastpass-cli
-                thefuck
             ];
 
             home = {

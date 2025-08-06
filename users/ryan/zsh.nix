@@ -13,7 +13,11 @@ in
     };
     history.size = 10000;
 
-    initExtra = ''
+    sessionVariables = {
+      GOOGLE_CLOUD_PROJECT = "gemini-code-assist-466218";
+    };
+
+    initContent = ''
       [[ ! -f ${configThemeNormal} ]] || source ${configThemeNormal}
       tabs -4
       [ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
@@ -29,7 +33,7 @@ in
     
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "thefuck" "history"];
+      plugins = [ "git" "history"];
     };
 
   };
