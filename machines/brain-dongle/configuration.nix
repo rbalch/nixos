@@ -37,12 +37,13 @@
             killall
             lastpass-cli
             ngrok
+            nodejs
             python3Full
             tmux
             wget
-        ]) ++ (with pkgsunstable; [
-            gemini-cli
-        ]);
+        ]); #++ (with pkgsunstable; [
+        #    gemini-cli
+        #]);
 
     # networking = {
     #     hostName = hostName;

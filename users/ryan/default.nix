@@ -33,6 +33,18 @@
             #!/bin/bash
             docker stop $(docker ps -q)
         '')
+
+        # OpenAI Codex CLI via npx (latest)
+        (pkgs.writeShellScriptBin "codex" ''
+          #!/usr/bin/env bash
+          exec ${pkgs.nodejs_20}/bin/npx @openai/codex@latest "$@"
+        '')
+
+        # Gemini-CLI via npx (latest)
+        (pkgs.writeShellScriptBin "gemini" ''
+          #!/usr/bin/env bash
+          exec ${pkgs.nodejs_20}/bin/npx @google/gemini-cli@latest "$@"
+        '')
     ];
 
     home.file = {
