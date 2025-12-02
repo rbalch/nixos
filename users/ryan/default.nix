@@ -45,6 +45,12 @@
           #!/usr/bin/env bash
           exec ${pkgs.nodejs_20}/bin/npx @google/gemini-cli@latest "$@"
         '')
+
+        # Claude CLI via npx (latest)
+        (pkgs.writeShellScriptBin "claude" ''
+          #!/usr/bin/env bash
+          exec ${pkgs.nodejs_20}/bin/npx @anthropic-ai/claude-code@latest "$@"
+        '')
     ];
 
     home.file = {

@@ -19,10 +19,11 @@
             };
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix
+                bierner.markdown-mermaid
+                charliermarsh.ruff
                 dracula-theme.theme-dracula
-                github.copilot
-                github.copilot-chat
                 donjayamanne.githistory
+                # googlecloudtools.cloudcode
                 ms-azuretools.vscode-docker
                 ms-vscode.makefile-tools
                 ms-vscode-remote.remote-containers
