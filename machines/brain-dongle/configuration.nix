@@ -42,6 +42,7 @@
             python3Full
             tmux
             wget
+            uv
         ]); #++ (with pkgsunstable; [
         #    gemini-cli
         #]);
