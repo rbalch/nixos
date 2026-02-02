@@ -31,6 +31,7 @@
             dig
             direnv
             fzf
+            ghostty.terminfo
             git
             git-lfs
             gnumake
