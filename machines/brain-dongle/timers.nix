@@ -8,7 +8,7 @@ in {
 
     serviceConfig = {
       User = "ryan";
-      WorkingDirectory = "/home/ryan/code/wodify-signup";
+      WorkingDirectory = "/home/ryan/code/wodif-ai";
 
       # Let systemd own the log file in /var/log
       StandardOutput = "append:/var/log/wodify.log";
