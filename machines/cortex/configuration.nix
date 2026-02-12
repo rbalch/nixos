@@ -1,6 +1,12 @@
 { config, lib, pkgs, ... }:
 
 {
+  fileSystems."/boot/windows-efi" = {
+    device = "/dev/disk/by-uuid/C01B-8E21";
+    fsType = "vfat";
+    options = [ "fmask=0022" "dmask=0022" "ro" ];
+  };
+  
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
