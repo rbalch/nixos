@@ -6,7 +6,7 @@
     fsType = "vfat";
     options = [ "fmask=0022" "dmask=0022" "ro" ];
   };
-  
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -17,6 +17,29 @@
       ../vim.nix
       ../sshd.nix
     ];
+
+    environment.systemPackages =
+        (with pkgs; [
+            cmatrix
+            curl
+            dig
+            direnv
+            fzf
+            ghostty.terminfo
+            git
+            git-lfs
+            gnumake
+            jq
+            killall
+            lastpass-cli
+            ngrok
+            nodejs
+            python3Full
+            tmux
+            wget
+            unzip
+            uv
+        ]);
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;

@@ -54,7 +54,7 @@
     ];
 
     home.file = {
-        # ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
+         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/hypr/hyprpaper.conf".source = configs/hyprpaper.conf;
         ".config/waybar/config".source = configs/waybar.json;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
@@ -83,6 +83,23 @@
         settings = {
         PASSWORD_STORE_DIR = "${config.xdg.dataHome}/password-store";
         };
+    };
+
+    programs.ghostty = {
+    enable = true;
+    settings = {
+        font-family = "MesloLGS Nerd Font";
+        font-size = 14;
+        theme = "tokyonight";
+        background-opacity = 0.95;
+        background-blur = true;
+        window-width = 160;
+        window-height = 70;
+        keybind = [
+        "super+c=copy_to_clipboard"
+        "super+v=paste_from_clipboard"
+        ];
+    };
     };
 
 }
