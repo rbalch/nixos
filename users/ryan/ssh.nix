@@ -9,10 +9,15 @@
     
     matchBlocks = {
       "bd"  = {
-        hostname = "192.168.12.194";
+        hostname = "10.13.37.42";
         user = "ryan";
         identityFile = "~/.ssh/zxrbzx";
         # identitiesOnly = true;
+      };
+      "dgx" = {
+        hostname = "dgx.braindongle.com";
+        user = "ryan";
+        identityFile = "~/.ssh/zxrbzx";
       };
       "github.com" = {
         hostname = "github.com";
