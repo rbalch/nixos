@@ -61,8 +61,8 @@
         ".config/waybar/config".source = configs/waybar.json;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
-        ".config/hypr/hypridle.conf".source = configs/hypridle.conf;
-        ".config/hypr/hyprlock.conf".source = configs/hyprlock.conf;
+        ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
+        ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
     };
 
     home.pointerCursor = {
