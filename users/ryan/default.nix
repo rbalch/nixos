@@ -20,6 +20,8 @@
         google-chrome
 		google-cloud-sdk
         google-cursor
+        hyprlock
+        hypridle
         kitty
         neofetch
         nwg-look
