@@ -56,11 +56,13 @@
     ];
 
     home.file = {
-         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
+        ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/hypr/hyprpaper.conf".source = configs/hyprpaper.conf;
         ".config/waybar/config".source = configs/waybar.json;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
+        ".config/hypr/hypridle.conf".source = configs/hypridle.conf;
+        ".config/hypr/hyprlock.conf".source = configs/hyprlock.conf;
     };
 
     home.pointerCursor = {
