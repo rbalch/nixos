@@ -7,6 +7,11 @@
     options = [ "fmask=0022" "dmask=0022" "ro" ];
   };
 
+  boot.loader.systemd-boot.extraEntries."windows.conf" = ''
+    title Windows
+    efi /windows-efi/EFI/Microsoft/Boot/bootmgfw.efi
+  '';
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
