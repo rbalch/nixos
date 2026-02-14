@@ -27,6 +27,7 @@
         (with pkgs; [
             cmatrix
             curl
+            dconf
             dig
             direnv
             fzf
