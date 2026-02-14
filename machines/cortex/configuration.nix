@@ -1,16 +1,26 @@
 { config, lib, pkgs, ... }:
 
 {
-  fileSystems."/boot/windows-efi" = {
-    device = "/dev/disk/by-uuid/C01B-8E21";
-    fsType = "vfat";
-    options = [ "fmask=0022" "dmask=0022" "ro" ];
-  };
+  # fileSystems."/boot/windows-efi" = {
+  #   device = "/dev/disk/by-uuid/C01B-8E21";
+  #   fsType = "vfat";
+  #   options = [ "fmask=0022" "dmask=0022" "ro" ];
+  # };
 
-  boot.loader.systemd-boot.extraEntries."windows.conf" = ''
-    title Windows
-    efi /windows-efi/EFI/Microsoft/Boot/bootmgfw.efi
-  '';
+  # boot.loader.systemd-boot.extraEntries."windows.conf" = ''
+  #   title Windows
+  #   efi /windows-efi/EFI/Microsoft/Boot/bootmgfw.efi
+  # '';
+
+  boot.loader.systemd-boot = {
+    windows."windows" = {
+      title = "Windows";
+      efiDeviceHandle = "FS1";  # may need adjusting
+      sortKey = "y_windows";
+    };
+    edk2-uefi-shell.enable = true;
+    edk2-uefi-shell.sortKey = "z_edk2";
+  };
 
   imports =
     [ # Include the results of the hardware scan.
@@ -69,4 +79,7 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   system.stateVersion = "25.11"; # Did you read the comment?
+
+  # limit number of boot options
+  boot.loader.systemd-boot.configurationLimit = 5;
 }
