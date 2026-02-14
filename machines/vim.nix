@@ -6,7 +6,7 @@
     environment.systemPackages = with pkgs; [
         universal-ctags 
 
-        ((vim_configurable.override { }).customize{
+        ((vim-full.override { }).customize{
             name = "vim";
             # plugins
             vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {

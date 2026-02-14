@@ -50,7 +50,7 @@
             lastpass-cli
             ngrok
             nodejs
-            python3Full
+            python3
             tmux
             wget
             unzip
