@@ -7,7 +7,7 @@ install:
 	nixos-install --no-write-lock-file --impure --flake github:rbalch/nixos#razor
 
 rebuild:
-	sudo nixos-rebuild switch
+	sudo nixos-rebuild switch --flake .#$$(hostname)
 
 garbage:
 	nix-collect-garbage --delete-old

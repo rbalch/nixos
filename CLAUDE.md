@@ -9,7 +9,9 @@ NixOS flake-based configuration managing 4 Linux hosts + 1 macOS (standalone fla
 ## Build Commands
 
 ```bash
-# Rebuild current host (must specify host name)
+# Rebuild current host (auto-detects hostname)
+make rebuild
+# Or explicitly:
 sudo nixos-rebuild switch --flake .#cortex      # or brain-dongle, nix1, razor
 
 # Fresh install from GitHub
@@ -30,27 +32,35 @@ docker run --runtime=nvidia --device nvidia.com/gpu=all nvidia/cuda:12.8.1-base-
 
 ### Flake entry point (`flake.nix`)
 - Tracks `nixpkgs-unstable` for all hosts
-- Each host is a `nixosConfigurations.<name>` entry calling `nixpkgs.lib.nixosSystem`
-- Home-manager is wired identically per-host (repeated block — candidate for DRY-ing up)
-- `specialArgs` passes host-specific data (only some hosts use it)
+- Uses `lib/mkHost.nix` helper — each host is a one-liner with optional extra modules
+- Home-manager and `specialArgs` are wired up automatically by `mkHost`
+- `specialArgs` always passes `inputs` and `hostName` to all hosts
 
-### Host configs (`machines/`)
-Mixed directory — contains both per-host subdirectories AND shared modules side-by-side:
+### `lib/mkHost.nix`
+Helper function: `mkHost hostname { system, dir, modules }` → `nixosSystem` attrset.
+- Defaults: `system = "x86_64-linux"`, `dir = hostname`
+- Imports the host's `hosts/<dir>/default.nix` + any extra `modules`
+- Wires home-manager with `useGlobalPkgs` and `useUserPackages`
 
-**Per-host directories** (each has `configuration.nix` + `hardware-configuration.nix`):
-- `cortex/` — Main workstation. Hyprland + NVIDIA + Docker
-- `brain-dongle/` — GPU server. Docker + systemd timers + vscode-server
-- `x1/` — ThinkPad laptop. Hyprland, no GPU. Uses `nixos-hardware` module
-- `razor/` — Minimal laptop. Bare essentials
-- `balch-huge/` — macOS (Apple Silicon). **Separate standalone flake**, nix-darwin
+### Host configs (`hosts/`)
+```
+hosts/
+  common/
+    default.nix              # Base config ALL hosts get (boot, nix, user, fonts, locale, sudo, gc)
+    optional/
+      docker.nix             # Docker daemon + NVIDIA container toolkit (CDI-based)
+      hyprland.nix           # Hyprland WM + SDDM + XDG portals
+      nvidia.nix             # NVIDIA drivers + CUDA + modesetting
+      podman.nix             # Podman container runtime
+      sshd.nix               # OpenSSH server config
+      vim.nix                # Vim with plugins
+  cortex/                    # Main workstation. Hyprland + NVIDIA + Docker
+  brain-dongle/              # GPU server. Docker + systemd timers + vscode-server
+  x1/                        # ThinkPad laptop (nix1). Hyprland, no GPU
+  razor/                     # Minimal laptop. Bare essentials
+```
 
-**Shared modules** (imported selectively by hosts):
-- `desktop-hyprland.nix` — Hyprland WM + SDDM + XDG portals
-- `nvidia.nix` — NVIDIA drivers + CUDA + modesetting
-- `docker.nix` — Docker daemon + NVIDIA container toolkit (CDI-based)
-- `ryan.nix` — User account, timezone, fonts, locale, sudo
-- `sshd.nix` — OpenSSH server config
-- `vim.nix` — Vim with plugins
+Each per-host `default.nix` imports `../common` + relevant `../common/optional/*` modules + host-specific settings.
 
 ### User config (`users/ryan/`)
 Home-manager modules for the ryan user:
@@ -64,17 +74,20 @@ Home-manager modules for the ryan user:
 ### Custom modules (`modules/`)
 - `kitty/` — Kitty terminal config (just maps a config file via `xdg.configFile`)
 
+### macOS (`machines/balch-huge/`)
+Standalone nix-darwin flake, not part of the main flake's outputs.
+
 ## Key Patterns
 
-- **allowUnfree** is set globally in `nixConfig` block and per-user in `configs/config.nix`
+- **`mkHost`** handles all boilerplate — adding a new host is just a new `hosts/<name>/` dir + one line in `flake.nix`
+- **`hosts/common/default.nix`** is imported by every host — contains boot, nix settings, user account, fonts, locale, sudo, gc
+- **`hosts/common/optional/`** modules are opt-in — each host picks what it needs via imports
+- **allowUnfree** is set in `nixConfig` block, in `hosts/common/default.nix` (mkDefault), and per-user in `configs/config.nix`
 - **NVIDIA Docker** uses CDI standard: `--device nvidia.com/gpu=all` (not `--gpus`, which doesn't work on NixOS)
 - **Home-manager** uses `useGlobalPkgs = true` and `useUserPackages = true` — user packages come from the system nixpkgs
-- **Nix experimental features** `nix-command` and `flakes` are enabled in the flake's `nixConfig`
 - Static config files live in `users/ryan/configs/` and are mapped to `~/.config/` paths via `home.file`
 
 ## Gotchas
 
-- `nixpkgs` and `pkgsunstable` inputs both point to `nixpkgs-unstable` — they're currently identical
-- The Makefile `rebuild` target doesn't specify a flake host — it relies on the system hostname matching a config name
+- The `nix1` host uses `dir = "x1"` in mkHost — the hostname doesn't match the directory name
 - `machines/balch-huge/` is a fully separate flake (nix-darwin) — it's not part of the main flake's outputs
-- Some hosts don't pass `specialArgs` (cortex, razor) while others do — modules that expect `hostName` in args will break on those hosts

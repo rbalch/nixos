@@ -4,7 +4,7 @@
     environment.variables.EDITOR = "vim";
 
     environment.systemPackages = with pkgs; [
-        universal-ctags 
+        universal-ctags
 
         ((vim-full.override { }).customize{
             name = "vim";
