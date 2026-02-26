@@ -19,7 +19,9 @@
       }
 
       #clock {
-        background: transparent;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 10px;
+        padding: 0 14px;
       }
 
       #cpu {

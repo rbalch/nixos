@@ -28,7 +28,9 @@
         pay-respects
         slack
 		terraform
+        nautilus
         udiskie
+        swww
         wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -53,18 +55,44 @@
           #!/usr/bin/env bash
           exec ${pkgs.nodejs_20}/bin/npx @anthropic-ai/claude-code@latest "$@"
         '')
+
+        (pkgs.writeShellScriptBin "copy-to-bd-movie" ''
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          src="''${1:?usage: copy-to-bd-movie <file>}"
+
+          host="bd"
+          dest_dir="~/other/movies"
+          dest_path="''${dest_dir}/$(basename "$src")"
+
+          ssh -o BatchMode=yes "$host" "mkdir -p $dest_dir" >/dev/null 2>&1 || {
+            echo "Failed to reach $host or create $dest_dir"
+            exit 1
+          }
+
+          rsync -a --partial --append-verify --info=progress2 \
+            "$src" "''${host}:''${dest_path}"
+        '')
     ];
 
     home.file = {
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
-        ".config/hypr/hyprpaper.conf".source = configs/hyprpaper.conf;
         ".config/waybar/config".source = configs/waybar.json;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
+        ".config/hypr/snap-right.sh" = { source = configs/hypr/snap-right.sh; executable = true; };
         # vscode wayland font fix
         ".config/code-flags.conf".text = "--ozone-platform=wayland";
+        # chrome wayland stability — prevent crash on DPMS off / suspend
+        ".config/chrome-flags.conf".text = ''
+            --ozone-platform=wayland
+            --enable-features=UseOzonePlatform
+            --disable-features=WaylandWpColorManagerV1
+            --disable-gpu-compositing
+        '';
     };
 
     home.pointerCursor = {
@@ -74,13 +102,14 @@
         size = 28;
     };
 
+
     programs.git = {
         enable = true;
         lfs.enable = true;
-        userEmail = "ryan@balch.io";
-        userName = "Ryan Balch";
-        extraConfig = {
-            core = { editor = "vim"; };
+        settings = {
+            user.email = "ryan@balch.io";
+            user.name = "Ryan Balch";
+            core.editor = "vim";
         };
     };
 
@@ -96,7 +125,7 @@
     settings = {
         font-family = "MesloLGS Nerd Font";
         font-size = 14;
-        theme = "tokyonight";
+        theme = "TokyoNight";
         background-opacity = 0.95;
         background-blur = true;
         window-width = 160;
@@ -104,6 +133,7 @@
         keybind = [
         "super+c=copy_to_clipboard"
         "super+v=paste_from_clipboard"
+        "super+t=new_tab"
         ];
     };
     };

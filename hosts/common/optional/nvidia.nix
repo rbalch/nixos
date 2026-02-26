@@ -1,12 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # hardware.opengl = {
-  #   enable = true;
-  #   # driSupport = true;
-  #   # driSupport32Bit = true;
-  # };
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;

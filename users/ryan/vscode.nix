@@ -15,7 +15,7 @@
                 terminal.integrated.fontFamily = "MesloLGS Nerd Font Mono";
                 workbench.colorTheme = "Dracula";
                 files.autoSave = "afterDelay";
-			    window.titleBarStyle = "custom"; 
+			    window.titleBarStyle = "custom";
             };
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix
