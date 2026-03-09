@@ -15,6 +15,7 @@
         hyprland.url = "github:hyprwm/Hyprland";
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         vscode-server.url = "github:nix-community/nixos-vscode-server";
+        sddm-stray.url = "github:Bqrry4/sddm-stray";
     };
 
     outputs = { self, nixpkgs, home-manager, nixos-hardware, vscode-server, ... }@inputs:

@@ -15,7 +15,7 @@
   boot.loader.systemd-boot = {
     windows."windows" = {
       title = "Windows";
-      efiDeviceHandle = "FS1";  # may need adjusting
+      efiDeviceHandle = "FS0";
       sortKey = "y_windows";
     };
     edk2-uefi-shell.enable = true;

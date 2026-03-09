@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
 
@@ -7,9 +7,7 @@
         pavucontrol
         wayland-logout
         wl-clipboard
-        (sddm-astronaut.override {
-            embeddedTheme = "pixel_sakura_static";
-        })
+        inputs.sddm-stray.packages.${pkgs.system}.default
     ];
 
     programs.hyprland = {
@@ -25,7 +23,7 @@
     services.displayManager.sddm = {
         enable = true;
         wayland.enable = true;
-        theme = "sddm-astronaut-theme";
+        theme = "sddm-stray";
         extraPackages = [ pkgs.kdePackages.qtmultimedia pkgs.kdePackages.qtsvg pkgs.kdePackages.qtvirtualkeyboard ];
     };
 

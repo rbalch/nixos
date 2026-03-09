@@ -31,6 +31,7 @@
         nautilus
         udiskie
         swww
+        orca-slicer
         wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
