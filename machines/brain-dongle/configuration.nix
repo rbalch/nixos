@@ -10,7 +10,7 @@
         ../sshd.nix
         ../desktop-hyprland.nix
         ../vim.nix
-        ./timers.nix
+        # ./timers.nix
     ];
 
     nix.settings = {
