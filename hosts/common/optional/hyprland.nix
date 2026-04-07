@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, ... }:
 
 {
 
@@ -7,7 +7,6 @@
         pavucontrol
         wayland-logout
         wl-clipboard
-        inputs.sddm-stray.packages.${pkgs.system}.default
     ];
 
     programs.hyprland = {
@@ -23,7 +22,6 @@
     services.displayManager.sddm = {
         enable = true;
         wayland.enable = true;
-        theme = "sddm-stray";
         extraPackages = [ pkgs.kdePackages.qtmultimedia pkgs.kdePackages.qtsvg pkgs.kdePackages.qtvirtualkeyboard ];
     };
 

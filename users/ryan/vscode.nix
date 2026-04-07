@@ -16,6 +16,7 @@
                 workbench.colorTheme = "Dracula";
                 files.autoSave = "afterDelay";
 			    window.titleBarStyle = "custom";
+                remote.autoForwardPortsSource = "hybrid";
             };
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix
