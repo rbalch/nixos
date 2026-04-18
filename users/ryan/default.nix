@@ -85,6 +85,7 @@
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
         ".config/hypr/snap-right.sh" = { source = configs/hypr/snap-right.sh; executable = true; };
+        ".config/tmux/tmux.conf".source = configs/tmux.conf;
         # vscode wayland font fix
         ".config/code-flags.conf".text = "--ozone-platform=wayland";
         # chrome wayland stability — prevent crash on DPMS off / suspend

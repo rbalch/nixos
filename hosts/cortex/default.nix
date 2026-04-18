@@ -22,6 +22,9 @@
     edk2-uefi-shell.sortKey = "z_edk2";
   };
 
+  # compatability shim - so stuff like npx and vscode can work
+  programs.nix-ld.enable = true;
+
   environment.systemPackages = with pkgs; [
     cmatrix
     curl
