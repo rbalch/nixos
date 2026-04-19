@@ -86,5 +86,9 @@
   # Lock screen
   security.pam.services.hyprlock = {};
 
+  # Keyring: unlock on SDDM login so libsecret clients (vscode, etc.) can store/retrieve secrets
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
+
   system.stateVersion = "25.11";
 }
