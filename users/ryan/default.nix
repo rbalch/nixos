@@ -3,7 +3,7 @@
 {
     home.username = "ryan";
     home.homeDirectory = "/home/ryan";
-    home.stateVersion = "23.11";
+    home.stateVersion = "25.11";
 
     imports = [
         ./ssh.nix
@@ -23,14 +23,13 @@
         hyprlock
         hypridle
         kitty
-        neofetch
         nwg-look
         pay-respects
         slack
 		terraform
         nautilus
         udiskie
-        swww
+        awww
         orca-slicer
         wofi
 
@@ -79,7 +78,6 @@
 
     home.file = {
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
-        ".config/waybar/config".source = configs/waybar.json;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;

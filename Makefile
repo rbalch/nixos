@@ -9,6 +9,9 @@ install:
 rebuild:
 	sudo nixos-rebuild switch --flake .#$$(hostname)
 
+rebuild-nix1:
+	sudo nixos-rebuild switch --flake .#nix1
+
 garbage:
 	nix-collect-garbage --delete-old
 

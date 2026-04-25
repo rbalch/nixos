@@ -22,6 +22,7 @@ nixpkgs.lib.nixosSystem {
     {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
+      home-manager.extraSpecialArgs = { hostName = hostname; };
       home-manager.users.ryan = import ../users/ryan;
     }
   ] ++ modules;

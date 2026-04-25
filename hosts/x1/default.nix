@@ -21,6 +21,9 @@
     wget
   ];
 
+  # compatability shim - so stuff like npx and vscode can work
+  programs.nix-ld.enable = true;
+
   networking = {
     hostName = hostName;
     enableIPv6 = false;
@@ -51,6 +54,13 @@
     };
   };
   users.extraGroups.docker.members = [ "ryan" ];
+
+  # Lock screen
+  security.pam.services.hyprlock = {};
+
+  # Keyring: unlock on SDDM login so libsecret clients can store/retrieve secrets
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
 
   system.stateVersion = "23.11";
 }
