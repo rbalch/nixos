@@ -7,6 +7,7 @@
         uwsm
         wayland-logout
         wl-clipboard
+        (sddm-astronaut.override { embeddedTheme = "black_hole"; })
     ];
 
     programs.hyprland = {
@@ -33,7 +34,14 @@
     services.displayManager.sddm = {
         enable = true;
         wayland.enable = true;
-        extraPackages = [ pkgs.kdePackages.qtmultimedia pkgs.kdePackages.qtsvg pkgs.kdePackages.qtvirtualkeyboard ];
+        theme = "sddm-astronaut-theme";
+        package = pkgs.kdePackages.sddm;
+        extraPackages = [
+            pkgs.kdePackages.qtmultimedia
+            pkgs.kdePackages.qtsvg
+            pkgs.kdePackages.qtvirtualkeyboard
+            pkgs.kdePackages.qt5compat
+        ];
     };
 
     xdg.portal = {

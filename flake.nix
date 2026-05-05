@@ -1,4 +1,4 @@
-{
+/*  */{
     description = "rbalch NixOS configurations";
 
     nixConfig = {
@@ -15,6 +15,7 @@
         hyprland.url = "github:hyprwm/Hyprland";
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         vscode-server.url = "github:nix-community/nixos-vscode-server";
+        xremap-flake.url = "github:xremap/nix-flake";
     };
 
     outputs = { self, nixpkgs, home-manager, nixos-hardware, vscode-server, ... }@inputs:

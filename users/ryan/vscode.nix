@@ -18,6 +18,26 @@
 			    window.titleBarStyle = "custom";
                 remote.autoForwardPortsSource = "hybrid";
             };
+            keybindings = [
+                {
+                    key = "ctrl+j";
+                    command = "-workbench.action.togglePanel";
+                }
+                {
+                    key = "ctrl+shift+c";
+                    command = "-workbench.action.terminal.openNativeConsole";
+                }
+                {
+                    key = "ctrl+shift+c";
+                    command = "editor.action.clipboardCopyAction";
+                    when = "editorTextFocus";
+                }
+                {
+                    key = "ctrl+shift+v";
+                    command = "editor.action.clipboardPasteAction";
+                    when = "editorTextFocus";
+                }
+            ];
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix
                 bierner.markdown-mermaid

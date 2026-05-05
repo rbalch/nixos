@@ -71,9 +71,6 @@ Home-manager modules for the ryan user:
 - `waybar.nix` — Status bar styling and layout
 - `configs/` — Static config files (hyprland.conf, ghostty.conf, p10k.zsh, etc.)
 
-### Custom modules (`modules/`)
-- `kitty/` — Kitty terminal config (just maps a config file via `xdg.configFile`)
-
 ### macOS (`machines/balch-huge/`)
 Standalone nix-darwin flake, not part of the main flake's outputs.
 

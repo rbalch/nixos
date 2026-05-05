@@ -10,7 +10,6 @@
         ./vscode.nix
         ./waybar.nix
         ./zsh.nix
-        ../../modules/kitty
     ];
 
     home.packages = with pkgs; [
@@ -22,7 +21,6 @@
         google-cursor
         hyprlock
         hypridle
-        kitty
         nwg-look
         pay-respects
         slack
@@ -30,7 +28,19 @@
         nautilus
         udiskie
         awww
-        orca-slicer
+        # orca-slicer wrapped to force XWayland — wxGLCanvas + NVIDIA + Wayland
+        # passthrough leaves the 3D scene blank when models load. XWayland fixes it.
+        # symlinkJoin avoids re-triggering the (very long) orca-slicer compile.
+        (pkgs.symlinkJoin {
+            name = "orca-slicer-${pkgs.orca-slicer.version}";
+            paths = [ pkgs.orca-slicer ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+                wrapProgram $out/bin/orca-slicer \
+                    --set GDK_BACKEND x11 \
+                    --set-default __GL_THREADED_OPTIMIZATIONS 0
+            '';
+        })
         wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -38,22 +48,22 @@
             docker stop $(docker ps -q)
         '')
 
-        # OpenAI Codex CLI via npx (latest)
+        # AI CLIs via npx — invoking via full nodejs to bypass nixpkgs bug
+        # where npx's shebang points to nodejs-slim (missing /lib), causing
+        # npm's globalDir lookup to crash with ENOENT on /lib.
         (pkgs.writeShellScriptBin "codex" ''
           #!/usr/bin/env bash
-          exec ${pkgs.nodejs_20}/bin/npx @openai/codex@latest "$@"
+          exec ${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js @openai/codex@latest "$@"
         '')
 
-        # Gemini-CLI via npx (latest)
         (pkgs.writeShellScriptBin "gemini" ''
           #!/usr/bin/env bash
-          exec ${pkgs.nodejs_20}/bin/npx @google/gemini-cli@latest "$@"
+          exec ${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js @google/gemini-cli@latest "$@"
         '')
 
-        # Claude CLI via npx (latest)
         (pkgs.writeShellScriptBin "claude" ''
           #!/usr/bin/env bash
-          exec ${pkgs.nodejs_20}/bin/npx @anthropic-ai/claude-code@latest "$@"
+          exec ${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js @anthropic-ai/claude-code@latest "$@"
         '')
 
         (pkgs.writeShellScriptBin "copy-to-bd-movie" ''

@@ -4,12 +4,17 @@
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # boot.loader.systemd-boot.configurationLimit = 10;
+  boot.loader.systemd-boot.configurationLimit = 5;
 
   # Nix settings
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.auto-optimise-store = true;
   nixpkgs.config.allowUnfree = lib.mkDefault true;
+
+  # Yield to interactive work — nix-daemon runs at idle CPU/IO priority,
+  # so big builds (orca-slicer, kernels, etc.) can't smother the desktop.
+  nix.daemonCPUSchedPolicy = "idle";
+  nix.daemonIOSchedClass = "idle";
 
   # Garbage collection
   nix.gc = {

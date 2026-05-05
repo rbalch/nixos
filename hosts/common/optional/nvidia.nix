@@ -10,6 +10,14 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   nixpkgs.config.cudaSupport = true;
 
+  # Pre-built CUDA-enabled binaries — avoids local rebuilds of opencv/ffmpeg/etc.
+  nix.settings = {
+    extra-substituters = [ "https://cuda-maintainers.cachix.org" ];
+    extra-trusted-public-keys = [
+      "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+    ];
+  };
+
   hardware.nvidia-container-toolkit.enable = true;
 
   hardware.nvidia = {

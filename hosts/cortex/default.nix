@@ -9,6 +9,7 @@
     ../common/optional/docker.nix
     ../common/optional/sshd.nix
     ../common/optional/vim.nix
+    ../common/optional/xremap.nix
   ];
 
   # Windows dual-boot
