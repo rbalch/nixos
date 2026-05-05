@@ -6,6 +6,7 @@
     home.stateVersion = "25.11";
 
     imports = [
+        ./nvim.nix
         ./ssh.nix
         ./vscode.nix
         ./waybar.nix
