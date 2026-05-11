@@ -42,6 +42,12 @@
                     command = "-workbench.action.quickOpen";
                     when = "terminalFocus";
                 }
+                {
+                    key = "shift+enter";
+                    command = "workbench.action.terminal.sendSequence";
+                    args = { text = "\n"; };
+                    when = "terminalFocus";
+                }
             ];
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix

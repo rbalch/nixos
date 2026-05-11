@@ -111,6 +111,7 @@
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
         ".config/hypr/snap-right.sh" = { source = configs/hypr/snap-right.sh; executable = true; };
         ".config/hypr/power-menu.sh" = { source = configs/hypr/power-menu.sh; executable = true; };
+        ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
         ".config/tmux/tmux.conf".source = configs/tmux.conf;
         # vscode wayland font fix
         ".config/code-flags.conf".text = "--ozone-platform=wayland";
@@ -158,10 +159,13 @@
         background-blur = true;
         window-width = 160;
         window-height = 70;
+        # SUPER+C/V/N handled here (Hyprland doesn't claim these chords).
+        # SUPER+T deliberately omitted: Hyprland's Super+T script handles new-window
+        # vs new-tab routing, sending Ctrl+Shift+T to Ghostty for the tab case.
         keybind = [
         "super+c=copy_to_clipboard"
         "super+v=paste_from_clipboard"
-        "super+t=new_tab"
+        "super+n=new_window"
         ];
     };
     };
