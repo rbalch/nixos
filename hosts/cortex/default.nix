@@ -84,6 +84,12 @@
     };
   };
 
+  # Power button: short press = suspend (default is poweroff, footgun), long press = poweroff
+  services.logind.settings.Login = {
+    HandlePowerKey = "suspend";
+    HandlePowerKeyLongPress = "poweroff";
+  };
+
   # Lock screen
   security.pam.services.hyprlock = {};
 

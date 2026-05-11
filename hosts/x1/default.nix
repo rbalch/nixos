@@ -57,6 +57,12 @@
   };
   users.extraGroups.docker.members = [ "ryan" ];
 
+  # Power button: short press = suspend, long press = poweroff
+  services.logind.settings.Login = {
+    HandlePowerKey = "suspend";
+    HandlePowerKeyLongPress = "poweroff";
+  };
+
   # Lock screen
   security.pam.services.hyprlock = {};
 

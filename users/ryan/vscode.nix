@@ -37,6 +37,11 @@
                     command = "editor.action.clipboardPasteAction";
                     when = "editorTextFocus";
                 }
+                {
+                    key = "ctrl+e";
+                    command = "-workbench.action.quickOpen";
+                    when = "terminalFocus";
+                }
             ];
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix
