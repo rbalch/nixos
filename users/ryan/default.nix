@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
     home.username = "ryan";
@@ -12,6 +12,27 @@
         ./waybar.nix
         ./zsh.nix
     ];
+
+    home.sessionVariables = {
+        # claude-code: stay on Claude's own bleeding-edge channel but silence
+        # the auto-updater nag. With the native install in ~/.local/bin/claude,
+        # `claude update` is a deliberate command rather than a popup.
+        DISABLE_AUTOUPDATER = "1";
+    };
+
+    # Native claude install lives in ~/.local/bin; ensure it's on PATH and beats
+    # any stale wrappers from /etc/profiles.
+    home.sessionPath = [ "$HOME/.local/bin" ];
+
+    # Bootstrap claude-code into ~/.local/bin on first rebuild (or any rebuild
+    # where the binary is missing). Subsequent rebuilds are silent no-ops.
+    # Claude's own self-updater handles all upgrades after this.
+    home.activation.claudeCodeBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -x "$HOME/.local/bin/claude" ]; then
+            run ${pkgs.nodejs_24}/bin/npx --yes \
+                @anthropic-ai/claude-code@latest install latest
+        fi
+    '';
 
     home.packages = with pkgs; [
         awscli2
@@ -60,11 +81,6 @@
         (pkgs.writeShellScriptBin "gemini" ''
           #!/usr/bin/env bash
           exec ${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js @google/gemini-cli@latest "$@"
-        '')
-
-        (pkgs.writeShellScriptBin "claude" ''
-          #!/usr/bin/env bash
-          exec ${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js @anthropic-ai/claude-code@latest "$@"
         '')
 
         (pkgs.writeShellScriptBin "copy-to-bd-movie" ''
