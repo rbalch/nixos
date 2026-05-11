@@ -15,6 +15,7 @@
       tabs -4
 
       export PATH=$HOME/bin:$PATH
+      export PATH=$HOME/.local/bin/env:$PATH
       export PATH=$HOME/.nix-profile/bin:$PATH
       export PATH=/run/current-system/sw/bin:$PATH
       export PATH=/nix/var/nix/profiles/default/bin:$PATH
