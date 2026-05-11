@@ -9,7 +9,7 @@
     ../common/optional/docker.nix
     ../common/optional/sshd.nix
     ../common/optional/vim.nix
-    ./timers.nix
+    # ./timers.nix  # moved to openclaw
   ];
 
   nix.settings.download-buffer-size = 16777216; # 16 MiB
