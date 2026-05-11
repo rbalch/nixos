@@ -20,8 +20,6 @@ in
     initContent = ''
       [[ ! -f ${configThemeNormal} ]] || source ${configThemeNormal}
       tabs -4
-      [ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
-      export PATH=$HOME/.local/bin/env:$PATH
     '';
 
     plugins = [

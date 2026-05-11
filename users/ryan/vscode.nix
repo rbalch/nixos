@@ -15,8 +15,34 @@
                 terminal.integrated.fontFamily = "MesloLGS Nerd Font Mono";
                 workbench.colorTheme = "Dracula";
                 files.autoSave = "afterDelay";
-			    window.titleBarStyle = "custom"; 
+			    window.titleBarStyle = "custom";
+                remote.autoForwardPortsSource = "hybrid";
             };
+            keybindings = [
+                {
+                    key = "ctrl+j";
+                    command = "-workbench.action.togglePanel";
+                }
+                {
+                    key = "ctrl+shift+c";
+                    command = "-workbench.action.terminal.openNativeConsole";
+                }
+                {
+                    key = "ctrl+shift+c";
+                    command = "editor.action.clipboardCopyAction";
+                    when = "editorTextFocus";
+                }
+                {
+                    key = "ctrl+shift+v";
+                    command = "editor.action.clipboardPasteAction";
+                    when = "editorTextFocus";
+                }
+                {
+                    key = "ctrl+e";
+                    command = "-workbench.action.quickOpen";
+                    when = "terminalFocus";
+                }
+            ];
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix
                 bierner.markdown-mermaid

@@ -6,8 +6,15 @@ sync-in:
 install:
 	nixos-install --no-write-lock-file --impure --flake github:rbalch/nixos#razor
 
+# Flakes ignore untracked files, so new modules get "path does not exist" errors
+# until staged. -AN marks them intent-to-add (visible to nix, no content staged).
 rebuild:
-	sudo nixos-rebuild switch
+	git add -AN .
+	sudo nixos-rebuild switch --flake .#$$(hostname)
+
+rebuild-nix1:
+	git add -AN .
+	sudo nixos-rebuild switch --flake .#nix1
 
 garbage:
 	nix-collect-garbage --delete-old

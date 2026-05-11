@@ -1,18 +1,20 @@
 {
   programs.ssh = {
     enable = true;
-    forwardAgent = false; # play with later - using local ssh keys on when on server
-    hashKnownHosts = true;
-    controlMaster = "auto";
-    controlPath = "~/.ssh/master-%r@%h:%p";
-    controlPersist = "10s";
-    
+    enableDefaultConfig = false;
+
     matchBlocks = {
+      "*" = {
+        forwardAgent = false;
+        hashKnownHosts = true;
+        controlMaster = "auto";
+        controlPath = "~/.ssh/master-%r@%h:%p";
+        controlPersist = "10s";
+      };
       "bd"  = {
         hostname = "10.13.37.42";
         user = "ryan";
         identityFile = "~/.ssh/zxrbzx";
-        # identitiesOnly = true;
       };
       "dgx" = {
         hostname = "dgx.braindongle.com";
