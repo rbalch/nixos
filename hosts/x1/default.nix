@@ -6,6 +6,7 @@
     ../common
     ../common/optional/hyprland.nix
     ../common/optional/vim.nix
+    ../common/optional/xremap.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -17,6 +18,7 @@
     jq
     killall
     lastpass-cli
+    nodejs
     python3
     wget
   ];

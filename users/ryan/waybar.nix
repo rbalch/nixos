@@ -21,12 +21,12 @@ in
       backlight = {
         device = "intel_backlight";
         format = "{percent}% {icon}";
-        "format-icons" = [ "" "" ];
+        "format-icons" = [ "" "" ];
       };
 
       battery = {
         format = "{capacity}% {icon}";
-        "format-icons" = [ "" "" "" "" "" ];
+        "format-icons" = [ "" "" "" "" "" ];
       };
 
       clock = {
@@ -79,7 +79,7 @@ in
       wireplumber = {
         format = "{volume}% {icon}";
         "format-muted" = "󰖁";
-        "format-icons" = [ "" "" "" ];
+        "format-icons" = [ "" "" "" ];
       };
     }];
 
