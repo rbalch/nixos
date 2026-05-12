@@ -48,6 +48,18 @@
                     args = { text = "\n"; };
                     when = "terminalFocus";
                 }
+                {
+                    # Shift+Tab → CSI Z (back-tab). Claude Code uses this
+                    # to cycle modes (Plan / Accept-edits / Default).
+                    # VSCode otherwise eats Shift+Tab for panel focus nav.
+                    # NOTE: the args.text string contains a literal ESC
+                    # byte (0x1B) before "[Z" — invisible in plain text
+                    # but real. `xxd` to confirm if it looks like just "[Z".
+                    key = "shift+tab";
+                    command = "workbench.action.terminal.sendSequence";
+                    args = { text = "[Z"; };
+                    when = "terminalFocus";
+                }
             ];
             extensions = with pkgs.vscode-extensions; [
                 bbenoist.nix

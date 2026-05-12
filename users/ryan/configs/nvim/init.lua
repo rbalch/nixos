@@ -14,7 +14,7 @@ opt.wrap = false
 opt.swapfile = false
 opt.backup = false
 opt.undofile = true
-opt.hlsearch = false
+opt.hlsearch = true
 opt.incsearch = true
 opt.ignorecase = true
 opt.smartcase = true
@@ -87,6 +87,9 @@ map("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle tree" })
 
 map("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
 map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })
+
+-- Clear search highlight on Esc (hlsearch persists otherwise)
+map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 
 map("n", "<C-h>", "<C-w>h")
 map("n", "<C-j>", "<C-w>j")

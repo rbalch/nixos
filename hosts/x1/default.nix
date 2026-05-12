@@ -10,12 +10,9 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    curl
     fzf
     git
     gnumake
-    htop
-    jq
     killall
     lastpass-cli
     nodejs

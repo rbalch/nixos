@@ -29,6 +29,9 @@
                 set mouse=a "allow mouse in vim"
                 set number relativenumber
                 set clipboard=unnamedplus "remaps to system clipboard"
+                set hlsearch incsearch
+                " Clear search highlight on Esc
+                nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
                 syntax on
                 filetype on
                 nmap <F2> :NERDTreeToggle<CR>

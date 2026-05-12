@@ -19,7 +19,6 @@
 
   environment.systemPackages = with pkgs; [
     cmatrix
-    curl
     dig
     direnv
     fzf
@@ -27,7 +26,6 @@
     git
     git-lfs
     gnumake
-    jq
     killall
     lastpass-cli
     ngrok

@@ -28,7 +28,6 @@
 
   environment.systemPackages = with pkgs; [
     cmatrix
-    curl
     dconf
     dig
     direnv
@@ -37,7 +36,6 @@
     git
     git-lfs
     gnumake
-    jq
     killall
     lastpass-cli
     ngrok

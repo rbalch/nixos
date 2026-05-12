@@ -57,6 +57,14 @@
     }
   ];
 
+  # Baseline system packages shared by every host
+  environment.systemPackages = with pkgs; [
+    curl
+    htop
+    jq
+    nvtopPackages.full
+  ];
+
   # Fonts
   fonts = {
     fontDir.enable = true;

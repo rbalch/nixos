@@ -9,11 +9,9 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    curl
     fzf
     git
     gnumake
-    jq
     killall
     lastpass-cli
     wget

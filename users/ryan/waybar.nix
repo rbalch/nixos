@@ -55,7 +55,7 @@ in
         format = "{icon}";
         "on-click" = "activate";
         "format-icons" = {
-          "1" = "";
+          "1" = "";
           "2" = "";
           "3" = "";
           "4" = "󰒱";
@@ -85,6 +85,10 @@ in
 
     style = ''
       ${builtins.readFile "${pkgs.waybar}/etc/xdg/waybar/style.css"}
+
+      * {
+        font-family: "MesloLGS Nerd Font", sans-serif;
+      }
 
       #backlight {
         background: transparent;
