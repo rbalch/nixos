@@ -26,10 +26,12 @@
             };
             vimrcConfig.customRC = ''
                 set tabstop=4
+                set shiftwidth=4 softtabstop=4 expandtab
                 set mouse=a "allow mouse in vim"
                 set number relativenumber
                 set clipboard=unnamedplus "remaps to system clipboard"
                 set hlsearch incsearch
+                set nrformats=
                 " Clear search highlight on Esc
                 nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
                 syntax on

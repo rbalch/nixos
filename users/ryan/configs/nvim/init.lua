@@ -28,6 +28,7 @@ opt.clipboard = "unnamedplus"
 opt.splitbelow = true
 opt.splitright = true
 opt.completeopt = "menuone,noselect"
+opt.nrformats = ""
 
 require("tokyonight").setup({
   style = "night",
@@ -98,9 +99,6 @@ map("n", "<C-l>", "<C-w>l")
 
 map("n", "<S-l>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
 map("n", "<S-h>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
-
-map("v", "<", "<gv")
-map("v", ">", ">gv")
 
 map("v", "J", ":m '>+1<cr>gv=gv")
 map("v", "K", ":m '<-2<cr>gv=gv")

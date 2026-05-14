@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hostName, ... }:
 
 {
     home.username = "ryan";
@@ -50,19 +50,6 @@
         nautilus
         udiskie
         awww
-        # orca-slicer wrapped to force XWayland — wxGLCanvas + NVIDIA + Wayland
-        # passthrough leaves the 3D scene blank when models load. XWayland fixes it.
-        # symlinkJoin avoids re-triggering the (very long) orca-slicer compile.
-        (pkgs.symlinkJoin {
-            name = "orca-slicer-${pkgs.orca-slicer.version}";
-            paths = [ pkgs.orca-slicer ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-                wrapProgram $out/bin/orca-slicer \
-                    --set GDK_BACKEND x11 \
-                    --set-default __GL_THREADED_OPTIMIZATIONS 0
-            '';
-        })
         wofi
 
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -101,6 +88,21 @@
           rsync -a --partial --append-verify --info=progress2 \
             "$src" "''${host}:''${dest_path}"
         '')
+    ] ++ lib.optionals (hostName == "cortex") [
+        # orca-slicer wrapped to force XWayland — wxGLCanvas + NVIDIA + Wayland
+        # passthrough leaves the 3D scene blank when models load. XWayland fixes it.
+        # symlinkJoin avoids re-triggering the (very long) orca-slicer compile.
+        # Cortex-only: the other hosts are headless (brain-dongle) or GPU-less.
+        (pkgs.symlinkJoin {
+            name = "orca-slicer-${pkgs.orca-slicer.version}";
+            paths = [ pkgs.orca-slicer ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+                wrapProgram $out/bin/orca-slicer \
+                    --set GDK_BACKEND x11 \
+                    --set-default __GL_THREADED_OPTIMIZATIONS 0
+            '';
+        })
     ];
 
     home.file = {
