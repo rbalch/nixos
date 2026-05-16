@@ -66,6 +66,7 @@ in
         "format-ethernet" = "{ifname}: {ipaddr}/{cidr} ethernet";
         "format-disconnected" = "⚠";
         "format-icons" = [ "󰤯" "󰤟" "󰤢" "󰤥" "󰤨" ];
+        "on-click" = "${config.home.homeDirectory}/.config/hypr/wofi-wifi.sh";
       };
 
       wireplumber = {

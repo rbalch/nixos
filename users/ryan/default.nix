@@ -161,6 +161,11 @@
         theme = "TokyoNight";
         background-opacity = 0.95;
         background-blur = true;
+        # Force single-instance so a second `ghostty` invocation routes into
+        # the running process (becomes a new tab via the internal super+t
+        # binding) instead of forking a separate window. Default is `detect`,
+        # which resolves inconsistently across hosts depending on launch env.
+        gtk-single-instance = true;
         window-width = 160;
         window-height = 70;
         keybind = [
