@@ -52,16 +52,8 @@ in
       };
 
       "hyprland/workspaces" = {
-        format = "{icon}";
+        format = "{name}";
         "on-click" = "activate";
-        "format-icons" = {
-          "1" = "";
-          "2" = "";
-          "3" = "";
-          "4" = "󰒱";
-          urgent = "";
-          default = "";
-        };
         "sort-by-number" = true;
       };
 
