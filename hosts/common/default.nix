@@ -57,6 +57,15 @@
     }
   ];
 
+  # The home-manager-ryan activation runs an npx install for claude-code, which
+  # needs network. Without this, the unit fires before NetworkManager finishes
+  # bringing up the link at boot and exits before the rest of activation
+  # (dotfile symlinks, etc.) runs.
+  systemd.services.home-manager-ryan = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+  };
+
   # Fonts
   fonts = {
     fontDir.enable = true;

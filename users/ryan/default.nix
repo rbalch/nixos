@@ -27,10 +27,15 @@
     # Bootstrap claude-code into ~/.local/bin on first rebuild (or any rebuild
     # where the binary is missing). Subsequent rebuilds are silent no-ops.
     # Claude's own self-updater handles all upgrades after this.
+    # Non-fatal: if this runs at boot before network is up, npx can't fetch the
+    # package and exits non-zero. Don't let that abort the rest of activation —
+    # next interactive `nixos-rebuild switch` (or boot once network is ready)
+    # will retry. After the first successful install, claude self-updates.
     home.activation.claudeCodeBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ ! -x "$HOME/.local/bin/claude" ]; then
             run ${pkgs.nodejs_24}/bin/npx --yes \
-                @anthropic-ai/claude-code@latest install latest
+                @anthropic-ai/claude-code@latest install latest \
+                || verboseEcho "claude-code bootstrap failed (non-fatal, will retry next activation)"
         fi
     '';
 
