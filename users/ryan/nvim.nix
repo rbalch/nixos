@@ -32,6 +32,6 @@
       tree-sitter
     ];
 
-    extraLuaConfig = builtins.readFile ./configs/nvim/init.lua;
+    initLua = builtins.readFile ./configs/nvim/init.lua;
   };
 }

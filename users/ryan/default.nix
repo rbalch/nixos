@@ -168,6 +168,7 @@
         "super+c=copy_to_clipboard"
         "super+v=paste_from_clipboard"
         "super+n=new_window"
+        "ctrl+alt+t=new_tab"
         ];
     };
     };
