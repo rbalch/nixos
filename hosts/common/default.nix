@@ -66,6 +66,12 @@
     wants = [ "network-online.target" ];
   };
 
+  environment.systemPackages = with pkgs; [
+    htop
+    iftop
+    iperf3
+  ];
+
   # Fonts
   fonts = {
     fontDir.enable = true;
