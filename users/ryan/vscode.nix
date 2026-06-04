@@ -51,9 +51,14 @@
                     when = "terminalFocus";
                 }
                 {
+                    # Shift+Enter → "\" + CR. Claude Code's TUI treats
+                    # this as line continuation (matches what its own
+                    # `/terminal-setup` writes for VSCode). Bare LF
+                    # doesn't trigger newline-insert in the TUI even
+                    # though Ctrl+J does — different code paths.
                     key = "shift+enter";
                     command = "workbench.action.terminal.sendSequence";
-                    args = { text = "\n"; };
+                    args = { text = "\\\r"; };
                     when = "terminalFocus";
                 }
                 {
