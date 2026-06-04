@@ -43,6 +43,14 @@
                     when = "terminalFocus";
                 }
                 {
+                    # Ctrl+E → ENQ (0x05) so readline gets end-of-line.
+                    # Nix strings have no \x escape, so decode via JSON.
+                    key = "ctrl+e";
+                    command = "workbench.action.terminal.sendSequence";
+                    args = { text = builtins.fromJSON ''"\u0005"''; };
+                    when = "terminalFocus";
+                }
+                {
                     key = "shift+enter";
                     command = "workbench.action.terminal.sendSequence";
                     args = { text = "\n"; };
