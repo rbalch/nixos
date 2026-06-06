@@ -7,7 +7,7 @@ in
     enable = true;
     autosuggestion.enable = true;
     shellAliases = {
-      ll = "ls -l";
+      ll = "ls -lah";
       nix-update = "sudo nixos-rebuild switch";
       bd = "ssh bd";
     };
