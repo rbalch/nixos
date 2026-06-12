@@ -6,7 +6,7 @@
 class=$(hyprctl activewindow -j | jq -r .class)
 
 if [[ "$class" == "com.mitchellh.ghostty" ]]; then
-  hyprctl dispatch sendshortcut "CTRL SHIFT, T, class:^(com\.mitchellh\.ghostty)$"
+  hyprctl dispatch sendshortcut "CTRL ALT, T, class:^(com\.mitchellh\.ghostty)$"
 else
   ghostty
 fi

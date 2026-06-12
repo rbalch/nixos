@@ -14,11 +14,20 @@
 				extensions.autoUpdate = false;
                 terminal.integrated.fontFamily = "MesloLGS Nerd Font Mono";
                 workbench.colorTheme = "Dracula";
+                workbench.panel.defaultLocation = "right";
                 files.autoSave = "afterDelay";
 			    window.titleBarStyle = "custom";
                 remote.autoForwardPortsSource = "hybrid";
+                vim.handleKeys = { "<C-f>" = false; };
             };
             keybindings = [
+                {
+                    # Super+A → select-all. xremap leaves Super+A alone
+                    # for VSCode so vim's <C-a> (increment) doesn't eat it.
+                    key = "super+a";
+                    command = "editor.action.selectAll";
+                    when = "editorTextFocus";
+                }
                 {
                     key = "ctrl+j";
                     command = "-workbench.action.togglePanel";

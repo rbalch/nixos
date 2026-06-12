@@ -140,22 +140,31 @@ User-mode service, `withHypr = true` (window-class-aware via Hyprland IPC). Curr
 
 Mac-style — `$mainMod = SUPER ≈ Cmd`. Window management and app shortcuts:
 
-- `Super+Q` / `Super+W` → killactive (close window)
+- `Super+Q` → killactive (close window)
 - `Super+T` → context-aware: in Ghostty → new tab (via `super-t.sh`); else → launch new Ghostty
 - `Super+E` → nautilus, `Super+Space` → wofi launcher (Spotlight-style)
-- `Super+F` → fullscreen, `Super+P` → pseudo, `Super+J` → togglesplit, `Super+Shift+V` → togglefloating
+- `Super+F` → fullscreen, `Super+Shift+V` → togglefloating
+- `Super+Return` → `swapwithmaster` (yank focused window into the center master slot)
+- `Super+Shift+Return` → `focusmaster` (jump focus to the master)
 - `Super+1..0` → workspace 1..10, `Super+Shift+1..0` → move window to workspace
-- `Super+arrows` → focus, `Super+Shift+arrows` → resize, `Super+LMB/RMB drag` → move/resize
-- `Super+]` → `snap-right.sh` (right-half float-snap)
+- `Super+arrows` → movefocus, `Super+Shift+arrows` → swapwindow, `Super+Alt+arrows` → resizeactive
+- `Meh+arrows` → snap to half-screen (`snap.sh left/right/top/bottom`). Meh = Ctrl+Alt+Shift, single-key on Moonlander.
+- `Meh+Y/U/B/N` → snap to corner — 2x2 grid (Y=TL, U=TR, B=BL, N=BR). Meh bypasses xremap, so corners fire from inside any app.
+- `Super+LMB/RMB drag` → move/resize
 - Mouse swipe-3 → workspace next/prev
 
-Sleep / lock / power (`# sleep and screenshot` section):
+**Spatial mod pattern (consistent across arrows and numbers):**
+| Modifier | Verb |
+|---|---|
+| Super alone | navigate (movefocus, workspace switch) |
+| Super+Shift | move this window (swapwindow, movetoworkspace) |
+| Super+Alt | resize this window |
+
+Sleep / lock / power (`# sleep and lock` section):
 
 - `Super+L` → lock
 - `Ctrl+Alt+L` → lock (universal — xremap has no Ctrl+Alt rules, always reaches Hyprland)
-- `Super+M` → lock + DPMS off (screen off, machine awake)
 - `Super+Backspace` → power menu (`power-menu.sh` — Lock / Screen Off / Suspend / Logout / Reboot / Shutdown)
-- `Super+Shift+Backspace` → lock + suspend (direct, no menu)
 - Power button: short = suspend, long = poweroff (configured per-host in `services.logind.settings.Login` on cortex + x1)
 
 ### VSCode overrides — `users/ryan/vscode.nix` `keybindings`

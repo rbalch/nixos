@@ -27,7 +27,6 @@
       {
         name = "VSCode/Cursor: SUPER -> Ctrl (Mac-style)";
         remap = {
-          "Super-a" = "C-a";
           "Super-b" = "C-b";
           "Super-c" = "C-Shift-c";
           "Super-comma" = "C-comma";
@@ -55,6 +54,15 @@
           "Super-z" = "C-z";
         };
         application.only = [ "code" "cursor" "code-url-handler" "cursor-url-handler" ];
+      }
+      {
+        name = "Slack: SUPER -> Ctrl";
+        remap = {
+          "Super-c" = "C-c";
+          "Super-v" = "C-v";
+          "Super-x" = "C-x";
+        };
+        application.only = [ "Slack" ];
       }
     ];
   };

@@ -16,6 +16,9 @@ rebuild-nix1:
 	git add -AN .
 	sudo nixos-rebuild switch --flake .#nix1
 
+rebuild-cortex:
+	sudo nixos-rebuild switch --flake .#cortex --max-jobs 2 --cores 4
+
 garbage:
 	nix-collect-garbage --delete-old
 
