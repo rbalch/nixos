@@ -44,7 +44,6 @@
           "Super-p" = "C-p";
           "Super-q" = "C-q";
           "Super-r" = "C-r";
-          "Super-s" = "C-s";
           "Super-slash" = "C-slash";
           "Super-t" = "C-t";
           "Super-v" = "C-Shift-v";
@@ -54,6 +53,14 @@
           "Super-z" = "C-z";
         };
         application.only = [ "code" "cursor" "code-url-handler" "cursor-url-handler" ];
+      }
+      {
+        name = "WaveTerm: SUPER -> Ctrl (terminal-safe)";
+        remap = {
+          "Super-c" = "C-Shift-c";
+          "Super-v" = "C-Shift-v";
+        };
+        application.only = [ "Wave" ];
       }
       {
         name = "Slack: SUPER -> Ctrl";

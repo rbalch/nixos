@@ -53,6 +53,7 @@
         wofi
         obsidian
         warp-terminal
+        waveterm
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
@@ -116,15 +117,16 @@
         ".config/hypr/snap.sh" = { source = configs/hypr/snap.sh; executable = true; };
         ".config/hypr/power-menu.sh" = { source = configs/hypr/power-menu.sh; executable = true; };
         ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
+        ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
         ".config/tmux/tmux.conf".source = configs/tmux.conf;
         # vscode wayland font fix
         ".config/code-flags.conf".text = "--ozone-platform=wayland";
         # chrome wayland stability — prevent crash on DPMS off / suspend
+        # --disable-gpu-compositing disabled: it tanks Netflix to 540p. Re-add if DPMS crashes return.
         ".config/chrome-flags.conf".text = ''
             --ozone-platform=wayland
             --enable-features=UseOzonePlatform
             --disable-features=WaylandWpColorManagerV1
-            --disable-gpu-compositing
         '';
     };
 

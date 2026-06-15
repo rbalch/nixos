@@ -33,6 +33,13 @@
                     command = "-workbench.action.togglePanel";
                 }
                 {
+                    # Super+S → save, unconditionally. xremap leaves
+                    # Super+S alone so vim/other contexts can't eat
+                    # Ctrl+S before this binding fires.
+                    key = "super+s";
+                    command = "workbench.action.files.save";
+                }
+                {
                     key = "ctrl+shift+c";
                     command = "-workbench.action.terminal.openNativeConsole";
                 }
@@ -42,9 +49,19 @@
                     when = "editorTextFocus";
                 }
                 {
+                    key = "ctrl+shift+c";
+                    command = "workbench.action.terminal.copySelection";
+                    when = "terminalFocus && terminalTextSelected";
+                }
+                {
                     key = "ctrl+shift+v";
                     command = "editor.action.clipboardPasteAction";
                     when = "editorTextFocus";
+                }
+                {
+                    key = "ctrl+shift+v";
+                    command = "workbench.action.terminal.paste";
+                    when = "terminalFocus";
                 }
                 {
                     key = "ctrl+e";

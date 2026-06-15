@@ -26,6 +26,16 @@
   # compatability shim - so stuff like npx and vscode can work
   programs.nix-ld.enable = true;
 
+  # Swap file on root disk — 62 GiB RAM is plenty for normal use, but heavy
+  # parallel C++ builds (OrcaSlicer, NVIDIA kmod) spike memory hard enough
+  # to trigger systemd-oomd kills. Without swap there's nowhere to spill,
+  # so the OOM killer murders the build (or the compositor, or both) and
+  # we end up with black-screen-and-coredumps. 16 GiB is overkill for a
+  # safety net but cheap on disk.
+  swapDevices = [
+    { device = "/var/lib/swapfile"; size = 16 * 1024; }  # MiB
+  ];
+
   environment.systemPackages = with pkgs; [
     cmatrix
     dconf
