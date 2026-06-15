@@ -142,7 +142,7 @@ Mac-style — `$mainMod = SUPER ≈ Cmd`. Window management and app shortcuts:
 
 - `Super+Q` → killactive (close window)
 - `Super+T` → context-aware: in Ghostty → new tab (via `super-t.sh`); else → launch new Ghostty
-- `Super+E` → nautilus, `Super+Space` → wofi launcher (Spotlight-style)
+- `Super+E` → cosmic-files (default file manager); `Ctrl+Alt+E` → nautilus (fallback during eval). `Super+Space` → wofi launcher (Spotlight-style)
 - `Super+F` → fullscreen, `Super+Shift+V` → togglefloating
 - `Super+Return` → `swapwithmaster` (yank focused window into the center master slot)
 - `Super+Shift+Return` → `focusmaster` (jump focus to the master)

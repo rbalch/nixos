@@ -48,6 +48,7 @@
         slack
 		terraform
         nautilus
+        cosmic-files
         udiskie
         awww
         wofi
@@ -137,6 +138,21 @@
         size = 28;
     };
 
+
+    xdg.mimeApps = {
+        enable = true;
+        defaultApplications = {
+            "inode/directory" = "com.system76.CosmicFiles.desktop";
+            "application/x-gnome-saved-search" = "com.system76.CosmicFiles.desktop";
+            "text/html" = "google-chrome.desktop";
+            "x-scheme-handler/http" = "google-chrome.desktop";
+            "x-scheme-handler/https" = "google-chrome.desktop";
+            "x-scheme-handler/about" = "google-chrome.desktop";
+            "x-scheme-handler/unknown" = "google-chrome.desktop";
+            "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
+            "x-scheme-handler/slack" = "slack.desktop";
+        };
+    };
 
     programs.git = {
         enable = true;
