@@ -44,6 +44,7 @@
           "Super-p" = "C-p";
           "Super-q" = "C-q";
           "Super-r" = "C-r";
+          "Super-s" = "C-s";
           "Super-slash" = "C-slash";
           "Super-t" = "C-t";
           "Super-v" = "C-Shift-v";
@@ -63,13 +64,21 @@
         application.only = [ "Wave" ];
       }
       {
+        name = "Warp: SUPER -> Ctrl (terminal-safe)";
+        remap = {
+          "Super-c" = "C-Shift-c";
+          "Super-v" = "C-Shift-v";
+        };
+        application.only = [ "dev.warp.Warp" ];
+      }
+      {
         name = "Slack: SUPER -> Ctrl";
         remap = {
           "Super-c" = "C-c";
           "Super-v" = "C-v";
           "Super-x" = "C-x";
         };
-        application.only = [ "Slack" ];
+        application.only = [ "slack" ];
       }
     ];
   };

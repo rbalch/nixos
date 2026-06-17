@@ -55,6 +55,7 @@
         obsidian
         warp-terminal
         waveterm
+        sshfs
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
