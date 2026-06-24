@@ -56,6 +56,9 @@
         warp-terminal
         waveterm
         sshfs
+        grim
+        slurp
+        wl-clipboard
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
