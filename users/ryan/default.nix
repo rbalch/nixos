@@ -56,6 +56,7 @@
         warp-terminal
         waveterm
         sshfs
+        vlc
         grim
         slurp
         wl-clipboard

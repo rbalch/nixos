@@ -8,6 +8,7 @@
     serviceMode = "user";
     userName = "ryan";
     withHypr = true;
+    watch = true;
 
     config.keymap = [
       {
