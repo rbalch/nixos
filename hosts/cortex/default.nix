@@ -80,6 +80,11 @@
   };
   programs.gamemode.enable = true;
 
+  # Modern Proton/DXVK games (OW2 et al) blow past the default 65530 mmap
+  # limit and crash silently. Steam Deck / Fedora / Arch-steam ship this
+  # value; it's a ceiling, not an allocation.
+  boot.kernel.sysctl."vm.max_map_count" = 2147483642;
+
   # Prevent USB controller from waking system immediately after suspend
   systemd.services.disable-usb-wakeup = {
     description = "Disable XHCI USB wakeup";

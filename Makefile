@@ -31,6 +31,16 @@ list-historical-versions:
 update:
 	sudo nix flake update
 
+# Preview what would build locally (cache miss) vs fetch from substituters.
+# Run after `make update` to see if you're about to compile opencv/chromium/etc.
+check-build:
+	git add -AN .
+	@echo "=== Derivations that would build locally (cache misses): ==="
+	@sudo nixos-rebuild dry-build --flake .#$$(hostname) 2>&1 | awk '/will be built/,/will be fetched/' | grep -E '^\s+/nix/store' || echo "  (none — full cache hit)"
+	@echo ""
+	@echo "=== Derivations that would fetch from cache: ==="
+	@sudo nixos-rebuild dry-build --flake .#$$(hostname) 2>&1 | awk '/will be fetched/,0' | grep -cE '^\s+/nix/store' | xargs -I{} echo "  {} paths"
+
 cleanup:
 	# delete all historical versions older than 7 days
 	sudo nix profile wipe-history --older-than 7d --profile /nix/var/nix/profiles/system

@@ -76,9 +76,11 @@
       {
         name = "Slack: SUPER -> Ctrl";
         remap = {
+          "Super-a" = "C-a";
           "Super-c" = "C-c";
           "Super-v" = "C-v";
           "Super-x" = "C-x";
+          "Super-k" = "C-k";
         };
         application.only = [ "slack" ];
       }
