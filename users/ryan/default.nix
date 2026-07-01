@@ -13,13 +13,6 @@
         ./zsh.nix
     ];
 
-    home.sessionVariables = {
-        # claude-code: stay on Claude's own bleeding-edge channel but silence
-        # the auto-updater nag. With the native install in ~/.local/bin/claude,
-        # `claude update` is a deliberate command rather than a popup.
-        DISABLE_AUTOUPDATER = "1";
-    };
-
     # Native claude install lives in ~/.local/bin; ensure it's on PATH and beats
     # any stale wrappers from /etc/profiles.
     home.sessionPath = [ "$HOME/.local/bin" ];

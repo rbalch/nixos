@@ -12,6 +12,9 @@ rebuild:
 	git add -AN .
 	sudo nixos-rebuild switch --flake .#$$(hostname)
 
+rebuild-braindongle:
+	sudo nixos-rebuild switch --flake .#brain-dongle --max-jobs 4 --cores 6
+
 rebuild-nix1:
 	git add -AN .
 	sudo nixos-rebuild switch --flake .#nix1
