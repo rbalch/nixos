@@ -54,6 +54,13 @@
         slurp
         wl-clipboard
         gh
+        # Handy: offline speech-to-text (Whisper/Parakeet), Wispr-Flow-style dictation.
+        # Its GPU accel is Vulkan (works on NVIDIA w/o CUDA), but it links onnxruntime,
+        # which the global `nixpkgs.config.cudaSupport = true` would otherwise rebuild
+        # with the CUDA EP from source (huge, OOM-prone). Force it to CPU — Whisper
+        # still runs on GPU via Vulkan, Parakeet is CPU-optimized anyway.
+        (handy.override { onnxruntime = onnxruntime.override { cudaSupport = false; }; })
+        wtype       # Wayland "type" tool — Handy's injection backend on wlroots
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash

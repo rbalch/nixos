@@ -112,6 +112,7 @@
                 charliermarsh.ruff
                 dracula-theme.theme-dracula
                 donjayamanne.githistory
+                eamodio.gitlens
                 # googlecloudtools.cloudcode
                 ms-azuretools.vscode-docker
                 ms-vscode.makefile-tools
