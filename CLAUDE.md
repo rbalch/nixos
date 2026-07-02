@@ -108,7 +108,7 @@ users/ryan/
 ├── backgrounds/    # static wallpaper assets
 └── configs/        # raw files mapped via home.file
     ├── hyprland.conf
-    ├── ghostty.conf, tmux.conf, p10k.zsh, waybar.json, config.nix
+    ├── ghostty.conf, tmux.conf, p10k.zsh, config.nix
     ├── hypr/
     │   ├── hypridle.conf, hyprlock.conf
     │   ├── snap-right.sh    # bound to Super+]

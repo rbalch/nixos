@@ -2,7 +2,7 @@
 
 let
   modulesRight =
-    [ "cpu" "memory" ]
+    [ "tray" "cpu" "memory" ]
     ++ lib.optional (hostName == "nix1") "battery"
     ++ [ "backlight" "wireplumber" "network" ];
 in
@@ -49,6 +49,11 @@ in
 
       cpu = {
         format = "{usage}% 󰫕";
+      };
+
+      tray = {
+        "icon-size" = 16;
+        spacing = 8;
       };
 
       "hyprland/workspaces" = {
@@ -101,6 +106,11 @@ in
       #cpu {
         color: white;
         background: transparent;
+      }
+
+      #tray {
+        background: transparent;
+        padding: 0 8px;
       }
 
       #memory {
