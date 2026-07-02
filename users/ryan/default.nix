@@ -53,6 +53,7 @@
         grim
         slurp
         wl-clipboard
+        gh
 
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash

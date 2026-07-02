@@ -11,7 +11,7 @@
                 editor.fontFamily = "MesloLGS Nerd Font";
                 editor.fontSize = 14;
 				extensions.autoCheckUpdates = false;
-				extensions.autoUpdate = false;
+				extensions.autoUpdate = "off"; # string enum since VSCode 1.125; boolean is deprecated and triggers a migration-write to the read-only settings.json
                 terminal.integrated.fontFamily = "MesloLGS Nerd Font Mono";
                 workbench.colorTheme = "Dracula";
                 workbench.panel.defaultLocation = "right";
