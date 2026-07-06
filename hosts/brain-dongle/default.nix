@@ -64,5 +64,8 @@
 
   virtualisation.docker.enableNvidia = true;
 
+  # Cat-proof: ignore physical power button presses
+  services.logind.extraConfig = "HandlePowerKey=ignore";
+
   system.stateVersion = "23.11";
 }

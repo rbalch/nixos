@@ -66,3 +66,12 @@ fix-vscode:
 
 restart-xremap:
 	systemctl --user restart xremap
+
+camera-list-controls:
+	v4l2-ctl --list-ctrls
+
+camera-lighten:
+	v4l2-ctl --set-ctrl=brightness=180 --set-ctrl=backlight_compensation=1 --set-ctrl=gain=50
+
+camera-reset:
+	v4l2-ctl --set-ctrl=brightness=128 --set-ctrl=backlight_compensation=0 --set-ctrl=gain=0

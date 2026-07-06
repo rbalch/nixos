@@ -65,6 +65,7 @@
     ++ lib.optionals (hostName != "brain-dongle") [
         (handy.override { onnxruntime = onnxruntime.override { cudaSupport = false; }; })
         wtype       # Wayland "type" tool — Handy's injection backend on wlroots
+        pkgs.v4l-utils
     ]
     ++ [
         (pkgs.writeShellScriptBin "docker-stop" ''
