@@ -55,6 +55,7 @@
     wget
     unzip
     uv
+    quickemu
   ];
 
   networking = {
@@ -109,6 +110,9 @@
   # Keyring: unlock on SDDM login so libsecret clients (vscode, etc.) can store/retrieve secrets
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.sddm.enableGnomeKeyring = true;
+
+  # macOS VM via QEMU/KVM — kvm-intel already loaded in hardware-configuration.nix
+  virtualisation.libvirtd.enable = true;
 
   system.stateVersion = "25.11";
 }

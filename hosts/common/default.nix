@@ -29,7 +29,7 @@
 
   users.users.ryan = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "docker" "input" ];
+    extraGroups = [ "wheel" "networkmanager" "docker" "input" "libvirtd" "kvm" ];
     shell = pkgs.zsh;
   };
 
