@@ -34,6 +34,20 @@ list-historical-versions:
 update:
 	sudo nix flake update
 
+# Build new config without switching, then show package version diffs vs running system.
+# Run after `make update` to see exactly what would change before committing.
+diff:
+	git add -AN .
+	@echo "=== Building new configuration (no switch)... ==="
+	@sudo nixos-rebuild build --flake .#$$(hostname)
+	@echo ""
+	@echo "=== Package changes vs current system: ==="
+	@nix store diff-closures /run/current-system ./result
+
+update-diff:
+	sudo nix flake update
+	$(MAKE) diff
+
 # Preview what would build locally (cache miss) vs fetch from substituters.
 # Run after `make update` to see if you're about to compile opencv/chromium/etc.
 check-build:
@@ -75,3 +89,6 @@ camera-lighten:
 
 camera-reset:
 	v4l2-ctl --set-ctrl=brightness=128 --set-ctrl=backlight_compensation=0 --set-ctrl=gain=0
+
+check-kernel-bump:
+	nix store diff-closures /run/current-system /nix/var/nix/profiles/system

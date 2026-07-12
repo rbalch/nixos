@@ -56,6 +56,7 @@
     unzip
     uv
     quickemu
+    figma-linux
   ];
 
   networking = {

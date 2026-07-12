@@ -132,6 +132,16 @@
         ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
         ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
         ".config/tmux/tmux.conf".source = configs/tmux.conf;
+        ".local/share/applications/figma-linux.desktop".text = ''
+            [Desktop Entry]
+            Name=Figma Linux
+            Exec=env NIXOS_OZONE_WL="" GTK_THEME=Adwaita:dark figma-linux --ozone-platform=x11 --force-dark-mode %U
+            Icon=figma-linux
+            Comment=Unofficial Figma desktop application for Linux
+            Terminal=false
+            Type=Application
+            MimeType=x-scheme-handler/figma;
+        '';
         # vscode wayland font fix
         ".config/code-flags.conf".text = "--ozone-platform=wayland";
         # chrome wayland stability — prevent crash on DPMS off / suspend
@@ -163,6 +173,7 @@
             "x-scheme-handler/unknown" = "google-chrome.desktop";
             "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
             "x-scheme-handler/slack" = "slack.desktop";
+            "x-scheme-handler/figma" = "figma-linux.desktop";
         };
     };
 

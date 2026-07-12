@@ -17,7 +17,8 @@
                 workbench.panel.defaultLocation = "right";
                 files.autoSave = "afterDelay";
 			    window.titleBarStyle = "custom";
-                remote.autoForwardPortsSource = "hybrid";
+                remote.autoForwardPorts = false;
+                python.terminal.shellIntegration.enabled = false;
                 vim.handleKeys = { "<C-f>" = false; };
             };
             keybindings = [
