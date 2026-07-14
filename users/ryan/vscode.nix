@@ -19,6 +19,7 @@
 			    window.titleBarStyle = "custom";
                 remote.autoForwardPorts = false;
                 python.terminal.shellIntegration.enabled = false;
+                python.terminal.useEnvFile = false;
                 vim.handleKeys = { "<C-f>" = false; };
             };
             keybindings = [
