@@ -16,6 +16,10 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         vscode-server.url = "github:nix-community/nixos-vscode-server";
         xremap-flake.url = "github:xremap/nix-flake";
+        claude-desktop = {
+            url = "github:patrickjaja/claude-desktop-bin";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
     };
 
     outputs = { self, nixpkgs, home-manager, nixos-hardware, vscode-server, ... }@inputs:

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hostName, ... }:
+{ config, inputs, lib, pkgs, hostName, ... }:
 
 {
     home.username = "ryan";
@@ -66,6 +66,8 @@
         (handy.override { onnxruntime = onnxruntime.override { cudaSupport = false; }; })
         wtype       # Wayland "type" tool — Handy's injection backend on wlroots
         pkgs.v4l-utils
+        zed-editor
+        inputs.claude-desktop.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ [
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -132,6 +134,10 @@
         ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
         ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
         ".config/tmux/tmux.conf".source = configs/tmux.conf;
+        # Chrome's Auto Dark Mode has no user-facing per-site exception list.
+        # This unpacked, CSS-only extension opts Google Docs/Slides out before
+        # their page is rendered; load it once from chrome://extensions.
+        ".config/chrome-extensions/google-docs-light".source = configs/chrome-extensions/google-docs-light;
         ".local/share/applications/figma-linux.desktop".text = ''
             [Desktop Entry]
             Name=Figma Linux
@@ -154,6 +160,7 @@
     };
 
     home.pointerCursor = {
+        enable = true;
         gtk.enable = true;
         package = pkgs.google-cursor;
         name = "GoogleDot-Blue";
@@ -172,6 +179,7 @@
             "x-scheme-handler/about" = "google-chrome.desktop";
             "x-scheme-handler/unknown" = "google-chrome.desktop";
             "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
+            "x-scheme-handler/claude" = "claude.desktop";
             "x-scheme-handler/slack" = "slack.desktop";
             "x-scheme-handler/figma" = "figma-linux.desktop";
         };

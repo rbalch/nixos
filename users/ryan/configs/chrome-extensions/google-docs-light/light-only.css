@@ -1,0 +1,8 @@
+/*
+ * Chrome Auto Dark Mode respects `only light` as a page opt-out.  This is
+ * deliberately a static content stylesheet: it needs no JavaScript and no
+ * extension permissions beyond access to docs.google.com.
+ */
+:root {
+  color-scheme: only light !important;
+}

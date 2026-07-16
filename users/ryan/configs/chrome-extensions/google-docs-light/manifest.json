@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Google Docs light content",
+  "version": "1.0.0",
+  "description": "Keeps Google Docs, Sheets, and Slides out of Chrome Auto Dark Mode.",
+  "content_scripts": [
+    {
+      "matches": ["https://docs.google.com/*"],
+      "css": ["light-only.css"],
+      "run_at": "document_start"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ rebuild: ## Rebuild+switch the current host (auto-detects hostname)
 	sudo nixos-rebuild switch --flake .#$$(hostname)
 
 rebuild-braindongle: ## Rebuild+switch brain-dongle (throttled: -j4 -c6)
+	git add -AN .
 	sudo nixos-rebuild switch --flake .#brain-dongle --max-jobs 4 --cores 6
 
 rebuild-nix1: ## Rebuild+switch nix1 (hostname != dir, so explicit)
@@ -20,6 +21,7 @@ rebuild-nix1: ## Rebuild+switch nix1 (hostname != dir, so explicit)
 	sudo nixos-rebuild switch --flake .#nix1
 
 rebuild-cortex: ## Rebuild+switch cortex (throttled: -j2 -c4, keeps desktop responsive)
+	git add -AN .
 	sudo nixos-rebuild switch --flake .#cortex --max-jobs 2 --cores 4
 
 garbage: ## Delete all old generations (nix-collect-garbage --delete-old)
