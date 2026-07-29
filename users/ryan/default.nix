@@ -107,8 +107,12 @@
             "$src" "''${host}:''${dest_path}"
         '')
     ] ++ lib.optionals (hostName == "cortex") [
-        # orca-slicer wrapped to force XWayland — wxGLCanvas + NVIDIA + Wayland
-        # passthrough leaves the 3D scene blank when models load. XWayland fixes it.
+        # orca-slicer on the native Wayland backend. Forcing GDK_BACKEND=x11 was a
+        # 2.3.x workaround for a blank wxGLCanvas, but 2.4.2 ships wxWidgets 3.3.2
+        # (wxGLCanvasEGL), and on XWayland the forced GLX path makes NVIDIA raise an
+        # X error inside MakeCurrent whenever the GL context is re-made after a
+        # background job finishes — slice-complete and send-to-printer both abort,
+        # since GDK escalates unhandled X errors to a fatal g_error.
         # symlinkJoin avoids re-triggering the (very long) orca-slicer compile.
         # Cortex-only: the other hosts are headless (brain-dongle) or GPU-less.
         (pkgs.symlinkJoin {
@@ -117,7 +121,6 @@
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
                 wrapProgram $out/bin/orca-slicer \
-                    --set GDK_BACKEND x11 \
                     --set-default __GL_THREADED_OPTIMIZATIONS 0
             '';
         })
@@ -133,6 +136,17 @@
         ".config/hypr/power-menu.sh" = { source = configs/hypr/power-menu.sh; executable = true; };
         ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
         ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
+        ".config/hypr/with-idle-paused.sh" = { source = configs/hypr/with-idle-paused.sh; executable = true; };
+        # Chrome opens the screencast portal TWICE per share: once for its own
+        # source picker, then again for the real stream. Without a restore token
+        # the second request logs "restore data invalid / missing, prompting" and
+        # re-opens the xdph picker, so you must reselect the source mid-share.
+        # Granting tokens by default lets the second request restore silently.
+        ".config/hypr/xdph.conf".text = ''
+            screencopy {
+                allow_token_by_default = true
+            }
+        '';
         ".config/tmux/tmux.conf".source = configs/tmux.conf;
         # Chrome's Auto Dark Mode has no user-facing per-site exception list.
         # This unpacked, CSS-only extension opts Google Docs/Slides out before

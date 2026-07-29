@@ -51,6 +51,15 @@
                     when = "editorTextFocus";
                 }
                 {
+                    # Markdown previews (and other rendered editors) are
+                    # webviews, not text editors, so editorTextFocus is false.
+                    # VSCode redirects its normal copy action to the focused
+                    # webview internally; there is no webview-specific command.
+                    key = "ctrl+shift+c";
+                    command = "editor.action.clipboardCopyAction";
+                    when = "webviewFocus";
+                }
+                {
                     key = "ctrl+shift+c";
                     command = "workbench.action.terminal.copySelection";
                     when = "terminalFocus && terminalTextSelected";

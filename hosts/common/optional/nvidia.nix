@@ -1,6 +1,25 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
+  # Screen sharing fix (Chrome/Meet, Slack, OBS-via-portal).
+  #
+  # xdg-desktop-portal-hyprland negotiates DMA-BUF with *explicit* modifiers.
+  # Against the NVIDIA proprietary driver the modifier fixation handshake fails:
+  #     [pw] Building modifiers for dma
+  #     [screencopy/pipewire] Out of buffers
+  #     [ERR] [pw] DMA-BUF fixation failed after 2 attempts, falling back to SHM
+  #     [WARN] [pipewire] Asked for a wl_shm buffer which is legacy.
+  # The legacy SHM fallback then streams solid black. Forcing implicit modifiers
+  # keeps capture on the working DMA-BUF path.
+  # Upstream: https://github.com/hyprwm/xdg-desktop-portal-hyprland/issues/48
+  services.pipewire.extraConfig.pipewire."10-no-dmabuf-modifiers" =
+    lib.mkIf config.services.pipewire.enable {
+      "context.properties" = {
+        "support.dmabuf" = true;
+        "support.dmabuf.modifiers" = false;
+      };
+    };
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
