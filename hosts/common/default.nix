@@ -65,6 +65,23 @@
     nvtopPackages.full
   ];
 
+  # Printing and wireless printer discovery
+  programs.system-config-printer = lib.mkIf (hostName != "brain-dongle") {
+    enable = true;
+  };
+  services.printing = lib.mkIf (hostName != "brain-dongle") {
+    enable = true;
+    drivers = with pkgs; [
+      cups-browsed
+      cups-filters
+    ];
+  };
+  services.avahi = lib.mkIf (hostName != "brain-dongle") {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
   # Fonts
   fonts = {
     fontDir.enable = true;
