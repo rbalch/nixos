@@ -130,6 +130,7 @@
                 ms-vscode-remote.remote-containers
                 ms-vscode-remote.remote-ssh
                 ms-python.python
+                tomoki1207.pdf
                 vscodevim.vim
             ];
         };

@@ -31,7 +31,7 @@ rebuild-nix1: ## Rebuild+switch nix1 (hostname != dir, so explicit)
 
 rebuild-cortex: ## Rebuild+switch cortex (throttled: -j2 -c4, keeps desktop responsive)
 	git add -AN .
-	$(NO_IDLE) sudo nixos-rebuild switch --flake .#cortex --max-jobs 2 --cores 4
+	$(NO_IDLE) sudo nixos-rebuild switch --flake .#cortex --max-jobs 4 --cores 6
 
 garbage: ## Delete all old generations (nix-collect-garbage --delete-old)
 	nix-collect-garbage --delete-old

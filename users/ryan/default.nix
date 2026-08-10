@@ -137,6 +137,7 @@
         ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
         ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
         ".config/hypr/with-idle-paused.sh" = { source = configs/hypr/with-idle-paused.sh; executable = true; };
+        ".config/zed/keymap.json".source = configs/zed/keymap.json;
         # Chrome opens the screencast portal TWICE per share: once for its own
         # source picker, then again for the real stream. Without a restore token
         # the second request logs "restore data invalid / missing, prompting" and

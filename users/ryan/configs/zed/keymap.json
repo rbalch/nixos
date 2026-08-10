@@ -1,0 +1,24 @@
+[
+  {
+    "context": "Editor",
+    "bindings": {
+      "super-a": "editor::SelectAll",
+      "super-c": "editor::Copy",
+      "super-v": "editor::Paste"
+    }
+  },
+  {
+    "context": "Markdown",
+    "bindings": {
+      "super-c": "markdown::Copy"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "super-a": "editor::SelectAll",
+      "super-c": "terminal::Copy",
+      "super-v": "terminal::Paste"
+    }
+  }
+]

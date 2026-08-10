@@ -91,6 +91,9 @@
       noto-fonts-color-emoji
       font-awesome
       nerd-fonts.meslo-lg
+      roboto
+      source-sans
+      source-sans-pro
     ];
     fontconfig = {
       enable = true;
