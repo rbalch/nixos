@@ -1,6 +1,11 @@
 { config, inputs, lib, pkgs, hostName, ... }:
 
-{
+let
+    claude-desktop = import ../../packages/claude-desktop {
+        inherit pkgs;
+        packageIndex = inputs.claude-desktop-repo;
+    };
+in {
     home.username = "ryan";
     home.homeDirectory = "/home/ryan";
     home.stateVersion = "25.11";
@@ -67,7 +72,11 @@
         wtype       # Wayland "type" tool — Handy's injection backend on wlroots
         pkgs.v4l-utils
         zed-editor
-        inputs.claude-desktop.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ]
+    # Official Linux .deb, wrapped for NixOS with Wayland and GNOME Keyring.
+    # hostName is nix1 even though that host's config directory is x1.
+    ++ lib.optionals (lib.elem hostName [ "cortex" "nix1" ]) [
+        claude-desktop
     ]
     ++ [
         (pkgs.writeShellScriptBin "docker-stop" ''

@@ -16,9 +16,11 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         vscode-server.url = "github:nix-community/nixos-vscode-server";
         xremap-flake.url = "github:xremap/nix-flake";
-        claude-desktop = {
-            url = "github:patrickjaja/claude-desktop-bin";
-            inputs.nixpkgs.follows = "nixpkgs";
+        claude-desktop-repo = {
+            # Anthropic's apt index includes every versioned .deb path and hash.
+            # `nix flake update` refreshes this lock, then our package picks the newest.
+            url = "file+https://downloads.claude.ai/claude-desktop/apt/stable/dists/stable/main/binary-amd64/Packages";
+            flake = false;
         };
     };
 

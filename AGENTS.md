@@ -32,7 +32,7 @@ make fix-vscode                    # re-patch vscode-server (brain-dongle)
 ```
 flake.nix
   ├── inputs: nixpkgs-unstable, home-manager, hyprland, nixos-hardware,
-  │           vscode-server, xremap-flake
+  │           vscode-server, xremap-flake, claude-desktop-repo
   └── outputs.nixosConfigurations.<host> = mkHost "<name>" { ... }
                                               ↓
                               lib/mkHost.nix
@@ -116,6 +116,17 @@ users/ryan/
     │   └── super-t.sh       # bound to Super+T — context-aware
     └── nvim/init.lua        # baked into nvim via builtins.readFile
 ```
+
+## Claude Desktop package
+
+`packages/claude-desktop/default.nix` packages Anthropic's official Linux `.deb` for `cortex` and `nix1` only. Do not restore the old `patrickjaja/claude-desktop-bin` or `patrickjaja/claude-desktop-extra` GitHub inputs.
+
+- `claude-desktop-repo` is a non-flake input that locks Anthropic's official amd64 apt `Packages` index.
+- `make update` refreshes that index with the other flake inputs. The local package parses all `claude-desktop` entries, selects the newest version, and uses its `Filename` and `SHA256` fields to fetch the `.deb`.
+- The package extracts the `.deb` without running its apt setup scripts, then runs it in an FHS environment with its desktop, keyring, tray, audio, and Cowork VM needs.
+- The launcher always passes `--ozone-platform=wayland` and `--password-store=gnome-libsecret`. Keep `libsecret` in the FHS library set: Electron loads it at run time, so `ldd` does not report it when it is absent.
+- The package scope checks `hostName` against `[ "cortex" "nix1" ]`; the ThinkPad's host name remains `nix1` even though its directory is `x1`.
+- Old Git revisions still need their versioned `.deb` in Anthropic's pool or a retained Nix store path. The lock fixes the index and hashes, but it does not archive upstream files.
 
 ## Keybinding system
 
