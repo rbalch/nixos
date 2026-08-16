@@ -136,7 +136,7 @@ in {
     ];
 
     home.file = {
-        ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
+        ".config/hypr/hyprland.lua".source = configs/hyprland.lua;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;

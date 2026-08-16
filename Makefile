@@ -115,6 +115,9 @@ camera-reset: ## Reset the webcam controls to defaults
 check-kernel-bump: ## Diff current system vs latest profile (spot kernel/driver bumps)
 	nix store diff-closures /run/current-system /nix/var/nix/profiles/system
 
+update-claude-desktop: ## Fetch the latest version of claude desktop
+	nix flake lock --update-input claude-desktop-repo
+
 .PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
