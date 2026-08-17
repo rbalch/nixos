@@ -150,7 +150,7 @@ in {
     ];
 
     home.file = {
-        ".config/hypr/hyprland.lua".source = configs/hyprland.lua;
+        ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         ".pi/agent/models.json".source = configs/pi/models.json;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
