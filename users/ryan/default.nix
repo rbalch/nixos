@@ -150,6 +150,9 @@ in {
     ];
 
     home.file = {
+        # Hyprland 0.56 prefers Lua at startup. Keep the legacy file during the
+        # move so sessions that started with the old parser can still reload.
+        ".config/hypr/hyprland.lua".source = configs/hyprland.lua;
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         ".pi/agent/models.json".source = configs/pi/models.json;

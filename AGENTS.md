@@ -206,6 +206,7 @@ These exist to undo VSCode defaults that fight Mac muscle memory and TUI convent
 
 ## Gotchas
 
+- **TODO after the next Cortex reboot:** Confirm Cortex starts with `~/.config/hypr/hyprland.lua` and has no config errors, then remove `users/ryan/configs/hyprland.conf` and its `home.file` mapping from `users/ryan/default.nix`. The `.conf` file exists only as a fallback for the Cortex session that was running during the Lua move.
 - **`allowUnfree` set in 3 places**: `flake.nix` `nixConfig`, `hosts/common/default.nix` (`mkDefault`), `users/ryan/configs/config.nix`. Touch all three when changing.
 - **`__HM_SESS_VARS_SOURCED` guard kills sessionPath/sessionVariables updates in running sessions.** After adding/changing `home.sessionPath` or `home.sessionVariables`, `exec zsh` *won't* pick them up because the guard env var is inherited from the parent and `hm-session-vars.sh` short-circuits. Recovery: `unset __HM_SESS_VARS_SOURCED && exec zsh` for the current terminal, `systemctl --user import-environment PATH` for the Hyprland tree, or just logout/login (cleanest). Warn the user explicitly when proposing these changes.
 - **`SUPER+Shift+<letter>` and xremap partial-match.** Don't bind WM actions to `Super+Shift+M`/`N`/`L`/etc — xremap converts to `Ctrl+Shift+<letter>` for that app and Hyprland never sees the original. Use `Ctrl+Alt+<letter>` for universal WM chords.
