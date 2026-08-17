@@ -32,9 +32,21 @@ in {
         fi
     '';
 
+    # Bootstrap pi into ~/.local on first rebuild. `pi update` handles later
+    # upgrades while keeping the install outside the read-only Nix store.
+    home.activation.piBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -x "$HOME/.local/bin/pi" ]; then
+            run ${pkgs.nodejs_24}/bin/node \
+                ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js \
+                install -g --prefix "$HOME/.local" --ignore-scripts \
+                @earendil-works/pi-coding-agent
+        fi
+    '';
+
     home.packages = with pkgs; [
         awscli2
         code-cursor
+        fd
         font-manager
         google-chrome
 		google-cloud-sdk
@@ -42,7 +54,9 @@ in {
         hyprlock
         hypridle
         nwg-look
+        nodejs_24
         pay-respects
+        ripgrep
         slack
 		terraform
         nautilus
@@ -138,6 +152,7 @@ in {
     home.file = {
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
+        ".pi/agent/models.json".source = configs/pi/models.json;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
