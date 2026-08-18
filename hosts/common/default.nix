@@ -61,6 +61,7 @@
   environment.systemPackages = with pkgs; [
     curl
     htop
+    imagemagick
     jq
     nvtopPackages.full
   ];
