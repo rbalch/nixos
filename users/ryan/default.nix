@@ -43,6 +43,24 @@ in {
         fi
     '';
 
+    # Bootstrap the official Grok Build client into ~/.local/bin on first
+    # rebuild. `grok update` handles later upgrades. Hide the managed shell
+    # from the installer so it does not try to edit Home Manager's .zshrc.
+    home.activation.grokBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -x "$HOME/.local/bin/grok" ]; then
+            installer="$(${pkgs.coreutils}/bin/mktemp)"
+            run ${pkgs.curl}/bin/curl -fsSL \
+                https://x.ai/cli/install.sh \
+                -o "$installer"
+            run ${pkgs.coreutils}/bin/env \
+                SHELL=/bin/false \
+                GROK_BIN_DIR="$HOME/.local/bin" \
+                PATH=${lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.gawk pkgs.gnugrep pkgs.gnused ]} \
+                ${pkgs.bash}/bin/bash "$installer"
+            rm -f "$installer"
+        fi
+    '';
+
     home.packages = with pkgs; [
         awscli2
         code-cursor
