@@ -1,0 +1,12 @@
+diff --git a/src-tauri/src/actions.rs b/src-tauri/src/actions.rs
+index 91bb06c..dd6bde9 100644
+--- a/src-tauri/src/actions.rs
++++ b/src-tauri/src/actions.rs
+@@ -173,7 +173,7 @@ async fn post_process_transcription(
+     //   out of the response so it can't pollute structured-output JSON parsing
+     let (reasoning_effort, reasoning) = match provider.id.as_str() {
+-        "custom" => (Some("none".to_string()), None),
++        "custom" => (Some("low".to_string()), None),
+         "openrouter" => (
+             None,
+             Some(crate::llm_client::ReasoningConfig {

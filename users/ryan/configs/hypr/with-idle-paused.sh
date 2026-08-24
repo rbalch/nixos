@@ -24,14 +24,44 @@ resume_idle() {
     # Only relaunch if we're the one who stopped it, and only if it isn't
     # somehow already back (e.g. Hyprland was restarted by the command we ran).
     if [ "${paused:-0}" = "1" ] && ! pgrep -x hypridle >/dev/null 2>&1; then
+        if [ "${managed:-0}" = "1" ]; then
+            if systemctl --user start hypridle.service \
+                && systemctl --user is-active --quiet hypridle.service; then
+                echo "==> hypridle service resumed"
+            else
+                echo "==> ERROR: hypridle service failed to resume; run: systemctl --user status hypridle --no-pager" >&2
+                return 1
+            fi
+            return
+        fi
+
         setsid hypridle >/dev/null 2>&1 &
-        echo "==> hypridle resumed"
+        idle_pid=$!
+
+        # Give startup errors time to make the process exit before reporting
+        # success. Without this check, a failed restart looks successful and
+        # leaves the session with no lock or DPMS timers.
+        sleep 1
+        if kill -0 "$idle_pid" 2>/dev/null; then
+            echo "==> hypridle resumed (pid $idle_pid)"
+        else
+            echo "==> ERROR: hypridle failed to resume; run: hypridle --verbose" >&2
+            return 1
+        fi
     fi
 }
 
 paused=0
+managed=0
 if pgrep -x hypridle >/dev/null 2>&1; then
-    if pkill -x hypridle 2>/dev/null; then
+    if systemctl --user is-active --quiet hypridle.service; then
+        managed=1
+        stop_cmd=(systemctl --user stop hypridle.service)
+    else
+        stop_cmd=(pkill -x hypridle)
+    fi
+
+    if "${stop_cmd[@]}" 2>/dev/null; then
         paused=1
         echo "==> hypridle paused (idle DPMS-off held off for the duration)"
     fi

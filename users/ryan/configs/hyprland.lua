@@ -104,6 +104,8 @@ hl.bind("CTRL + ALT + SHIFT + S", hl.dsp.exec_cmd([[grim -g "$(slurp)" - | wl-co
 -- Neither chord has an xremap rule, so both reach Hyprland from every app.
 hl.bind("CTRL + ALT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"))
 hl.bind("SUPER + CTRL + ALT + SHIFT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"))
+-- Hyper+H: Handy transcription with LLM post-processing.
+hl.bind("SUPER + CTRL + ALT + SHIFT + H", hl.dsp.exec_cmd("handy --toggle-post-process"))
 
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true })

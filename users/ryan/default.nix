@@ -100,7 +100,11 @@ in {
         # Scoped off brain-dongle: headless GPU server, never dictated to — skips its
         # ~1.4GB webkit+onnxruntime closure (and the from-source onnx build) there.
     ++ lib.optionals (hostName != "brain-dongle") [
-        (handy.override { onnxruntime = onnxruntime.override { cudaSupport = false; }; })
+        ((handy.override { onnxruntime = onnxruntime.override { cudaSupport = false; }; }).overrideAttrs (old: {
+            # Handy 0.9.1 sends reasoning_effort=none to every custom endpoint,
+            # but the DGX vLLM gpt-oss server accepts only low, medium, or high.
+            patches = (old.patches or [ ]) ++ [ ./patches/handy-vllm-reasoning-effort.patch ];
+        }))
         wtype       # Wayland "type" tool — Handy's injection backend on wlroots
         pkgs.v4l-utils
         zed-editor

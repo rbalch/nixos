@@ -118,6 +118,9 @@ check-kernel-bump: ## Diff current system vs latest profile (spot kernel/driver 
 update-claude-desktop: ## Fetch the latest version of claude desktop
 	nix flake lock --update-input claude-desktop-repo
 
+restart-idle: ## Manually restart hypridle (screen off timer)
+	systemctl --user start hypridle
+
 .PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
