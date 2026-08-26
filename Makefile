@@ -112,6 +112,14 @@ camera-lighten: ## Brighten the webcam (brightness/backlight/gain up)
 camera-reset: ## Reset the webcam controls to defaults
 	v4l2-ctl --set-ctrl=brightness=128 --set-ctrl=backlight_compensation=0 --set-ctrl=gain=0
 
+mic-up: ## Raise the default microphone volume by 10% (max 100%)
+	@wpctl set-volume --limit 1.0 @DEFAULT_AUDIO_SOURCE@ 10%+
+	@wpctl get-volume @DEFAULT_AUDIO_SOURCE@
+
+mic-down: ## Lower the default microphone volume by 10%
+	@wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 10%-
+	@wpctl get-volume @DEFAULT_AUDIO_SOURCE@
+
 check-kernel-bump: ## Diff current system vs latest profile (spot kernel/driver bumps)
 	nix store diff-closures /run/current-system /nix/var/nix/profiles/system
 
@@ -124,4 +132,5 @@ restart-idle: ## Manually restart hypridle (screen off timer)
 .PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
-	kill-share-picker camera-list-controls camera-lighten camera-reset check-kernel-bump
+	kill-share-picker camera-list-controls camera-lighten camera-reset mic-up mic-down \
+	check-kernel-bump

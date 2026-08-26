@@ -5,26 +5,35 @@
       "api": "openai-completions",
       "apiKey": "vllm",
       "compat": {
-        "supportsDeveloperRole": true,
-        "supportsReasoningEffort": true
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "thinkingFormat": "chat-template",
+        "chatTemplateKwargs": {
+          "enable_thinking": { "$var": "thinking.enabled" },
+          "low_effort": { "$var": "thinking.enabled" },
+          "force_nonempty_content": true
+        }
       },
       "models": [
         {
-          "id": "gpt-oss-120b",
-          "name": "GPT-OSS 120B on DGX",
+          "id": "nemotron-3-super",
+          "name": "Nemotron 3 Super on DGX",
           "reasoning": true,
           "thinkingLevelMap": {
-            "off": null,
             "minimal": null,
-            "low": "low",
-            "medium": "medium",
-            "high": "high",
+            "low": "enabled",
+            "medium": null,
+            "high": null,
             "xhigh": null,
             "max": null
           },
           "input": ["text"],
           "contextWindow": 131072,
           "maxTokens": 32768,
+          "samplingParams": {
+            "temperature": 1.0,
+            "top_p": 0.95
+          },
           "cost": {
             "input": 0,
             "output": 0,
