@@ -7,7 +7,7 @@ let
     ++ [ "backlight" "wireplumber" "network" ];
 in
 {
-  programs.waybar = {
+  programs.waybar = lib.mkIf (hostName != "cortex") {
     enable = true;
     systemd.enable = true;
 

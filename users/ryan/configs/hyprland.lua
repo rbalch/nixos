@@ -3,15 +3,15 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" 
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE")
-    hl.exec_cmd("awww-daemon")
-    hl.exec_cmd("sleep 1 && awww img /home/ryan/Pictures/backgrounds/earth.jpg")
+    -- No-op on Cortex, where Wayle owns awww. Other hosts still use Waybar.
+    hl.exec_cmd("~/.config/hypr/start-wallpaper.sh")
     hl.exec_cmd("hyprctl setcursor GoogleDot-Blue 28")
     -- xremap loses Hyprland IPC if it starts before the socket exists at login.
     hl.exec_cmd("systemctl --user restart xremap.service")
     hl.exec_cmd("code", { workspace = "1 silent" })
     hl.exec_cmd("google-chrome-stable", { workspace = "1 silent" })
     hl.exec_cmd("handy") -- dictation daemon; toggle recording with Hyper+Space
-    hl.exec_cmd("blueman-applet")
+    hl.exec_cmd("~/.config/hypr/start-blueman-applet.sh")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("~/.config/hypr/portal-resize.sh")
     hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")

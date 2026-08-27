@@ -15,6 +15,7 @@ in {
         ./ssh.nix
         ./vscode.nix
         ./waybar.nix
+        ./wayle.nix
         ./zsh.nix
     ];
 
@@ -63,6 +64,7 @@ in {
 
     home.packages = with pkgs; [
         awscli2
+        cliamp
         code-cursor
         fd
         font-manager
@@ -80,7 +82,6 @@ in {
         nautilus
         cosmic-files
         udiskie
-        awww
         wofi
         obsidian
         warp-terminal
@@ -91,6 +92,11 @@ in {
         slurp
         wl-clipboard
         gh
+    ]
+    # Wayle owns awww on Cortex. Keep the direct package for hosts that still
+    # use the Waybar + Hyprland startup path.
+    ++ lib.optionals (hostName != "cortex") [
+        pkgs.awww
     ]
         # Handy: offline speech-to-text (Whisper/Parakeet), Wispr-Flow-style dictation.
         # Its GPU accel is Vulkan (works on NVIDIA w/o CUDA), but it links onnxruntime,
@@ -186,6 +192,32 @@ in {
         ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
         ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
         ".config/hypr/with-idle-paused.sh" = { source = configs/hypr/with-idle-paused.sh; executable = true; };
+        # Cortex lets Wayle own awww. Other hosts still start the same static
+        # wallpaper from Hyprland until they move from Waybar.
+        ".config/hypr/start-wallpaper.sh" = {
+            executable = true;
+            text = if hostName == "cortex" then ''
+                #!/bin/sh
+                exit 0
+            '' else ''
+                #!/bin/sh
+                ${pkgs.awww}/bin/awww-daemon &
+                sleep 1
+                exec ${pkgs.awww}/bin/awww img /home/ryan/Pictures/backgrounds/earth.jpg
+            '';
+        };
+        # Wayle has its own Bluetooth control on Cortex. Keep Blueman's tray
+        # applet for the hosts that still use Waybar.
+        ".config/hypr/start-blueman-applet.sh" = {
+            executable = true;
+            text = if hostName == "cortex" then ''
+                #!/bin/sh
+                exit 0
+            '' else ''
+                #!/bin/sh
+                exec blueman-applet
+            '';
+        };
         ".config/zed/keymap.json".source = configs/zed/keymap.json;
         # Chrome opens the screencast portal TWICE per share: once for its own
         # source picker, then again for the real stream. Without a restore token
