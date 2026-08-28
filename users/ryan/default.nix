@@ -189,7 +189,7 @@ in {
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
         ".config/hypr/snap.sh" = { source = configs/hypr/snap.sh; executable = true; };
         ".config/hypr/power-menu.sh" = { source = configs/hypr/power-menu.sh; executable = true; };
-        ".config/hypr/super-t.sh" = { source = configs/hypr/super-t.sh; executable = true; };
+        ".config/hypr/keybindings-menu.sh" = { source = configs/hypr/keybindings-menu.sh; executable = true; };
         ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
         ".config/hypr/with-idle-paused.sh" = { source = configs/hypr/with-idle-paused.sh; executable = true; };
         # Cortex lets Wayle own awww. Other hosts still start the same static
@@ -308,13 +308,11 @@ in {
         background-blur = true;
         window-width = 160;
         window-height = 70;
-        # SUPER+C/V/N handled here (Hyprland doesn't claim these chords).
-        # SUPER+T deliberately omitted: Hyprland's Super+T script handles new-window
-        # vs new-tab routing, sending Ctrl+Shift+T to Ghostty for the tab case.
+        # Super+C/V are free in Hyprland and avoid the longer terminal
+        # clipboard chords. Ctrl+C remains SIGINT/cancel.
         keybind = [
         "super+c=copy_to_clipboard"
         "super+v=paste_from_clipboard"
-        "super+n=new_window"
         "ctrl+alt+t=new_tab"
         ];
     };

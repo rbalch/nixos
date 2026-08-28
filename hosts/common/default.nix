@@ -27,6 +27,13 @@
   programs.zsh.enable = true;
   services.udisks2.enable = true;
 
+  # Join each host with `sudo tailscale up` after its first rebuild.
+  # State stays in /var/lib/tailscale, so later rebuilds keep the login.
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
   users.users.ryan = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "docker" "input" "libvirtd" "kvm" ];

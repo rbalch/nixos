@@ -6,8 +6,6 @@ hl.on("hyprland.start", function()
     -- No-op on Cortex, where Wayle owns awww. Other hosts still use Waybar.
     hl.exec_cmd("~/.config/hypr/start-wallpaper.sh")
     hl.exec_cmd("hyprctl setcursor GoogleDot-Blue 28")
-    -- xremap loses Hyprland IPC if it starts before the socket exists at login.
-    hl.exec_cmd("systemctl --user restart xremap.service")
     hl.exec_cmd("code", { workspace = "1 silent" })
     hl.exec_cmd("google-chrome-stable", { workspace = "1 silent" })
     hl.exec_cmd("handy") -- dictation daemon; toggle recording with Hyper+Space
@@ -60,62 +58,64 @@ hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 
 local mainMod = "SUPER"
 
-hl.bind(mainMod .. " + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("~/.config/hypr/super-t.sh"))
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("cosmic-files"))
-hl.bind("CTRL + ALT + E", hl.dsp.exec_cmd("nautilus"))
-hl.bind("CTRL + ALT + F", hl.dsp.window.float())
-hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("wofi --normal-window --show drun"))
-hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
-hl.bind(mainMod .. " + RETURN", hl.dsp.layout("swapwithmaster"))
-hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.layout("focusmaster"))
+hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close window" })
+hl.bind(mainMod .. " + W", hl.dsp.window.close(), { description = "Close window" })
+hl.bind(mainMod .. " + T", hl.dsp.window.float(), { description = "Toggle window floating" })
+hl.bind("CTRL + ALT + E", hl.dsp.exec_cmd("nautilus"), { description = "Nautilus file manager" })
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("wofi --normal-window --show drun"), { description = "App launcher" })
+hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("~/.config/hypr/keybindings-menu.sh"), { description = "Show keybindings" })
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen(), { description = "Toggle full screen" })
+hl.bind(mainMod .. " + M", hl.dsp.layout("swapwithmaster"), { description = "Move window to master" })
+hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("ghostty"), { description = "Terminal" })
+hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd("google-chrome-stable"), { description = "Browser" })
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd("cosmic-files"), { description = "File manager" })
 
 for _, direction in ipairs({ "left", "right", "up", "down" }) do
-    hl.bind(mainMod .. " + " .. direction, hl.dsp.focus({ direction = direction }))
-    hl.bind(mainMod .. " + SHIFT + " .. direction, hl.dsp.window.swap({ direction = direction }))
+    hl.bind(mainMod .. " + " .. direction, hl.dsp.focus({ direction = direction }), { description = "Focus window " .. direction })
+    hl.bind(mainMod .. " + SHIFT + " .. direction, hl.dsp.window.swap({ direction = direction }), { description = "Swap window " .. direction })
 end
 
 for i = 1, 10 do
     local key = i % 10
-    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }), { description = "Switch to workspace " .. i })
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }), { description = "Move window to workspace " .. i })
 end
 
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
-hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })
+hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }), { description = "Previous workspace" })
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Move window with mouse" })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window with mouse" })
 
-hl.bind(mainMod .. " + ALT + right", hl.dsp.window.resize({ x = 30, y = 0, relative = true }), { repeating = true })
-hl.bind(mainMod .. " + ALT + left", hl.dsp.window.resize({ x = -30, y = 0, relative = true }), { repeating = true })
-hl.bind(mainMod .. " + ALT + up", hl.dsp.window.resize({ x = 0, y = -30, relative = true }), { repeating = true })
-hl.bind(mainMod .. " + ALT + down", hl.dsp.window.resize({ x = 0, y = 30, relative = true }), { repeating = true })
+hl.bind(mainMod .. " + ALT + right", hl.dsp.window.resize({ x = 30, y = 0, relative = true }), { repeating = true, description = "Grow window right" })
+hl.bind(mainMod .. " + ALT + left", hl.dsp.window.resize({ x = -30, y = 0, relative = true }), { repeating = true, description = "Grow window left" })
+hl.bind(mainMod .. " + ALT + up", hl.dsp.window.resize({ x = 0, y = -30, relative = true }), { repeating = true, description = "Grow window up" })
+hl.bind(mainMod .. " + ALT + down", hl.dsp.window.resize({ x = 0, y = 30, relative = true }), { repeating = true, description = "Grow window down" })
 
 local snapDirections = {
     left = "left", right = "right", up = "top", down = "bottom",
     Y = "tl", U = "tr", B = "bl", N = "br",
 }
 for key, region in pairs(snapDirections) do
-    hl.bind("CTRL + ALT + SHIFT + " .. key, hl.dsp.exec_cmd("~/.config/hypr/snap.sh " .. region))
+    hl.bind("CTRL + ALT + SHIFT + " .. key, hl.dsp.exec_cmd("~/.config/hypr/snap.sh " .. region), { description = "Snap window " .. region })
 end
 
-hl.bind("CTRL + ALT + SHIFT + S", hl.dsp.exec_cmd([[grim -g "$(slurp)" - | wl-copy]]))
+hl.bind("CTRL + ALT + SHIFT + S", hl.dsp.exec_cmd([[grim -g "$(slurp)" - | wl-copy]]), { description = "Copy region screenshot" })
 -- Ctrl+Alt+Space works on standard keyboards; keep Hyper+Space for the Moonlander.
--- Neither chord has an xremap rule, so both reach Hyprland from every app.
-hl.bind("CTRL + ALT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"))
-hl.bind("SUPER + CTRL + ALT + SHIFT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"))
+-- Keep both a standard-keyboard chord and Hyper+Space for the Moonlander.
+hl.bind("CTRL + ALT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"), { description = "Toggle dictation" })
+hl.bind("SUPER + CTRL + ALT + SHIFT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"), { description = "Toggle dictation" })
 -- Hyper+H: Handy transcription with LLM post-processing.
-hl.bind("SUPER + CTRL + ALT + SHIFT + H", hl.dsp.exec_cmd("handy --toggle-post-process"))
+hl.bind("SUPER + CTRL + ALT + SHIFT + H", hl.dsp.exec_cmd("handy --toggle-post-process"), { description = "Toggle processed dictation" })
 
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true })
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"), { repeating = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true, description = "Raise volume" })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true, description = "Lower volume" })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { description = "Mute audio" })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true, description = "Lower brightness" })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"), { repeating = true, description = "Raise brightness" })
 
-hl.bind("SUPER + L", hl.dsp.exec_cmd("loginctl lock-session"))
-hl.bind("CTRL + ALT + L", hl.dsp.exec_cmd("loginctl lock-session"))
-hl.bind("SUPER + BACKSPACE", hl.dsp.exec_cmd("~/.config/hypr/power-menu.sh"))
+hl.bind("SUPER + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock screen" })
+hl.bind("CTRL + ALT + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock screen" })
+hl.bind("SUPER + ESCAPE", hl.dsp.exec_cmd("~/.config/hypr/power-menu.sh"), { description = "Power menu" })
 
 hl.window_rule({
     name = "chrome-suppress-maximize",

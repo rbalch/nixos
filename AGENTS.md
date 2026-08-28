@@ -55,7 +55,7 @@ mkHost hostname { system?, dir?, modules? }
 
 | host         | dir            | hw                    | role                                                |
 |--------------|----------------|-----------------------|-----------------------------------------------------|
-| `cortex`     | `cortex`       | NVIDIA, ultrawide DP-1 7680×2160@120 scale 1.25 | Main workstation. Dual-boot Windows. Steam + gamemode. xremap. |
+| `cortex`     | `cortex`       | NVIDIA, ultrawide DP-1 7680×2160@120 scale 1.25 | Main workstation. Dual-boot Windows. Steam + gamemode. |
 | `brain-dongle` | `brain-dongle` | NVIDIA               | GPU server. vscode-server module. firewall, no networkmanager. |
 | `nix1`       | `x1`           | none (ThinkPad iGPU)  | ThinkPad. `nixos-hardware.lenovo-thinkpad-x1-11th-gen`. Rootless Docker. |
 | `razor`      | `razor`        | none                  | Minimal laptop. No Docker, no NVIDIA, bare essentials. |
@@ -86,7 +86,7 @@ Standalone: `machines/balch-huge/` is a separate **nix-darwin** flake. Not part 
 | `sshd.nix` | OpenSSH server, pubkey-only (no passwords/kbdint), pre-loaded `authorized_keys` for ryan | cortex, brain-dongle |
 | `vim.nix` | `vim-full` w/ plugins (copilot-vim, nerdtree, vim-airline, undotree, vim-lastplace, vim-nix, vista-vim), `hlsearch`+`incsearch`, mouse, F2/F5/F8 toggles, ctags | cortex, brain-dongle, nix1, razor |
 | `podman.nix` | Podman runtime (exists, not currently imported anywhere) | — |
-| `xremap.nix` | xremap user service, `withHypr=true`, per-app Mac-style Super→Ctrl rules for Chrome and VSCode/Cursor | cortex (only) |
+| `xremap.nix` | legacy per-app Mac-style Super→Ctrl rules; retained for reference during the key-map trial | — |
 
 **Notes on per-host extras** (not in optional/):
 - `cortex/default.nix`: dual-boot Windows entry, `programs.nix-ld.enable`, Steam + gamescope + gamemode, `disable-usb-wakeup` oneshot (XHCI wake suppression), `services.logind.settings.Login` (short-press = suspend, long-press = poweroff), pam.hyprlock, gnome-keyring
@@ -112,8 +112,8 @@ users/ryan/
     ├── hypr/
     │   ├── hypridle.conf, hyprlock.conf
     │   ├── snap-right.sh    # bound to Super+]
-    │   ├── power-menu.sh    # bound to Super+Backspace
-    │   └── super-t.sh       # bound to Super+T — context-aware
+    │   ├── power-menu.sh    # bound to Super+Escape
+    │   └── keybindings-menu.sh # searchable live Hyprland key list
     └── nvim/init.lua        # baked into nvim via builtins.readFile
 ```
 
@@ -130,37 +130,22 @@ users/ryan/
 
 ## Keybinding system
 
-Three layers, in order of how the kernel sees the key event:
-
-1. **xremap** (intercepts at `/dev/input/event*` before anything else sees it)
-2. **Hyprland** binds (sees whatever xremap emits — original or remapped)
-3. **Application** keybindings (sees whatever Hyprland passes through)
-
-### xremap rules — `hosts/common/optional/xremap.nix`
-
-User-mode service, `withHypr = true` (window-class-aware via Hyprland IPC). Currently grabs **keyboard devices only**, not mouse.
-
-- **Chrome** (`google-chrome`): plain `Super-X → Ctrl-X` for c/v/x/r/w/n/l/t. Lets Mac muscle memory work for copy/paste/refresh/close-tab/new-window/incognito/url-bar/new-tab.
-- **VSCode/Cursor** (classes `code`, `cursor`, `code-url-handler`, `cursor-url-handler`): a much larger Mac-style set. **Key difference vs Chrome**: `Super-c → C-Shift-c` and `Super-v → C-Shift-v` (terminal-safe — `Ctrl+C` stays as SIGINT/cancel, never repurposed). Plus `Super-grave` and `Super-equal` both map to `C-Shift-grave` (new terminal, two reachable chords — backtick is awkward on Moonlander default layouts).
-
-**Window class names are lowercase.** `Hyprland reports "code" not "Code"` — exact-match in `application.only`. Verify with `hyprctl clients`.
-
-**xremap matches partial modifier sets.** A rule keyed on `Super-n` *also* fires for `Super+Shift+N`; the extra Shift passes through to the emitted output. So `Super+Shift+N` in VSCode/Chrome becomes `Ctrl+Shift+N` (new window / new incognito) for free. Do NOT bind WM-level actions to `Super+Shift+<letter>` where `<letter>` is in any xremap rule — xremap will eat it.
+`Super` belongs to Hyprland. Apps use their normal Linux `Ctrl` keys. Cortex no longer imports xremap, so new apps need no per-app Super→Ctrl rules. Use `Ctrl+Shift+C/V` for copy and paste in terminals.
 
 ### Hyprland binds — `users/ryan/configs/hyprland.conf`
 
-Mac-style — `$mainMod = SUPER ≈ Cmd`. Window management and app shortcuts:
+OS-first — `$mainMod = SUPER`. Window management and app shortcuts:
 
-- `Super+Q` → killactive (close window)
-- `Super+T` → context-aware: in Ghostty → new tab (via `super-t.sh`); else → launch new Ghostty
-- `Super+E` → cosmic-files (default file manager); `Ctrl+Alt+E` → nautilus (fallback during eval). `Super+Space` → wofi launcher (Spotlight-style)
-- `Super+F` → fullscreen, `Super+Shift+V` → togglefloating
-- `Super+Return` → `swapwithmaster` (yank focused window into the center master slot)
-- `Super+Shift+Return` → `focusmaster` (jump focus to the master)
+- `Super+Q` or `Super+W` → close window
+- `Super+T` → toggle floating/tiling
+- `Super+Return` → Ghostty; `Super+Shift+Return` → Chrome; `Super+Shift+F` → cosmic-files
+- `Super+Space` → app launcher; `Super+K` → searchable live key list
+- `Super+F` → full screen
+- `Super+M` → move the focused window to the center master slot
 - `Super+1..0` → workspace 1..10, `Super+Shift+1..0` → move window to workspace
 - `Super+arrows` → movefocus, `Super+Shift+arrows` → swapwindow, `Super+Alt+arrows` → resizeactive
 - `Meh+arrows` → snap to half-screen (`snap.sh left/right/top/bottom`). Meh = Ctrl+Alt+Shift, single-key on Moonlander.
-- `Meh+Y/U/B/N` → snap to corner — 2x2 grid (Y=TL, U=TR, B=BL, N=BR). Meh bypasses xremap, so corners fire from inside any app.
+- `Meh+Y/U/B/N` → snap to corner — 2x2 grid (Y=TL, U=TR, B=BL, N=BR).
 - `Super+LMB/RMB drag` → move/resize
 - Mouse swipe-3 → workspace next/prev
 
@@ -174,31 +159,28 @@ Mac-style — `$mainMod = SUPER ≈ Cmd`. Window management and app shortcuts:
 Sleep / lock / power (`# sleep and lock` section):
 
 - `Super+L` → lock
-- `Ctrl+Alt+L` → lock (universal — xremap has no Ctrl+Alt rules, always reaches Hyprland)
-- `Super+Backspace` → power menu (`power-menu.sh` — Lock / Screen Off / Suspend / Logout / Reboot / Shutdown)
+- `Ctrl+Alt+L` → lock
+- `Super+Escape` → power menu (`power-menu.sh` — Lock / Screen Off / Suspend / Logout / Reboot / Shutdown)
 - Power button: short = suspend, long = poweroff (configured per-host in `services.logind.settings.Login` on cortex + x1)
 
 ### VSCode overrides — `users/ryan/vscode.nix` `keybindings`
 
-These exist to undo VSCode defaults that fight Mac muscle memory and TUI conventions:
+These keep terminal and TUI keys useful inside VSCode:
 
 - `Ctrl+J` unbound from `togglePanel` (so it can pass through to terminal as LF = newline)
 - `Ctrl+Shift+C` editor → editor copy (default was openNativeConsole, useless); terminal default already copies selection
 - `Ctrl+Shift+V` editor → paste (default unbound on editor)
+- `Super+C/V` in `terminalFocus` → copy selected text / paste; `Ctrl+C` remains SIGINT/cancel
 - `Ctrl+E` in `terminalFocus` → unbound from quickOpen (so terminal gets end-of-line readline)
 - `Shift+Enter` in `terminalFocus` → sends `\n` (Claude Code newline / TUI newline)
 - `Shift+Tab` in `terminalFocus` → sends CSI Z (back-tab, Claude Code mode cycle: Plan / Accept-edits / Default). **The `args.text` string contains a literal ESC byte (0x1B) that's invisible in plain text — verify with `xxd` if it looks like just `"[Z"`.**
 
-### Ghostty bindings — `users/ryan/default.nix` `programs.ghostty.settings.keybind`
-
-`super+c`, `super+v`, `super+n` are declared here (Hyprland doesn't claim them so they reach Ghostty cleanly). `Super+T` is deliberately *not* declared here — it's intercepted by Hyprland and routed by `super-t.sh`.
-
 ## Key patterns
 
 - **mkHost** handles all boilerplate — adding a new host is a new `hosts/<name>/` dir + one line in `flake.nix`
-- **xremap intercepts BEFORE Hyprland binds fire.** So adding `Super-W → C-W` to an app rule shadows Hyprland's `Super+W = killactive` *for that app only*. This is the mechanism that prevents `Super+W` from killing windows or `Super+N` from locking mid-edit. Outside the matched apps, bare-Super still hits Hyprland.
-- **Universal WM-chord pattern: `Ctrl+Alt+<letter>`** — no xremap rule uses Ctrl+Alt, so these always reach Hyprland regardless of focused app. Use this for any WM action that must work from inside VSCode/Chrome.
-- **`Ctrl+C` is sacred.** Never remapped to clipboard copy anywhere. It's always SIGINT/cancel in terminals and TUIs. Clipboard copy in apps with integrated terminals goes through `Ctrl+Shift+C`.
+- **Super is for the OS.** Do not add app-specific Super remaps. Use normal Linux `Ctrl` shortcuts in apps.
+- **`Ctrl+C` is sacred in terminals.** It stays SIGINT/cancel. `Ctrl+Shift+C` remains the standard clipboard copy key.
+- **Ghostty clipboard:** `Super+C/V` copy and paste because Hyprland leaves those chords free; `Ctrl+C` remains SIGINT/cancel.
 - **NVIDIA Docker uses CDI**: `docker run --runtime=nvidia --device nvidia.com/gpu=all ...`. NOT `--gpus all` (that's docker desktop / non-nixos).
 - **Home-manager** uses `useGlobalPkgs = true` — user packages come from the *system* nixpkgs, no second pkgs evaluation.
 - **Static config files** live in `users/ryan/configs/` and map to `~/.config/...` via `home.file` in `users/ryan/default.nix`.
@@ -209,7 +191,6 @@ These exist to undo VSCode defaults that fight Mac muscle memory and TUI convent
 - **TODO after the next Cortex reboot:** Confirm Cortex starts with `~/.config/hypr/hyprland.lua` and has no config errors, then remove `users/ryan/configs/hyprland.conf` and its `home.file` mapping from `users/ryan/default.nix`. The `.conf` file exists only as a fallback for the Cortex session that was running during the Lua move.
 - **`allowUnfree` set in 3 places**: `flake.nix` `nixConfig`, `hosts/common/default.nix` (`mkDefault`), `users/ryan/configs/config.nix`. Touch all three when changing.
 - **`__HM_SESS_VARS_SOURCED` guard kills sessionPath/sessionVariables updates in running sessions.** After adding/changing `home.sessionPath` or `home.sessionVariables`, `exec zsh` *won't* pick them up because the guard env var is inherited from the parent and `hm-session-vars.sh` short-circuits. Recovery: `unset __HM_SESS_VARS_SOURCED && exec zsh` for the current terminal, `systemctl --user import-environment PATH` for the Hyprland tree, or just logout/login (cleanest). Warn the user explicitly when proposing these changes.
-- **`SUPER+Shift+<letter>` and xremap partial-match.** Don't bind WM actions to `Super+Shift+M`/`N`/`L`/etc — xremap converts to `Ctrl+Shift+<letter>` for that app and Hyprland never sees the original. Use `Ctrl+Alt+<letter>` for universal WM chords.
 - **VSCode + Cursor need Wayland flags**: `NIXOS_OZONE_WL=1` (set in `users/ryan/default.nix` env files + Hyprland conf) and `~/.config/code-flags.conf = "--ozone-platform=wayland"`.
 - **Chrome needs Wayland flags**: see `.config/chrome-flags.conf` in `users/ryan/default.nix` — disables `WaylandWpColorManagerV1` and `gpu-compositing` to prevent crash on DPMS off / suspend.
 - **`exec-once` in hyprland.conf with `&&` against long-running daemons is a trap.** Use two `exec-once` lines: one to start the daemon, one with `sleep N && cmd` to do follow-up. Bit us on `awww-daemon && awww img ...` showing black background.

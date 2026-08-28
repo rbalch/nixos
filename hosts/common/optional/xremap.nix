@@ -38,7 +38,6 @@
           "Super-e" = "C-e";
           "Super-f" = "C-f";
           "Super-g" = "C-g";
-          "Super-k" = "C-k";
           "Super-l" = "C-l";
           "Super-m" = "C-m";
           "Super-n" = "C-n";
@@ -80,7 +79,6 @@
           "Super-c" = "C-c";
           "Super-v" = "C-v";
           "Super-x" = "C-x";
-          "Super-k" = "C-k";
         };
         application.only = [ "slack" ];
       }

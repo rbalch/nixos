@@ -20,26 +20,21 @@
                 remote.autoForwardPorts = false;
                 python.terminal.shellIntegration.enabled = false;
                 python.terminal.useEnvFile = false;
-                vim.handleKeys = { "<C-f>" = false; };
+                # Super belongs to Hyprland; let VSCode handle the usual
+                # Linux edit keys instead of giving them to the Vim plugin.
+                vim.handleKeys = {
+                    "<C-a>" = false;
+                    "<C-c>" = false;
+                    "<C-f>" = false;
+                    "<C-v>" = false;
+                    "<C-x>" = false;
+                    "<C-z>" = false;
+                };
             };
             keybindings = [
                 {
-                    # Super+A → select-all. xremap leaves Super+A alone
-                    # for VSCode so vim's <C-a> (increment) doesn't eat it.
-                    key = "super+a";
-                    command = "editor.action.selectAll";
-                    when = "editorTextFocus";
-                }
-                {
                     key = "ctrl+j";
                     command = "-workbench.action.togglePanel";
-                }
-                {
-                    # Super+S → save, unconditionally. xremap leaves
-                    # Super+S alone so vim/other contexts can't eat
-                    # Ctrl+S before this binding fires.
-                    key = "super+s";
-                    command = "workbench.action.files.save";
                 }
                 {
                     key = "ctrl+shift+c";
@@ -65,12 +60,24 @@
                     when = "terminalFocus && terminalTextSelected";
                 }
                 {
+                    # Easier terminal clipboard keys. Keep Ctrl+C free for
+                    # SIGINT/cancel when the terminal has focus.
+                    key = "super+c";
+                    command = "workbench.action.terminal.copySelection";
+                    when = "terminalFocus && terminalTextSelected";
+                }
+                {
                     key = "ctrl+shift+v";
                     command = "editor.action.clipboardPasteAction";
                     when = "editorTextFocus";
                 }
                 {
                     key = "ctrl+shift+v";
+                    command = "workbench.action.terminal.paste";
+                    when = "terminalFocus";
+                }
+                {
+                    key = "super+v";
                     command = "workbench.action.terminal.paste";
                     when = "terminalFocus";
                 }
@@ -96,12 +103,6 @@
                     key = "shift+enter";
                     command = "workbench.action.terminal.sendSequence";
                     args = { text = "\\\r"; };
-                    when = "terminalFocus";
-                }
-                {
-                    key = "super+enter";
-                    command = "workbench.action.terminal.sendSequence";
-                    args = { text = "\n"; };
                     when = "terminalFocus";
                 }
                 {

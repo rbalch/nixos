@@ -10,29 +10,36 @@
         "thinkingFormat": "chat-template",
         "chatTemplateKwargs": {
           "enable_thinking": { "$var": "thinking.enabled" },
-          "low_effort": { "$var": "thinking.enabled" },
-          "force_nonempty_content": true
+          "preserve_thinking": true,
+          "reasoning_effort": {
+            "$var": "thinking.effort",
+            "omitWhenOff": true
+          }
         }
       },
       "models": [
         {
-          "id": "nemotron-3-super",
-          "name": "Nemotron 3 Super on DGX",
+          "id": "qwen3.8-27b",
+          "name": "Qwen3.8 27B on DGX",
           "reasoning": true,
           "thinkingLevelMap": {
             "minimal": null,
-            "low": "enabled",
-            "medium": null,
+            "low": "low",
+            "medium": "medium",
             "high": null,
-            "xhigh": null,
+            "xhigh": "xhigh",
             "max": null
           },
-          "input": ["text"],
-          "contextWindow": 131072,
+          "input": ["text", "image"],
+          "contextWindow": 262144,
           "maxTokens": 32768,
           "samplingParams": {
             "temperature": 1.0,
-            "top_p": 0.95
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0.0,
+            "presence_penalty": 0.0,
+            "repetition_penalty": 1.0
           },
           "cost": {
             "input": 0,
