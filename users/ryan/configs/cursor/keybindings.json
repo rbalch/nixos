@@ -1,0 +1,27 @@
+[
+  {
+    "key": "super+c",
+    "command": "editor.action.clipboardCopyAction",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "super+c",
+    "command": "editor.action.clipboardCopyAction",
+    "when": "webviewFocus"
+  },
+  {
+    "key": "super+c",
+    "command": "workbench.action.terminal.copySelection",
+    "when": "terminalFocus && terminalTextSelected"
+  },
+  {
+    "key": "super+v",
+    "command": "editor.action.clipboardPasteAction",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "super+v",
+    "command": "workbench.action.terminal.paste",
+    "when": "terminalFocus"
+  }
+]

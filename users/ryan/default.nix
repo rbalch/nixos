@@ -5,6 +5,12 @@ let
         inherit pkgs;
         packageIndex = inputs.claude-desktop-repo;
     };
+
+    # Codex calls this after a turn. BEL lets the active terminal choose how
+    # to alert instead of tying Codex to a desktop sound player.
+    codex-notify = pkgs.writeShellScript "codex-notify" ''
+        printf '\a' > /dev/tty
+    '';
 in {
     home.username = "ryan";
     home.homeDirectory = "/home/ryan";
@@ -17,6 +23,13 @@ in {
         ./waybar.nix
         ./wayle.nix
         ./zsh.nix
+    ];
+
+    # Keep one systemd-owned Hypridle process. The settings stay in the raw
+    # config file below so its Hyprland Lua dispatch calls remain unchanged.
+    services.hypridle.enable = true;
+    systemd.user.services.hypridle.Unit.X-Restart-Triggers = [
+        "${./configs/hypr/hypridle.conf}"
     ];
 
     # Native claude install lives in ~/.local/bin; ensure it's on PATH and beats
@@ -65,6 +78,7 @@ in {
     home.packages = with pkgs; [
         awscli2
         cliamp
+        pulseaudio # pactl: inspect and switch PipeWire/PulseAudio outputs
         code-cursor
         fd
         font-manager
@@ -72,7 +86,6 @@ in {
 		google-cloud-sdk
         google-cursor
         hyprlock
-        hypridle
         nwg-look
         nodejs_24
         pay-respects
@@ -131,7 +144,11 @@ in {
         # npm's globalDir lookup to crash with ENOENT on /lib.
         (pkgs.writeShellScriptBin "codex" ''
           #!/usr/bin/env bash
-          exec ${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js @openai/codex@latest "$@"
+          exec ${pkgs.nodejs_24}/bin/node \
+            ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js \
+            @openai/codex@latest \
+            --config 'notify=["${codex-notify}"]' \
+            "$@"
         '')
 
         (pkgs.writeShellScriptBin "gemini" ''
@@ -184,6 +201,7 @@ in {
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".config/nixpkgs/config.nix".source = configs/config.nix;
         ".pi/agent/models.json".source = configs/pi/models.json;
+        ".pi/agent/extensions/italic-yellow.ts".source = configs/pi/extensions/italic-yellow.ts;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
@@ -191,7 +209,6 @@ in {
         ".config/hypr/power-menu.sh" = { source = configs/hypr/power-menu.sh; executable = true; };
         ".config/hypr/keybindings-menu.sh" = { source = configs/hypr/keybindings-menu.sh; executable = true; };
         ".config/hypr/portal-resize.sh" = { source = configs/hypr/portal-resize.sh; executable = true; };
-        ".config/hypr/with-idle-paused.sh" = { source = configs/hypr/with-idle-paused.sh; executable = true; };
         # Cortex lets Wayle own awww. Other hosts still start the same static
         # wallpaper from Hyprland until they move from Waybar.
         ".config/hypr/start-wallpaper.sh" = {
@@ -218,6 +235,7 @@ in {
                 exec blueman-applet
             '';
         };
+        ".config/Cursor/User/keybindings.json".source = configs/cursor/keybindings.json;
         ".config/zed/keymap.json".source = configs/zed/keymap.json;
         # Chrome opens the screencast portal TWICE per share: once for its own
         # source picker, then again for the real stream. Without a restore token
@@ -308,6 +326,11 @@ in {
         background-blur = true;
         window-width = 160;
         window-height = 70;
+        # Codex sends BEL with its turn notice, so Ghostty plays this sound
+        # beside the desktop popup.
+        bell-features = "audio";
+        bell-audio-path = "${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/complete.oga";
+        bell-audio-volume = 0.4;
         # Super+C/V are free in Hyprland and avoid the longer terminal
         # clipboard chords. Ctrl+C remains SIGINT/cancel.
         keybind = [

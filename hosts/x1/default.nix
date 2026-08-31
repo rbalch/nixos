@@ -6,7 +6,6 @@
     ../common
     ../common/optional/hyprland.nix
     ../common/optional/vim.nix
-    ../common/optional/xremap.nix
     ../common/optional/bluetooth.nix
   ];
 

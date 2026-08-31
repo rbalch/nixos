@@ -10,7 +10,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("google-chrome-stable", { workspace = "1 silent" })
     hl.exec_cmd("handy") -- dictation daemon; toggle recording with Hyper+Space
     hl.exec_cmd("~/.config/hypr/start-blueman-applet.sh")
-    hl.exec_cmd("hypridle")
     hl.exec_cmd("~/.config/hypr/portal-resize.sh")
     hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
 end)

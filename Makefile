@@ -6,32 +6,23 @@ help: ## Show this help message
 install: ## Fresh nixos-install of razor from github:rbalch/nixos
 	nixos-install --no-write-lock-file --impure --flake github:rbalch/nixos#razor
 
-# Pause hypridle for the length of a build, so a long unattended rebuild can't
-# race the 600s idle timer into `hyprctl dispatch dpms off` — which on this
-# NVIDIA card intermittently hard-locks the machine (2026-07-27). Restored on
-# exit, failure, or Ctrl+C. systemd-inhibit deliberately NOT used: logind
-# inhibitors have no authority over hyprctl.
-# Deliberately the in-repo copy, not ~/.config/hypr/: the Makefile must work
-# before home-manager has ever activated this file.
-NO_IDLE := ./users/ryan/configs/hypr/with-idle-paused.sh
-
 # Flakes ignore untracked files, so new modules get "path does not exist" errors
 # until staged. -AN marks them intent-to-add (visible to nix, no content staged).
 rebuild: ## Rebuild+switch the current host (auto-detects hostname)
 	git add -AN .
-	$(NO_IDLE) sudo nixos-rebuild switch --flake .#$$(hostname)
+	sudo nixos-rebuild switch --flake .#$$(hostname)
 
 rebuild-braindongle: ## Rebuild+switch brain-dongle (throttled: -j4 -c6)
 	git add -AN .
-	$(NO_IDLE) sudo nixos-rebuild switch --flake .#brain-dongle --max-jobs 4 --cores 6
+	sudo nixos-rebuild switch --flake .#brain-dongle --max-jobs 4 --cores 6
 
 rebuild-nix1: ## Rebuild+switch nix1 (hostname != dir, so explicit)
 	git add -AN .
-	$(NO_IDLE) sudo nixos-rebuild switch --flake .#nix1
+	sudo nixos-rebuild switch --flake .#nix1
 
 rebuild-cortex: ## Rebuild+switch cortex (throttled: -j2 -c4, keeps desktop responsive)
 	git add -AN .
-	$(NO_IDLE) sudo nixos-rebuild switch --flake .#cortex --max-jobs 4 --cores 6
+	sudo nixos-rebuild switch --flake .#cortex --max-jobs 4 --cores 6
 
 garbage: ## Delete all old generations (nix-collect-garbage --delete-old)
 	nix-collect-garbage --delete-old
@@ -50,7 +41,7 @@ update: ## Update all flake inputs (sudo nix flake update)
 diff: ## Build (no switch) and show package diffs vs running system
 	git add -AN .
 	@echo "=== Building new configuration (no switch)... ==="
-	@$(NO_IDLE) sudo nixos-rebuild build --flake .#$$(hostname)
+	@sudo nixos-rebuild build --flake .#$$(hostname)
 	@echo ""
 	@echo "=== Package changes vs current system: ==="
 	@nix store diff-closures /run/current-system ./result
@@ -127,10 +118,10 @@ update-claude-desktop: ## Fetch the latest version of claude desktop
 	nix flake lock --update-input claude-desktop-repo
 
 restart-idle: ## Manually restart hypridle (screen off timer)
-	systemctl --user start hypridle
+	systemctl --user restart hypridle
 
 .PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
 	kill-share-picker camera-list-controls camera-lighten camera-reset mic-up mic-down \
-	check-kernel-bump
+	check-kernel-bump restart-idle

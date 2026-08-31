@@ -86,7 +86,7 @@ Standalone: `machines/balch-huge/` is a separate **nix-darwin** flake. Not part 
 | `sshd.nix` | OpenSSH server, pubkey-only (no passwords/kbdint), pre-loaded `authorized_keys` for ryan | cortex, brain-dongle |
 | `vim.nix` | `vim-full` w/ plugins (copilot-vim, nerdtree, vim-airline, undotree, vim-lastplace, vim-nix, vista-vim), `hlsearch`+`incsearch`, mouse, F2/F5/F8 toggles, ctags | cortex, brain-dongle, nix1, razor |
 | `podman.nix` | Podman runtime (exists, not currently imported anywhere) | — |
-| `xremap.nix` | legacy per-app Mac-style Super→Ctrl rules; retained for reference during the key-map trial | — |
+| `xremap.nix` | global Super+C/V→Ctrl+C/V, with terminal-safe app exceptions | all Hyprland hosts |
 
 **Notes on per-host extras** (not in optional/):
 - `cortex/default.nix`: dual-boot Windows entry, `programs.nix-ld.enable`, Steam + gamescope + gamemode, `disable-usb-wakeup` oneshot (XHCI wake suppression), `services.logind.settings.Login` (short-press = suspend, long-press = poweroff), pam.hyprlock, gnome-keyring
@@ -130,7 +130,7 @@ users/ryan/
 
 ## Keybinding system
 
-`Super` belongs to Hyprland. Apps use their normal Linux `Ctrl` keys. Cortex no longer imports xremap, so new apps need no per-app Super→Ctrl rules. Use `Ctrl+Shift+C/V` for copy and paste in terminals.
+`Super` belongs to Hyprland, except `Super+C/V`: xremap sends `Ctrl+C/V` to normal apps. Terminal apps must bypass that rule or map it to their safe copy and paste keys. Use `Ctrl+Shift+C/V` for copy and paste in terminals.
 
 ### Hyprland binds — `users/ryan/configs/hyprland.conf`
 
@@ -178,9 +178,9 @@ These keep terminal and TUI keys useful inside VSCode:
 ## Key patterns
 
 - **mkHost** handles all boilerplate — adding a new host is a new `hosts/<name>/` dir + one line in `flake.nix`
-- **Super is for the OS.** Do not add app-specific Super remaps. Use normal Linux `Ctrl` shortcuts in apps.
+- **Super is for the OS, except clipboard copy and paste.** xremap owns `Super+C/V`; keep terminal-safe exceptions in `xremap.nix` or in the app's own key map.
 - **`Ctrl+C` is sacred in terminals.** It stays SIGINT/cancel. `Ctrl+Shift+C` remains the standard clipboard copy key.
-- **Ghostty clipboard:** `Super+C/V` copy and paste because Hyprland leaves those chords free; `Ctrl+C` remains SIGINT/cancel.
+- **Clipboard keys:** xremap sends `Super+C/V` as `Ctrl+C/V` in normal apps. Ghostty, Cursor, and Zed handle `Super+C/V` themselves. VSCode, Wave, and Warp get terminal-safe copy and paste chords. `Ctrl+C` remains SIGINT/cancel in terminals.
 - **NVIDIA Docker uses CDI**: `docker run --runtime=nvidia --device nvidia.com/gpu=all ...`. NOT `--gpus all` (that's docker desktop / non-nixos).
 - **Home-manager** uses `useGlobalPkgs = true` — user packages come from the *system* nixpkgs, no second pkgs evaluation.
 - **Static config files** live in `users/ryan/configs/` and map to `~/.config/...` via `home.file` in `users/ryan/default.nix`.

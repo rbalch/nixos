@@ -1,6 +1,8 @@
 { config, pkgs, lib, ... }:
 
 {
+    imports = [ ./xremap.nix ];
+
     environment.systemPackages = with pkgs; [
         brightnessctl
         pavucontrol

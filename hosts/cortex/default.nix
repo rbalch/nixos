@@ -62,11 +62,39 @@
   networking = {
     hostName = "cortex";
     networkmanager.enable = true;
+
+    # PipeWire RAOP starts its AirPlay UDP control and timing sockets at 6001
+    # and tries up to 128 ports when several sinks exist at once.
+    firewall.allowedUDPPortRanges = [
+      {
+        from = 6001;
+        to = 6129;
+      }
+    ];
   };
 
   services.pipewire = {
     enable = true;
     pulse.enable = true;
+
+    # Find AirPlay speakers, including AirPlay-capable Sonos units, and expose
+    # each one as a normal audio output for cliamp and other apps.
+    extraConfig.pipewire-pulse."10-airplay-discovery" = {
+      "pulse.cmd" = [
+        {
+          cmd = "load-module";
+          args = "module-raop-discover";
+          flags = [ "nofail" ];
+        }
+      ];
+    };
+  };
+
+  # AirPlay discovery uses mDNS through Avahi. The firewall option opens only
+  # the local mDNS discovery port (UDP 5353).
+  services.avahi = {
+    enable = true;
+    openFirewall = true;
   };
 
   # Gaming

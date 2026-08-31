@@ -12,49 +12,35 @@
 
     config.keymap = [
       {
-        name = "Chrome: SUPER -> Ctrl";
+        # Most Linux apps use Ctrl+C/V for copy and paste. Terminal apps and
+        # mixed editor/terminal apps stay out of this rule so Super+C never
+        # turns into SIGINT in a shell.
+        name = "Global Super+C/V -> Ctrl+C/V";
         remap = {
-          "Super-a" = "C-a";
           "Super-c" = "C-c";
           "Super-v" = "C-v";
-          "Super-x" = "C-x";
-          "Super-r" = "C-r";
-          "Super-w" = "C-w";
-          "Super-n" = "C-n";
-          "Super-l" = "C-l";
-          "Super-t" = "C-t";
         };
-        application.only = [ "google-chrome" ];
+        application.not = [
+          "com.mitchellh.ghostty"
+          "code"
+          "code-url-handler"
+          "cursor"
+          "cursor-url-handler"
+          "dev.zed.Zed"
+          "zed"
+          "Wave"
+          "dev.warp.Warp"
+        ];
       }
       {
-        name = "VSCode/Cursor: SUPER -> Ctrl (Mac-style)";
+        # VSCode's Home Manager keybindings map Ctrl+Shift+C/V to copy and
+        # paste in both its editor and terminal.
+        name = "VSCode: terminal-safe copy/paste";
         remap = {
-          "Super-b" = "C-b";
           "Super-c" = "C-Shift-c";
-          "Super-comma" = "C-comma";
-          "Super-equal" = "C-Shift-grave";
-          "Super-grave" = "C-Shift-grave";
-          "Super-d" = "C-d";
-          "Super-e" = "C-e";
-          "Super-f" = "C-f";
-          "Super-g" = "C-g";
-          "Super-l" = "C-l";
-          "Super-m" = "C-m";
-          "Super-n" = "C-n";
-          "Super-o" = "C-o";
-          "Super-p" = "C-p";
-          "Super-q" = "C-q";
-          "Super-r" = "C-r";
-          "Super-s" = "C-s";
-          "Super-slash" = "C-slash";
-          "Super-t" = "C-t";
           "Super-v" = "C-Shift-v";
-          "Super-w" = "C-w";
-          "Super-x" = "C-x";
-          "Super-y" = "C-y";
-          "Super-z" = "C-z";
         };
-        application.only = [ "code" "cursor" "code-url-handler" "cursor-url-handler" ];
+        application.only = [ "code" "code-url-handler" ];
       }
       {
         name = "WaveTerm: SUPER -> Ctrl (terminal-safe)";
@@ -71,16 +57,6 @@
           "Super-v" = "C-Shift-v";
         };
         application.only = [ "dev.warp.Warp" ];
-      }
-      {
-        name = "Slack: SUPER -> Ctrl";
-        remap = {
-          "Super-a" = "C-a";
-          "Super-c" = "C-c";
-          "Super-v" = "C-v";
-          "Super-x" = "C-x";
-        };
-        application.only = [ "slack" ];
       }
     ];
   };
