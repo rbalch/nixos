@@ -5,6 +5,7 @@ let
         inherit pkgs;
         packageIndex = inputs.claude-desktop-repo;
     };
+    herdr = pkgs.callPackage ../../packages/herdr { };
 
     # Codex calls this after a turn. BEL lets the active terminal choose how
     # to alert instead of tying Codex to a desktop sound player.
@@ -85,6 +86,7 @@ in {
         google-chrome
 		google-cloud-sdk
         google-cursor
+        herdr
         hyprlock
         nwg-look
         nodejs_24
