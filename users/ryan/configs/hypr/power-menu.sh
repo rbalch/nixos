@@ -6,7 +6,7 @@ choice=$(printf "Lock\nScreen Off\nSuspend\nLogout\nReboot\nShutdown" \
 
 case "$choice" in
   Lock)         loginctl lock-session ;;
-  "Screen Off") loginctl lock-session && sleep 0.5 && hyprctl dispatch dpms off ;;
+  "Screen Off") loginctl lock-session && sleep 0.5 && hyprctl dispatch 'hl.dsp.dpms({ action = "off" })' ;;
   Suspend)      loginctl lock-session && sleep 0.5 && systemctl suspend ;;
   Logout)       hyprctl dispatch exit ;;
   Reboot)       systemctl reboot ;;
