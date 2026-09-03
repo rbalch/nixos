@@ -1,0 +1,14 @@
+# Allow routine Nix checks and builds while working in this trusted flake.
+prefix_rule(
+    pattern = ["nix", ["eval", "build"]],
+    decision = "allow",
+    justification = "This repository's Nix evaluations and builds are trusted.",
+    match = [
+        "nix eval .#nixosConfigurations.cortex.config.system.build.toplevel.drvPath",
+        "nix build .#nixosConfigurations.cortex.config.system.build.toplevel",
+    ],
+    not_match = [
+        "nix flake update",
+        "nix store gc",
+    ],
+)

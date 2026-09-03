@@ -66,6 +66,7 @@
 
   # Baseline system packages shared by every host
   environment.systemPackages = with pkgs; [
+    bubblewrap
     curl
     htop
     imagemagick

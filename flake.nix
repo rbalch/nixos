@@ -16,6 +16,10 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         vscode-server.url = "github:nix-community/nixos-vscode-server";
         xremap-flake.url = "github:xremap/nix-flake";
+        tether = {
+            url = "github:zackb/tether";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
         claude-desktop-repo = {
             # Anthropic's apt index includes every versioned .deb path and hash.
             # `nix flake update` refreshes this lock, then our package picks the newest.
@@ -29,7 +33,20 @@
         mkHost = import ./lib/mkHost.nix { inherit inputs; };
     in {
         nixosConfigurations = {
-            cortex = mkHost "cortex" {};
+            cortex = mkHost "cortex" {
+                modules = [
+                    inputs.tether.nixosModules.default
+                    ({ ... }: {
+                        programs.tether = {
+                            enable = true;
+                            bluetooth = {
+                                enable = true;
+                                adapters = [ "hci0" ];
+                            };
+                        };
+                    })
+                ];
+            };
 
             brain-dongle = mkHost "brain-dongle" {
                 modules = [
