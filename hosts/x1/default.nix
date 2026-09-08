@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../common
+    ../common/optional/docker.nix
     ../common/optional/hyprland.nix
     ../common/optional/vim.nix
     ../common/optional/bluetooth.nix
@@ -42,17 +43,6 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
-  # Local Docker (rootless, no GPU)
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = false;
-    rootless = {
-      enable = true;
-      setSocketVariable = true;
-    };
-  };
-  users.extraGroups.docker.members = [ "ryan" ];
 
   # Power button: short press = suspend, long press = poweroff
   services.logind.settings.Login = {

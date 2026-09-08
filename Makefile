@@ -62,11 +62,8 @@ dry: ## Preview what would build/fetch — evaluation only, nothing built or cha
 # Run after `make update` to see if you're about to compile opencv/chromium/etc.
 check-build: ## Preview cache misses (what would build locally vs fetch)
 	git add -AN .
-	@echo "=== Derivations that would build locally (cache misses): ==="
-	@sudo nixos-rebuild dry-build --flake .#$$(hostname) 2>&1 | awk '/will be built/,/will be fetched/' | grep -E '^\s+/nix/store' || echo "  (none — full cache hit)"
-	@echo ""
-	@echo "=== Derivations that would fetch from cache: ==="
-	@sudo nixos-rebuild dry-build --flake .#$$(hostname) 2>&1 | awk '/will be fetched/,0' | grep -cE '^\s+/nix/store' | xargs -I{} echo "  {} paths"
+	@echo "=== Preview of local builds and cache downloads: ==="
+	@sudo nixos-rebuild dry-build --flake .#$$(hostname)
 
 cleanup: ## Wipe system generations >7d old, then garbage-collect the store
 	# delete all historical versions older than 7 days
@@ -77,11 +74,11 @@ cleanup: ## Wipe system generations >7d old, then garbage-collect the store
 check-docker: ## Show configured Docker runtimes
 	docker info | grep -i runtime
 
-restart-docker: ## Restart both system and user Docker daemons
-	sudo systemctl restart docker && systemctl --user restart docker
+restart-docker: ## Restart the system Docker daemon
+	sudo systemctl restart docker
 
 test-docker: ## Verify NVIDIA CDI runtime (runs nvidia-smi in a container)
-	docker run --runtime=nvidia --device nvidia.com/gpu=all nvidia/cuda:12.8.1-base-ubuntu22.04 nvidia-smi
+	docker run --rm --device nvidia.com/gpu=all nvidia/cuda:13.1.1-base-ubuntu24.04 nvidia-smi
 
 fix-vscode: ## Re-patch vscode-server for the js language server (brain-dongle)
 	# patch vscode and cursor for the javascript server

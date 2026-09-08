@@ -1,16 +1,12 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   virtualisation.docker = {
     enable = true;
-    enableOnBoot = false;
-    rootless = {
-      enable = true;
-      setSocketVariable = false;
-    };
+    enableOnBoot = true;
+    rootless.enable = false;
   };
 
-  hardware.nvidia-container-toolkit.enable = true;
-
+  # Use the system daemon without sudo. NVIDIA support lives in nvidia.nix.
   users.extraGroups.docker.members = [ "ryan" ];
 }

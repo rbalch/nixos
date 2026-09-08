@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../common
+    ../common/optional/docker.nix
     ../common/optional/hyprland.nix
     ../common/optional/vim.nix
   ];

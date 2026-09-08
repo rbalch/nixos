@@ -81,10 +81,6 @@ nix repl '<nixpkgs>'
 
 ### Docker
 
-In my latest build docker and nvidia are still angry at each other. While it complains about deprecation without:
+All four Linux hosts use system Docker. User `ryan` can run Docker commands without sudo. Cortex and brain-dongle also support NVIDIA GPUs through CDI.
 
-```code
-virtualisation.docker.enableNvidia = true;
-```
-
-... in machines/brain-dongle/configuration.nix the docker->nvidia stuff won't work.
+See [Docker setup and GPU checks](docs/docker.md).

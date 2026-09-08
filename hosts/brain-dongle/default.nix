@@ -62,8 +62,6 @@
     pulse.enable = true;
   };
 
-  virtualisation.docker.enableNvidia = true;
-
   # Cat-proof: ignore physical power button presses
   services.logind.settings.Login.HandlePowerKey = "ignore";
 

@@ -1,199 +1,123 @@
-# CLAUDE.md
+# Repository guidance
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Scope and layout
 
-## What This Is
+This flake manages four NixOS hosts for one user, `ryan`, using `nixpkgs-unstable` and Home Manager as a NixOS module.
 
-NixOS flake managing 4 Linux hosts + 1 standalone macOS flake. Single user (`ryan`). Home-manager integrated as a NixOS module (not standalone). Tracks `nixpkgs-unstable`.
+- `flake.nix` defines inputs and hosts. Inputs include nixpkgs, Home Manager, Hyprland, nixos-hardware, vscode-server, xremap, Tether, and the Claude Desktop apt index.
+- `lib/mkHost.nix` wires `hosts/<dir>` to `users/ryan`. Its interface is `mkHost hostname { system?, dir?, modules? }`; defaults are `x86_64-linux`, the host name, and no extra modules.
+- `mkHost` passes `inputs` and `hostName` to both NixOS and Home Manager. Home Manager uses system packages (`useGlobalPkgs = true`), `useUserPackages = true`, and the backup suffix `hm-backup`.
+- `hosts/common/default.nix` holds shared system settings; `hosts/common/optional/` holds modules that hosts choose to import.
+- `users/ryan/default.nix` holds shared apps, file mappings, and install hooks. Other user modules hold editor, shell, SSH, and bar settings.
+- `machines/balch-huge/` is a separate nix-darwin flake. Leave it alone unless the task concerns the Mac.
+- Root `configuration.nix` is outside this flake. `make get-config` downloads that file for recovery; don't edit it unless the task concerns that path.
 
-## Build Commands
+Check the code before relying on a package list or old workaround. Keep this guide focused on rules and reasons; keep pending checks in `TODO.md`.
+
+## Commands
 
 ```bash
-# Rebuild current host
-make rebuild                       # = sudo nixos-rebuild switch --flake .#$(hostname)
-make rebuild-nix1                  # = same, but explicit for the hostname≠dir host
-
-# Fresh install
-nixos-install --no-write-lock-file --impure --flake github:rbalch/nixos#<host>
-
-# Maintenance
-make update                        # sudo nix flake update (all inputs)
-make cleanup                       # wipe-history >7d, then nix store gc
-make garbage                       # nix-collect-garbage --delete-old
-make test-docker                   # verify NVIDIA CDI runtime
-make check-docker                  # docker info | grep runtime
-make fix-vscode                    # re-patch vscode-server (brain-dongle)
+make rebuild              # switch the current host, selected by hostname
+make rebuild-cortex       # switch cortex with --max-jobs 4 --cores 6
+make rebuild-braindongle  # switch brain-dongle with the same limits
+make rebuild-nix1         # switch nix1 explicitly
+make update               # update all flake inputs
+make check-build          # one dry-build; show Nix's build/download plan and errors
+make diff                 # build without switching, then compare with the running system
+make update-diff          # update inputs, then run make diff
+make cleanup              # remove system generations older than 7 days, then collect garbage
+make garbage              # nix-collect-garbage --delete-old
+make test-docker           # run the configured NVIDIA container check
+make check-docker         # show Docker runtimes
+make fix-vscode           # restart the vscode-server patch service on brain-dongle
+make restart-idle         # restart the user's hypridle service
 ```
 
-`make rebuild` includes `git add -AN .` so newly-created files aren't invisible to flake builds (flakes ignore untracked files). Don't skip that step.
+Rebuild targets, `diff`, and `check-build` run `git add -AN .` so flakes see new files. Preserve that step. The generic rebuild works on nix1: it selects the flake output, not the host directory.
 
-## Architecture
-
-```
-flake.nix
-  ├── inputs: nixpkgs-unstable, home-manager, hyprland, nixos-hardware,
-  │           vscode-server, xremap-flake, claude-desktop-repo
-  └── outputs.nixosConfigurations.<host> = mkHost "<name>" { ... }
-                                              ↓
-                              lib/mkHost.nix
-                                              ↓
-                              hosts/<dir>/default.nix
-                                + home-manager.users.ryan = users/ryan
-```
-
-### `lib/mkHost.nix`
-```
-mkHost hostname { system?, dir?, modules? }
-```
-- `system` defaults to `x86_64-linux`
-- `dir` defaults to `hostname` (override for hostname/dirname mismatch — only nix1 does)
-- `modules` is extra modules layered on top of `hosts/<dir>` and the home-manager wiring
-- Always passes `inputs` and `hostName` via `specialArgs` AND `extraSpecialArgs` (so host modules and home-manager modules both see them)
-- Home-manager: `useGlobalPkgs = true`, `useUserPackages = true`, `backupFileExtension = "hm-backup"`
+Fresh install: `nixos-install --no-write-lock-file --impure --flake github:rbalch/nixos#<host>`. `make install` selects razor.
 
 ## Hosts
 
-| host         | dir            | hw                    | role                                                |
-|--------------|----------------|-----------------------|-----------------------------------------------------|
-| `cortex`     | `cortex`       | NVIDIA, ultrawide DP-1 7680×2160@120 scale 1.25 | Main workstation. Dual-boot Windows. Steam + gamemode. |
-| `brain-dongle` | `brain-dongle` | NVIDIA               | GPU server. vscode-server module. firewall, no networkmanager. |
-| `nix1`       | `x1`           | none (ThinkPad iGPU)  | ThinkPad. `nixos-hardware.lenovo-thinkpad-x1-11th-gen`. Rootless Docker. |
-| `razor`      | `razor`        | none                  | Minimal laptop. No Docker, no NVIDIA, bare essentials. |
+| Host | Directory | Current setup |
+|---|---|---|
+| cortex | cortex | NVIDIA workstation; DP-1 at 7680×2160@120, scale 1.25; Windows dual boot; Steam, gamescope, gamemode; Wayle; Tether Bluetooth support |
+| brain-dongle | brain-dongle | NVIDIA GPU server; Hyprland and shared desktop apps still installed; vscode-server; DHCP on eno1/eno2 without NetworkManager; TCP ports 22 and 32400 open |
+| nix1 | x1 | ThinkPad iGPU; Lenovo X1 11th-gen hardware module; NetworkManager; Waybar; Docker |
+| razor | razor | Small host config with Docker and no NVIDIA module; still includes Hyprland and shared desktop apps; NetworkManager; Waybar |
 
-**Quirk**: `nix1` is the only host where hostname ≠ dir — its `mkHost` call uses `dir = "x1"`. Don't normalize this without checking why (probably historical).
+Preserve `nix1`'s `dir = "x1"`; use `hostName == "nix1"` in host checks.
 
-Standalone: `machines/balch-huge/` is a separate **nix-darwin** flake. Not part of `outputs` here. Ignore unless explicitly working on the Mac.
+All hosts import Docker, Hyprland, and Vim. Cortex and brain-dongle also import NVIDIA and SSH. Cortex and nix1 import Bluetooth. Hyprland imports xremap. No host imports the Podman module.
 
-## Hosts/common
+Cortex and nix1 set up the hyprlock PAM service, GNOME Keyring, and power-button policy (short press suspends, long press powers off). Brain-dongle ignores the power button. Cortex also has a swap file, USB wake suppression, AirPlay discovery, and libvirt.
 
-**`hosts/common/default.nix`** — base for ALL hosts:
-- Bootloader: systemd-boot, `configurationLimit = 5`, EFI variables ok
-- Nix: flakes enabled, auto-optimise-store, daemon at idle CPU/IO priority (yields to interactive work)
-- GC: weekly automatic, `--delete-older-than 1w`
-- User `ryan`: wheel/networkmanager/docker/input, zsh shell, `NOPASSWD` sudo
-- Fonts: noto fonts (incl CJK + emoji), font-awesome, **`nerd-fonts.meslo-lg`**, fontconfig defaults to Meslo for monospace
-- Locale: en_US.UTF-8, terminus_font console, timezone America/New_York
-- **Baseline packages: `htop`, `nvtopPackages.full`** (multi-vendor GPU monitor — works on all 4 hosts)
-- `services.udisks2.enable = true`, `programs.zsh.enable = true`
-- `allowUnfree = lib.mkDefault true` (note: also set in `flake.nix` `nixConfig` and `users/ryan/configs/config.nix` — see Gotchas)
+### Shared system settings
 
-**`hosts/common/optional/`** — opt-in, imported per-host:
-| module | what it does | used by |
-|--------|--------------|---------|
-| `hyprland.nix` | Hyprland + SDDM (sddm-astronaut, `black_hole` preset) + uWSM + XDG portals + xkb us | cortex, brain-dongle, nix1, razor |
-| `nvidia.nix` | nvidia drivers (`stable` package, `open=false`), modesetting, CUDA, cuda-maintainers cachix, container-toolkit, NVreg_PreserveVideoMemoryAllocations=1 | cortex, brain-dongle |
-| `docker.nix` | Rootless Docker, `enableOnBoot=false`, `setSocketVariable=false`, container-toolkit, adds ryan to docker group | cortex |
-| `sshd.nix` | OpenSSH server, pubkey-only (no passwords/kbdint), pre-loaded `authorized_keys` for ryan | cortex, brain-dongle |
-| `vim.nix` | `vim-full` w/ plugins (copilot-vim, nerdtree, vim-airline, undotree, vim-lastplace, vim-nix, vista-vim), `hlsearch`+`incsearch`, mouse, F2/F5/F8 toggles, ctags | cortex, brain-dongle, nix1, razor |
-| `podman.nix` | Podman runtime (exists, not currently imported anywhere) | — |
-| `xremap.nix` | global Super+C/V→Ctrl+C/V, with terminal-safe app exceptions | all Hyprland hosts |
+- systemd-boot keeps five entries. Weekly garbage collection removes generations older than one week.
+- Nix builds use idle CPU and I/O priority.
+- `ryan` has passwordless sudo and groups `wheel`, `networkmanager`, `docker`, `input`, `libvirtd`, and `kvm`.
+- Tailscale runs on all hosts. Join each host with `sudo tailscale up`; login state lives in `/var/lib/tailscale`.
+- Printing and Avahi run on all hosts except brain-dongle. Cortex also uses Avahi for AirPlay.
+- Common tools include `htop`, `nvtopPackages.full`, `jq`, and `curl`. Meslo Nerd Fonts supplies the monospace font.
+- `allowUnfree` appears in `hosts/common/default.nix`, `users/ryan/configs/config.nix`, and `flake.nix`'s `nixConfig`. Review all three when changing that policy; they are distinct config locations.
 
-**Notes on per-host extras** (not in optional/):
-- `cortex/default.nix`: dual-boot Windows entry, `programs.nix-ld.enable`, Steam + gamescope + gamemode, `disable-usb-wakeup` oneshot (XHCI wake suppression), `services.logind.settings.Login` (short-press = suspend, long-press = poweroff), pam.hyprlock, gnome-keyring
-- `brain-dongle/default.nix`: bigger download buffer, no networkmanager (static eno1/eno2 + dhcpcd), firewall opens 22 + 32400, `virtualisation.docker.enableNvidia = true` (separate from docker.nix module)
-- `x1/default.nix` (host nix1): `programs.nix-ld.enable`, rootless Docker inline (NOT from docker.nix module — it has its own setup), same logind power-button policy as cortex, pam.hyprlock, gnome-keyring
-- `razor/default.nix`: barest of bones
+### Docker and NVIDIA
 
-## User config (`users/ryan/`)
+All four hosts use the shared system Docker module, start it at boot, and disable rootless Docker. `ryan` uses the system daemon without sudo through the `docker` group. Preserve this choice: non-root container users and Dev Containers UID matching support writable host project and media folders. NVIDIA container support belongs only in `nvidia.nix`, imported by cortex and brain-dongle.
 
-```
-users/ryan/
-├── default.nix     # packages, dotfile mappings, git, ghostty, password-store,
-│                   # home.sessionVariables, home.sessionPath, claudeCodeBootstrap activation
-├── nvim.nix        # programs.neovim w/ plugins, withRuby/Python3 off
-├── ssh.nix         # ssh client host aliases (bd, dgx, github, huggingface)
-├── vscode.nix      # immutable extensions, keybindings overrides (see Keybinding system)
-├── waybar.nix      # transparent waybar, hyprland workspaces module, conditional battery on nix1
-├── zsh.nix         # powerlevel10k + oh-my-zsh (git, history) + fzf
-├── backgrounds/    # static wallpaper assets
-└── configs/        # raw files mapped via home.file
-    ├── hyprland.conf
-    ├── ghostty.conf, tmux.conf, p10k.zsh, config.nix
-    ├── hypr/
-    │   ├── hypridle.conf, hyprlock.conf
-    │   ├── snap-right.sh    # bound to Super+]
-    │   ├── power-menu.sh    # bound to Super+Escape
-    │   └── keybindings-menu.sh # searchable live Hyprland key list
-    └── nvim/init.lua        # baked into nvim via builtins.readFile
-```
+`make restart-docker` restarts only the system daemon. `make test-docker` uses `--device nvidia.com/gpu=all` with native CDI; it does not require a named NVIDIA runtime. Do not restore the old `virtualisation.docker.enableNvidia` option.
 
-## Claude Desktop package
+When applying the change to a host that used rootless Docker, inspect both daemons before stopping workloads. Their containers and volumes are separate; do not delete rootless data as part of this config change. Existing shells on nix1 may retain `DOCKER_HOST` pointing at the user socket: unset it or log in again, and check the Docker context.
 
-`packages/claude-desktop/default.nix` packages Anthropic's official Linux `.deb` for `cortex` and `nix1` only. Do not restore the old `patrickjaja/claude-desktop-bin` or `patrickjaja/claude-desktop-extra` GitHub inputs.
+The NVIDIA module selects the stable proprietary driver (`open = false`), enables CUDA and the container toolkit, adds the CUDA cache, and preserves video memory across suspend. Read its PipeWire capture workaround before changing screen sharing.
 
-- `claude-desktop-repo` is a non-flake input that locks Anthropic's official amd64 apt `Packages` index.
-- `make update` refreshes that index with the other flake inputs. The local package parses all `claude-desktop` entries, selects the newest version, and uses its `Filename` and `SHA256` fields to fetch the `.deb`.
-- The package extracts the `.deb` without running its apt setup scripts, then runs it in an FHS environment with its desktop, keyring, tray, audio, and Cowork VM needs.
-- The launcher always passes `--ozone-platform=wayland` and `--password-store=gnome-libsecret`. Keep `libsecret` in the FHS library set: Electron loads it at run time, so `ldd` does not report it when it is absent.
-- The package scope checks `hostName` against `[ "cortex" "nix1" ]`; the ThinkPad's host name remains `nix1` even though its directory is `x1`.
-- Old Git revisions still need their versioned `.deb` in Anthropic's pool or a retained Nix store path. The lock fixes the index and hashes, but it does not archive upstream files.
+## Desktop and keybindings
 
-## Keybinding system
+`users/ryan/configs/hyprland.lua` holds the Lua desktop config. Home Manager also installs `hyprland.conf` for the session transition. Keep that fallback until Cortex has rebooted into Lua with no config errors.
 
-`Super` belongs to Hyprland, except `Super+C/V`: xremap sends `Ctrl+C/V` to normal apps. Terminal apps must bypass that rule or map it to their safe copy and paste keys. Use `Ctrl+Shift+C/V` for copy and paste in terminals.
+- Cortex uses `wayle.nix` for the bar, notifications, and wallpaper. Wayle owns awww there. Other hosts use `waybar.nix` and the generated wallpaper startup script. Waybar shows a battery on nix1.
+- Home Manager owns one hypridle service. Its raw config is `configs/hypr/hypridle.conf`, and config changes trigger a restart.
+- Keep the 10-minute DPMS-off timer despite its documented NVIDIA failure risk. The user chose it; do not replace it with automatic suspend or DDC/CI. Read the dated notes in `hypridle.conf`.
+- Raw files live in `users/ryan/configs/`; `home.file` maps them into the home directory. Ghostty's active settings live in `programs.ghostty` in `default.nix`.
+- `configs/hypr/snap.sh` handles halves and corners. `portal-resize.sh` handles file dialogs; `power-menu.sh` handles power actions; `keybindings-menu.sh` reads named binds from the live session.
+- Start long-running daemons and later actions separately. Chaining `awww-daemon && awww img ...` waits for the daemon to exit.
 
-### Hyprland binds — `users/ryan/configs/hyprland.conf`
+### Key rules
 
-OS-first — `$mainMod = SUPER`. Window management and app shortcuts:
+`Super` controls the desktop, except clipboard copy and paste. xremap maps `Super+C/V` to `Ctrl+C/V` in normal apps. Ghostty, Cursor, and Zed handle these keys themselves; VSCode, Wave, and Warp get terminal-safe chords. Preserve those exceptions. `Ctrl+C` must remain SIGINT/cancel in terminals; `Ctrl+Shift+C/V` copies and pastes.
 
-- `Super+Q` or `Super+W` → close window
-- `Super+T` → toggle floating/tiling
-- `Super+Return` → Ghostty; `Super+Shift+Return` → Chrome; `Super+Shift+F` → cosmic-files
-- `Super+Space` → app launcher; `Super+K` → searchable live key list
-- `Super+F` → full screen
-- `Super+M` → move the focused window to the center master slot
-- `Super+1..0` → workspace 1..10, `Super+Shift+1..0` → move window to workspace
-- `Super+arrows` → movefocus, `Super+Shift+arrows` → swapwindow, `Super+Alt+arrows` → resizeactive
-- `Meh+arrows` → snap to half-screen (`snap.sh left/right/top/bottom`). Meh = Ctrl+Alt+Shift, single-key on Moonlander.
-- `Meh+Y/U/B/N` → snap to corner — 2x2 grid (Y=TL, U=TR, B=BL, N=BR).
-- `Super+LMB/RMB drag` → move/resize
-- Mouse swipe-3 → workspace next/prev
+- Super alone navigates; Super+Shift moves windows; Super+Alt resizes.
+- `Super+Return` opens Ghostty; `Super+Shift+Return` opens Chrome; `Super+Shift+F` opens Cosmic Files.
+- `Super+Space` opens the launcher; `Super+K` shows live keybindings.
+- `Super+Q/W` closes; `Super+T` toggles floating; `Super+F` toggles fullscreen; `Super+M` moves to the master slot.
+- `Super+1..0` selects workspaces; adding Shift moves the window there.
+- Meh (Ctrl+Alt+Shift) plus arrows snaps to halves; Meh+Y/U/B/N selects top-left/top-right/bottom-left/bottom-right.
+- `Super+L` and `Ctrl+Alt+L` lock; `Super+Escape` opens the power menu.
 
-**Spatial mod pattern (consistent across arrows and numbers):**
-| Modifier | Verb |
-|---|---|
-| Super alone | navigate (movefocus, workspace switch) |
-| Super+Shift | move this window (swapwindow, movetoworkspace) |
-| Super+Alt | resize this window |
+In `vscode.nix`, keep terminal overrides for Ctrl+J, Ctrl+E, Shift+Enter, and Shift+Tab. Ctrl+E explicitly sends byte `0x05`; Shift+Enter sends a backslash then carriage return. Shift+Tab sends ESC followed by `[Z`; its string contains a literal `0x1B` byte. Use `xxd` if that byte is unclear. Copy bindings also cover rendered webviews.
 
-Sleep / lock / power (`# sleep and lock` section):
+## Apps and known fixes
 
-- `Super+L` → lock
-- `Ctrl+Alt+L` → lock
-- `Super+Escape` → power menu (`power-menu.sh` — Lock / Screen Off / Suspend / Logout / Reboot / Shutdown)
-- Power button: short = suspend, long = poweroff (configured per-host in `services.logind.settings.Login` on cortex + x1)
+### Claude Desktop
 
-### VSCode overrides — `users/ryan/vscode.nix` `keybindings`
+`packages/claude-desktop/default.nix` packages Anthropic's official amd64 `.deb` for cortex and nix1. Do not restore the old `patrickjaja/claude-desktop-bin` or `claude-desktop-extra` inputs.
 
-These keep terminal and TUI keys useful inside VSCode:
+The non-flake `claude-desktop-repo` input locks Anthropic's apt index. Updates refresh it; the package selects the newest entry and fetches its `Filename` with its `SHA256`. It extracts the package without running apt setup scripts, then supplies an FHS runtime with desktop and Cowork VM needs.
 
-- `Ctrl+J` unbound from `togglePanel` (so it can pass through to terminal as LF = newline)
-- `Ctrl+Shift+C` editor → editor copy (default was openNativeConsole, useless); terminal default already copies selection
-- `Ctrl+Shift+V` editor → paste (default unbound on editor)
-- `Super+C/V` in `terminalFocus` → copy selected text / paste; `Ctrl+C` remains SIGINT/cancel
-- `Ctrl+E` in `terminalFocus` → unbound from quickOpen (so terminal gets end-of-line readline)
-- `Shift+Enter` in `terminalFocus` → sends `\n` (Claude Code newline / TUI newline)
-- `Shift+Tab` in `terminalFocus` → sends CSI Z (back-tab, Claude Code mode cycle: Plan / Accept-edits / Default). **The `args.text` string contains a literal ESC byte (0x1B) that's invisible in plain text — verify with `xxd` if it looks like just `"[Z"`.**
+Keep `--ozone-platform=wayland`, `--password-store=gnome-libsecret`, and the runtime `libsecret` library. Electron loads libsecret at run time, so `ldd` will not reveal its absence. Old revisions still need their upstream `.deb` or a retained store path; the lock does not archive upstream files.
 
-## Key patterns
+### User tools
 
-- **mkHost** handles all boilerplate — adding a new host is a new `hosts/<name>/` dir + one line in `flake.nix`
-- **Super is for the OS, except clipboard copy and paste.** xremap owns `Super+C/V`; keep terminal-safe exceptions in `xremap.nix` or in the app's own key map.
-- **`Ctrl+C` is sacred in terminals.** It stays SIGINT/cancel. `Ctrl+Shift+C` remains the standard clipboard copy key.
-- **Clipboard keys:** xremap sends `Super+C/V` as `Ctrl+C/V` in normal apps. Ghostty, Cursor, and Zed handle `Super+C/V` themselves. VSCode, Wave, and Warp get terminal-safe copy and paste chords. `Ctrl+C` remains SIGINT/cancel in terminals.
-- **NVIDIA Docker uses CDI**: `docker run --runtime=nvidia --device nvidia.com/gpu=all ...`. NOT `--gpus all` (that's docker desktop / non-nixos).
-- **Home-manager** uses `useGlobalPkgs = true` — user packages come from the *system* nixpkgs, no second pkgs evaluation.
-- **Static config files** live in `users/ryan/configs/` and map to `~/.config/...` via `home.file` in `users/ryan/default.nix`.
-- **Claude Code install pattern**: NOT `pkgs.claude-code` (too slow a cadence), NOT npx wrapper (popups). Instead: home-manager activation script bootstraps native install to `~/.local/bin/claude` on first rebuild via `npx --yes @anthropic-ai/claude-code@latest install latest`, idempotent. Claude's own self-updater handles upgrades thereafter. `DISABLE_AUTOUPDATER=1` silences the nag. See `home.activation.claudeCodeBootstrap` in `users/ryan/default.nix`. `codex` and `gemini` are still npx wrappers (not in nixpkgs).
+- Claude Code installs to `~/.local/bin/claude` through a first-run Home Manager hook. Keep this native install and its own update path, rather than a nixpkgs package or npx launch wrapper.
+- Pi and Grok also have first-run install hooks outside the Nix store. Codex and Gemini use npx wrappers in `default.nix`; their versions are not fixed by `flake.lock`.
+- `packages/herdr/default.nix` wraps a versioned binary with a fixed hash.
+- Handy excludes brain-dongle. Its override keeps ONNX Runtime on CPU to avoid the global CUDA rebuild, and a local patch adjusts its vLLM reasoning setting. Preserve the reasons in the adjacent comments.
 
-## Gotchas
+### Session and app cautions
 
-- **TODO after the next Cortex reboot:** Confirm Cortex starts with `~/.config/hypr/hyprland.lua` and has no config errors, then remove `users/ryan/configs/hyprland.conf` and its `home.file` mapping from `users/ryan/default.nix`. The `.conf` file exists only as a fallback for the Cortex session that was running during the Lua move.
-- **`allowUnfree` set in 3 places**: `flake.nix` `nixConfig`, `hosts/common/default.nix` (`mkDefault`), `users/ryan/configs/config.nix`. Touch all three when changing.
-- **`__HM_SESS_VARS_SOURCED` guard kills sessionPath/sessionVariables updates in running sessions.** After adding/changing `home.sessionPath` or `home.sessionVariables`, `exec zsh` *won't* pick them up because the guard env var is inherited from the parent and `hm-session-vars.sh` short-circuits. Recovery: `unset __HM_SESS_VARS_SOURCED && exec zsh` for the current terminal, `systemctl --user import-environment PATH` for the Hyprland tree, or just logout/login (cleanest). Warn the user explicitly when proposing these changes.
-- **VSCode + Cursor need Wayland flags**: `NIXOS_OZONE_WL=1` (set in `users/ryan/default.nix` env files + Hyprland conf) and `~/.config/code-flags.conf = "--ozone-platform=wayland"`.
-- **Chrome needs Wayland flags**: see `.config/chrome-flags.conf` in `users/ryan/default.nix` — disables `WaylandWpColorManagerV1` and `gpu-compositing` to prevent crash on DPMS off / suspend.
-- **`exec-once` in hyprland.conf with `&&` against long-running daemons is a trap.** Use two `exec-once` lines: one to start the daemon, one with `sleep N && cmd` to do follow-up. Bit us on `awww-daemon && awww img ...` showing black background.
-- **nvim treesitter API rewrite.** Current nixpkgs nvim-treesitter ships the "main" branch — `require("nvim-treesitter.configs").setup(...)` is gone. Use built-in `vim.treesitter.start()` from a FileType autocmd. Already wired in `users/ryan/configs/nvim/init.lua`.
-- **Nerd Fonts v3 codepoint reorganization.** Some glyphs moved from old PUA in v2. If a glyph in `users/ryan/waybar.nix` renders as blank, verify the codepoint with `fc-list :charset` against the installed font (currently `nerd-fonts.meslo-lg 3.4.0+1.21`).
-- **`configuration.nix` in repo root** appears to be a leftover/legacy file (referenced by Makefile's `sync-in`/`install`/`get-config` targets). Not part of the flake — don't edit unless explicitly working on bare-install/recovery paths.
+- After changing `home.sessionPath` or `home.sessionVariables`, warn the user that `exec zsh` alone may retain old values due to `__HM_SESS_VARS_SOURCED`. A fresh login is simplest. For a current terminal, use `unset __HM_SESS_VARS_SOURCED && exec zsh`; import an updated PATH with `systemctl --user import-environment PATH` where needed.
+- Hyprland sets `NIXOS_OZONE_WL=1`; `default.nix` writes Code's Wayland flags. Preserve Wayland support for VSCode and Cursor.
+- Chrome's flags disable `WaylandWpColorManagerV1`. GPU compositing stays enabled; the code notes that disabling it reduced Netflix quality.
+- Neovim uses `vim.treesitter.start()` from a FileType callback. Do not restore the removed `nvim-treesitter.configs.setup` call.
+- Nerd Fonts changed codepoints between major versions. Check a missing glyph with `fc-list :charset` against the installed font before replacing it.
