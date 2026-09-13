@@ -1,12 +1,20 @@
-diff --git a/src-tauri/src/actions.rs b/src-tauri/src/actions.rs
-index 91bb06c..dd6bde9 100644
---- a/src-tauri/src/actions.rs
-+++ b/src-tauri/src/actions.rs
-@@ -173,7 +173,7 @@ async fn post_process_transcription(
-     //   out of the response so it can't pollute structured-output JSON parsing
-     let (reasoning_effort, reasoning) = match provider.id.as_str() {
--        "custom" => (Some("none".to_string()), None),
-+        "custom" => (Some("low".to_string()), None),
-         "openrouter" => (
-             None,
-             Some(crate::llm_client::ReasoningConfig {
+--- a/src-tauri/src/llm_client.rs
++++ b/src-tauri/src/llm_client.rs
+@@ -78,7 +78,7 @@
+         }
+     } else {
+         ReasoningParams {
+-            reasoning_effort: Some("none".to_string()),
++            reasoning_effort: Some("low".to_string()),
+             ..Default::default()
+         }
+     }
+@@ -680,7 +680,7 @@
+     fn custom_provider_uses_top_level_reasoning_effort() {
+         let params = reasoning_disable_params(&provider("custom", "http://localhost:11434/v1"));
+         let json = request_json(params);
+-        assert_eq!(json["reasoning_effort"], "none");
++        assert_eq!(json["reasoning_effort"], "low");
+         assert!(json.get("reasoning").is_none());
+         assert!(json.get("thinking").is_none());
+     }
