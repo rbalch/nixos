@@ -3,6 +3,25 @@
 let
     herdr = pkgs.callPackage ../../packages/herdr { };
 
+    # Finish Home Manager's files and packages before downloading extra CLIs.
+    # Run each installer in its own shell so a failure cannot abort activation.
+    bootstrap = name: commands:
+        let installer = pkgs.writeShellScript "bootstrap-${name}" ''
+            set -euo pipefail
+            export PATH=${lib.makeBinPath [ pkgs.nodejs_24 pkgs.bash pkgs.coreutils ]}:"$PATH"
+            ${commands}
+        '';
+        in lib.hm.dag.entryAfter [ "linkGeneration" "installPackages" ] ''
+            if [ ! -x "$HOME/.local/bin/${name}" ]; then
+                if run ${installer}; then
+                    :
+                else
+                    status=$?
+                    printf '%s\n' "Warning: ${name} install failed (exit $status); the next rebuild will retry if it is still missing." >&2
+                fi
+            fi
+        '';
+
     # Codex calls this after a turn. BEL lets the active terminal choose how
     # to alert instead of tying Codex to a desktop sound player.
     codex-notify = pkgs.writeShellScript "codex-notify" ''
@@ -16,40 +35,35 @@ in {
     # Bootstrap claude-code into ~/.local/bin on first rebuild (or any rebuild
     # where the binary is missing). Subsequent rebuilds are silent no-ops.
     # Claude's own self-updater handles all upgrades after this.
-    home.activation.claudeCodeBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -x "$HOME/.local/bin/claude" ]; then
-            run ${pkgs.nodejs_24}/bin/npx --yes \
-                @anthropic-ai/claude-code@latest install latest
-        fi
+    home.activation.claudeCodeBootstrap = bootstrap "claude" ''
+        # Use full Node, as in the npx wrappers below. This also puts Node on
+        # PATH for child commands launched by npm during the first boot.
+        ${pkgs.nodejs_24}/bin/node \
+            ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js --yes \
+            @anthropic-ai/claude-code@latest install latest
     '';
 
-    # Bootstrap pi into ~/.local on first rebuild. `pi update` handles later
-    # upgrades while keeping the install outside the read-only Nix store.
-    home.activation.piBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -x "$HOME/.local/bin/pi" ]; then
-            run ${pkgs.nodejs_24}/bin/node \
-                ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js \
-                install -g --prefix "$HOME/.local" --ignore-scripts \
-                @earendil-works/pi-coding-agent
-        fi
+    # `pi update` handles later upgrades outside the Nix store.
+    home.activation.piBootstrap = bootstrap "pi" ''
+        ${pkgs.nodejs_24}/bin/node \
+            ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js \
+            install -g --prefix "$HOME/.local" --ignore-scripts \
+            @earendil-works/pi-coding-agent
     '';
 
-    # Bootstrap the official Grok Build client into ~/.local/bin on first
-    # rebuild. `grok update` handles later upgrades. Hide the managed shell
-    # from the installer so it does not try to edit Home Manager's .zshrc.
-    home.activation.grokBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -x "$HOME/.local/bin/grok" ]; then
-            installer="$(${pkgs.coreutils}/bin/mktemp)"
-            run ${pkgs.curl}/bin/curl -fsSL \
-                https://x.ai/cli/install.sh \
-                -o "$installer"
-            run ${pkgs.coreutils}/bin/env \
-                SHELL=/bin/false \
-                GROK_BIN_DIR="$HOME/.local/bin" \
-                PATH=${lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.gawk pkgs.gnugrep pkgs.gnused ]} \
-                ${pkgs.bash}/bin/bash "$installer"
-            rm -f "$installer"
-        fi
+    # Hide the managed shell so Grok does not try to edit Home Manager's .zshrc.
+    # `grok update` handles later upgrades outside the Nix store.
+    home.activation.grokBootstrap = bootstrap "grok" ''
+        installer="$(${pkgs.coreutils}/bin/mktemp)"
+        trap 'rm -f "$installer"' EXIT
+        ${pkgs.curl}/bin/curl -fsSL \
+            https://x.ai/cli/install.sh \
+            -o "$installer"
+        ${pkgs.coreutils}/bin/env \
+            SHELL=/bin/false \
+            GROK_BIN_DIR="$HOME/.local/bin" \
+            PATH=${lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.gawk pkgs.gnugrep pkgs.gnused ]} \
+            ${pkgs.bash}/bin/bash "$installer"
     '';
 
     home.packages = with pkgs; [

@@ -51,6 +51,11 @@ Home Manager run installs Claude Code, Pi, and Grok outside the Nix store and
 needs network access. Those tools keep their own update paths. Codex and
 Gemini use the same npx wrappers as the desktop hosts.
 
+Home Manager links the shell files before running those installers. An
+installer failure prints a warning; later rebuilds retry missing tools.
+To inspect a first-boot failure, run
+`sudo journalctl -b -u home-manager-ryan.service --no-pager -n 100`.
+
 ## Shared tools
 
 - Zsh, Powerlevel10k, autosuggestions, aliases, fzf, and direnv.
