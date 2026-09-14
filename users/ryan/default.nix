@@ -93,6 +93,7 @@ in {
         pay-respects
         ripgrep
         slack
+        zoom-us
 		terraform
         nautilus
         cosmic-files
