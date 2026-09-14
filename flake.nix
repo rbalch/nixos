@@ -14,6 +14,10 @@
         };
         hyprland.url = "github:hyprwm/Hyprland";
         nixos-hardware.url = "github:NixOS/nixos-hardware";
+        nixos-wsl = {
+            url = "github:nix-community/NixOS-WSL/main";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
         vscode-server.url = "github:nix-community/nixos-vscode-server";
         xremap-flake.url = "github:xremap/nix-flake";
         tether = {
@@ -63,6 +67,10 @@
             };
 
             razor = mkHost "razor" {};
+
+            sparq-lappy = mkHost "sparq-lappy" {
+                homeModule = ./users/ryan/wsl.nix;
+            };
         };
     };
 }

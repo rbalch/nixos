@@ -2,6 +2,9 @@
 
 ## Installation
 
+For `sparq-lappy` on Windows, use the [NixOS-WSL setup](docs/wsl.md).
+The disk setup below applies to native NixOS installs.
+
 ### WiFi
 
 ```bash
@@ -81,6 +84,6 @@ nix repl '<nixpkgs>'
 
 ### Docker
 
-All four Linux hosts use system Docker. User `ryan` can run Docker commands without sudo. Cortex and brain-dongle also support NVIDIA GPUs through CDI.
+All five Linux hosts use system Docker. User `ryan` can run Docker commands without sudo. Cortex and brain-dongle also support NVIDIA GPUs through CDI.
 
 See [Docker setup and GPU checks](docs/docker.md).

@@ -20,6 +20,10 @@ rebuild-nix1: ## Rebuild+switch nix1 (hostname != dir, so explicit)
 	git add -AN .
 	sudo nixos-rebuild switch --flake .#nix1
 
+rebuild-sparq-lappy: ## Rebuild+switch WSL after the first boot
+	git add -AN .
+	sudo nixos-rebuild switch --flake .#sparq-lappy
+
 rebuild-cortex: ## Rebuild+switch cortex (throttled: -j2 -c4, keeps desktop responsive)
 	git add -AN .
 	sudo nixos-rebuild switch --flake .#cortex --max-jobs 4 --cores 6
@@ -117,7 +121,7 @@ update-claude-desktop: ## Fetch the latest version of claude desktop
 restart-idle: ## Manually restart hypridle (screen off timer)
 	systemctl --user restart hypridle
 
-.PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex \
+.PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex rebuild-sparq-lappy \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
 	kill-share-picker camera-list-controls camera-lighten camera-reset mic-up mic-down \
