@@ -2,13 +2,13 @@
 
 ## Scope and layout
 
-This flake manages four NixOS hosts for one user, `ryan`, using `nixpkgs-unstable` and Home Manager as a NixOS module.
+This flake manages five NixOS hosts for one user, `ryan`, using `nixpkgs-unstable` and Home Manager as a NixOS module.
 
 - `flake.nix` defines inputs and hosts. Inputs include nixpkgs, Home Manager, Hyprland, nixos-hardware, vscode-server, xremap, Tether, and the Claude Desktop apt index.
-- `lib/mkHost.nix` wires `hosts/<dir>` to `users/ryan`. Its interface is `mkHost hostname { system?, dir?, modules? }`; defaults are `x86_64-linux`, the host name, and no extra modules.
+- `lib/mkHost.nix` wires `hosts/<dir>` to `users/ryan`. Its interface is `mkHost hostname { system?, dir?, modules?, homeModule? }`; defaults are `x86_64-linux`, the host name, no extra modules, and `users/ryan` for Home Manager.
 - `mkHost` passes `inputs` and `hostName` to both NixOS and Home Manager. Home Manager uses system packages (`useGlobalPkgs = true`), `useUserPackages = true`, and the backup suffix `hm-backup`.
-- `hosts/common/default.nix` holds shared system settings; `hosts/common/optional/` holds modules that hosts choose to import.
-- `users/ryan/default.nix` holds shared apps, file mappings, and install hooks. Other user modules hold editor, shell, SSH, and bar settings.
+- `hosts/common/base.nix` holds boot-free settings for every host; `hosts/common/default.nix` adds native-only settings on top; `hosts/common/optional/` holds modules that hosts choose to import.
+- `users/ryan/default.nix` holds desktop apps, file mappings, and personal identity. `cli.nix` holds shared CLI tools, shared dotfiles, and install hooks. Other user modules hold editor, shell, SSH, and bar settings.
 - `machines/balch-huge/` is a separate nix-darwin flake. Leave it alone unless the task concerns the Mac.
 - Root `configuration.nix` is outside this flake. `make get-config` downloads that file for recovery; don't edit it unless the task concerns that path.
 
@@ -45,14 +45,25 @@ Fresh install: `nixos-install --no-write-lock-file --impure --flake github:rbalc
 | brain-dongle | brain-dongle | NVIDIA GPU server; Hyprland and shared desktop apps still installed; vscode-server; DHCP on eno1/eno2 without NetworkManager; TCP ports 22 and 32400 open |
 | nix1 | x1 | ThinkPad iGPU; Lenovo X1 11th-gen hardware module; NetworkManager; Waybar; Docker |
 | razor | razor | Small host config with Docker and no NVIDIA module; still includes Hyprland and shared desktop apps; NetworkManager; Waybar |
+| sparq-lappy | sparq-lappy | NixOS-WSL on x86_64; CLI tools, Docker, Tailscale, vscode-server; uses `users/ryan/wsl.nix` |
+
+`hosts/common/base.nix` holds the boot-free settings every host shares (Nix
+settings, GC, scheduling, zsh, Tailscale, locale, sudo, core packages).
+`hosts/common/default.nix` imports it and adds the bootloader, user account,
+console, printing, and fonts for native hosts. WSL imports `base.nix`
+directly; do not import `default.nix` there. `users/ryan/cli.nix` shares CLI
+packages, dotfiles, Git defaults, and install hooks across desktop and WSL
+users. Keep personal Git identity, SSH hosts, and the Google Cloud project in
+`default.nix`, `ssh.nix`, and out of the work profile. See `docs/wsl.md` for
+the first user change, which requires `boot` and WSL restarts.
 
 Preserve `nix1`'s `dir = "x1"`; use `hostName == "nix1"` in host checks.
 
-All hosts import Docker, Hyprland, and Vim. Cortex and brain-dongle also import NVIDIA and SSH. Cortex and nix1 import Bluetooth. Hyprland imports xremap. No host imports the Podman module.
+All native hosts import Docker, Hyprland, and Vim. Cortex and brain-dongle also import NVIDIA and SSH. Cortex and nix1 import Bluetooth. Hyprland imports xremap. No host imports the Podman module.
 
 Cortex and nix1 set up the hyprlock PAM service, GNOME Keyring, and power-button policy (short press suspends, long press powers off). Brain-dongle ignores the power button. Cortex also has a swap file, USB wake suppression, AirPlay discovery, and libvirt.
 
-### Shared system settings
+### Shared native system settings
 
 - systemd-boot keeps five entries. Weekly garbage collection removes generations older than one week.
 - Nix builds use idle CPU and I/O priority.
@@ -64,7 +75,7 @@ Cortex and nix1 set up the hyprlock PAM service, GNOME Keyring, and power-button
 
 ### Docker and NVIDIA
 
-All four hosts use the shared system Docker module, start it at boot, and disable rootless Docker. `ryan` uses the system daemon without sudo through the `docker` group. Preserve this choice: non-root container users and Dev Containers UID matching support writable host project and media folders. NVIDIA container support belongs only in `nvidia.nix`, imported by cortex and brain-dongle.
+All five hosts use the shared system Docker module, start it at boot, and disable rootless Docker. `ryan` uses the system daemon without sudo through the `docker` group. Preserve this choice: non-root container users and Dev Containers UID matching support writable host project and media folders. NVIDIA container support belongs only in `nvidia.nix`, imported by cortex and brain-dongle.
 
 `make restart-docker` restarts only the system daemon. `make test-docker` uses `--device nvidia.com/gpu=all` with native CDI; it does not require a named NVIDIA runtime. Do not restore the old `virtualisation.docker.enableNvidia` option.
 
@@ -110,7 +121,7 @@ Keep `--ozone-platform=wayland`, `--password-store=gnome-libsecret`, and the run
 ### User tools
 
 - Claude Code installs to `~/.local/bin/claude` through a first-run Home Manager hook. Keep this native install and its own update path, rather than a nixpkgs package or npx launch wrapper.
-- Pi and Grok also have first-run install hooks outside the Nix store. Codex and Gemini use npx wrappers in `default.nix`; their versions are not fixed by `flake.lock`.
+- Pi and Grok also have first-run install hooks outside the Nix store. Each installer is capped at 120 s and `mkHost` raises the Home Manager unit timeout to 15 min. Codex and Gemini use npx wrappers in `cli.nix`; their versions are not fixed by `flake.lock`.
 - `packages/herdr/default.nix` wraps a versioned binary with a fixed hash.
 - Handy excludes brain-dongle. Its override keeps ONNX Runtime on CPU to avoid the global CUDA rebuild, and a local patch adjusts its vLLM reasoning setting. Preserve the reasons in the adjacent comments.
 

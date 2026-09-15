@@ -5,19 +5,11 @@ let
         inherit pkgs;
         packageIndex = inputs.claude-desktop-repo;
     };
-    herdr = pkgs.callPackage ../../packages/herdr { };
-
-    # Codex calls this after a turn. BEL lets the active terminal choose how
-    # to alert instead of tying Codex to a desktop sound player.
-    codex-notify = pkgs.writeShellScript "codex-notify" ''
-        printf '\a' > /dev/tty
-    '';
 in {
-    home.username = "ryan";
-    home.homeDirectory = "/home/ryan";
     home.stateVersion = "25.11";
 
     imports = [
+        ./cli.nix
         ./nvim.nix
         ./ssh.nix
         ./vscode.nix
@@ -33,68 +25,16 @@ in {
         "${./configs/hypr/hypridle.conf}"
     ];
 
-    # Native claude install lives in ~/.local/bin; ensure it's on PATH and beats
-    # any stale wrappers from /etc/profiles.
-    home.sessionPath = [ "$HOME/.local/bin" ];
-
-    # Bootstrap claude-code into ~/.local/bin on first rebuild (or any rebuild
-    # where the binary is missing). Subsequent rebuilds are silent no-ops.
-    # Claude's own self-updater handles all upgrades after this.
-    home.activation.claudeCodeBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -x "$HOME/.local/bin/claude" ]; then
-            run ${pkgs.nodejs_24}/bin/npx --yes \
-                @anthropic-ai/claude-code@latest install latest
-        fi
-    '';
-
-    # Bootstrap pi into ~/.local on first rebuild. `pi update` handles later
-    # upgrades while keeping the install outside the read-only Nix store.
-    home.activation.piBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -x "$HOME/.local/bin/pi" ]; then
-            run ${pkgs.nodejs_24}/bin/node \
-                ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js \
-                install -g --prefix "$HOME/.local" --ignore-scripts \
-                @earendil-works/pi-coding-agent
-        fi
-    '';
-
-    # Bootstrap the official Grok Build client into ~/.local/bin on first
-    # rebuild. `grok update` handles later upgrades. Hide the managed shell
-    # from the installer so it does not try to edit Home Manager's .zshrc.
-    home.activation.grokBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -x "$HOME/.local/bin/grok" ]; then
-            installer="$(${pkgs.coreutils}/bin/mktemp)"
-            run ${pkgs.curl}/bin/curl -fsSL \
-                https://x.ai/cli/install.sh \
-                -o "$installer"
-            run ${pkgs.coreutils}/bin/env \
-                SHELL=/bin/false \
-                GROK_BIN_DIR="$HOME/.local/bin" \
-                PATH=${lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.gawk pkgs.gnugrep pkgs.gnused ]} \
-                ${pkgs.bash}/bin/bash "$installer"
-            rm -f "$installer"
-        fi
-    '';
-
     home.packages = with pkgs; [
-        awscli2
-        cliamp
         pulseaudio # pactl: inspect and switch PipeWire/PulseAudio outputs
         code-cursor
-        fd
         font-manager
         google-chrome
-		google-cloud-sdk
         google-cursor
-        herdr
         hyprlock
         nwg-look
-        nodejs_24
-        pay-respects
-        ripgrep
         slack
         zoom-us
-		terraform
         nautilus
         cosmic-files
         udiskie
@@ -102,12 +42,10 @@ in {
         obsidian
         warp-terminal
         waveterm
-        sshfs
         vlc
         grim
         slurp
         wl-clipboard
-        gh
     ]
     # Wayle owns awww on Cortex. Keep the direct package for hosts that still
     # use the Waybar + Hyprland startup path.
@@ -140,23 +78,6 @@ in {
         (pkgs.writeShellScriptBin "docker-stop" ''
             #!/bin/bash
             docker stop $(docker ps -q)
-        '')
-
-        # AI CLIs via npx — invoking via full nodejs to bypass nixpkgs bug
-        # where npx's shebang points to nodejs-slim (missing /lib), causing
-        # npm's globalDir lookup to crash with ENOENT on /lib.
-        (pkgs.writeShellScriptBin "codex" ''
-          #!/usr/bin/env bash
-          exec ${pkgs.nodejs_24}/bin/node \
-            ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js \
-            @openai/codex@latest \
-            --config 'notify=["${codex-notify}"]' \
-            "$@"
-        '')
-
-        (pkgs.writeShellScriptBin "gemini" ''
-          #!/usr/bin/env bash
-          exec ${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js @google/gemini-cli@latest "$@"
         '')
 
         (pkgs.writeShellScriptBin "copy-to-bd-movie" ''
@@ -202,9 +123,7 @@ in {
         # move so sessions that started with the old parser can still reload.
         ".config/hypr/hyprland.lua".source = configs/hyprland.lua;
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
-        ".config/nixpkgs/config.nix".source = configs/config.nix;
         ".pi/agent/models.json".source = configs/pi/models.json;
-        ".pi/agent/extensions/italic-yellow.ts".source = configs/pi/extensions/italic-yellow.ts;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
@@ -250,7 +169,6 @@ in {
                 allow_token_by_default = true
             }
         '';
-        ".config/tmux/tmux.conf".source = configs/tmux.conf;
         # Chrome's Auto Dark Mode has no user-facing per-site exception list.
         # This unpacked, CSS-only extension opts Google Docs/Slides out before
         # their page is rendered; load it once from chrome://extensions.
@@ -302,14 +220,15 @@ in {
         };
     };
 
-    programs.git = {
-        enable = true;
-        lfs.enable = true;
-        settings = {
-            user.email = "ryan@balch.io";
-            user.name = "Ryan Balch";
-            core.editor = "vim";
-        };
+    # Personal identity; enable/lfs/editor are shared in cli.nix.
+    programs.git.settings = {
+        user.email = "ryan@balch.io";
+        user.name = "Ryan Balch";
+    };
+
+    # Personal Google Cloud project; kept out of the work (WSL) profile.
+    programs.zsh.sessionVariables = {
+        GOOGLE_CLOUD_PROJECT = "gemini-code-assist-466218";
     };
 
     programs.password-store = {
