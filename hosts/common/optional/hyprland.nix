@@ -1,4 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
+
+let
+    hyprlandPackages = inputs.hyprland-pinned.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in
 
 {
     imports = [ ./xremap.nix ];
@@ -14,6 +18,8 @@
 
     programs.hyprland = {
         enable = true;
+        package = hyprlandPackages.hyprland;
+        portalPackage = hyprlandPackages.xdg-desktop-portal-hyprland;
         xwayland.enable = true;
         withUWSM = true;
     };

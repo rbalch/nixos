@@ -12,7 +12,9 @@
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows = "nixpkgs";
         };
-        hyprland.url = "github:hyprwm/Hyprland";
+        # Keep Hyprland 0.56.2 with Aquamarine 0.14. Aquamarine 0.15 can fail
+        # to redraw DP-1 after DPMS wake on cortex. See TODO.md before updating.
+        hyprland-pinned.url = "github:NixOS/nixpkgs/a831408e6378bc02ebf8cc09b52c96ca86f6bab4";
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         nixos-wsl = {
             url = "github:nix-community/NixOS-WSL/main";
