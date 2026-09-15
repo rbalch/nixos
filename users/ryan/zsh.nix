@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hostName, ... }:
 let
   configThemeNormal = configs/p10k.zsh;
 in
@@ -8,14 +8,11 @@ in
     autosuggestion.enable = true;
     shellAliases = {
       ll = "ls -lah";
-      nix-update = "sudo nixos-rebuild switch";
-      bd = "ssh bd";
+      # Rebuild from the checked-out repo regardless of cwd. hostName comes
+      # from mkHost and always matches the flake output (nix1 included).
+      nix-update = "sudo nixos-rebuild switch --flake ${config.home.homeDirectory}/code/nixos#${hostName}";
     };
     history.size = 10000;
-
-    sessionVariables = {
-      GOOGLE_CLOUD_PROJECT = "gemini-code-assist-466218";
-    };
 
     initContent = ''
       [[ ! -f ${configThemeNormal} ]] || source ${configThemeNormal}

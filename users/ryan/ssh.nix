@@ -1,4 +1,7 @@
 {
+  # Personal hosts only; the work (WSL) profile does not import this file.
+  programs.zsh.shellAliases.bd = "ssh bd";
+
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;

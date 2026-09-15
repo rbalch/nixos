@@ -29,6 +29,12 @@ nixpkgs.lib.nixosSystem {
         hostName = hostname;
       };
       home-manager.users.ryan = import homeModule;
+
+      # cli.nix runs three network installers (120 s cap each) on first
+      # activation; Home Manager's default 5 min unit timeout would SIGKILL
+      # the whole script partway through.
+      systemd.services.home-manager-ryan.serviceConfig.TimeoutStartSec =
+        nixpkgs.lib.mkForce "15min";
     }
   ] ++ modules;
 }

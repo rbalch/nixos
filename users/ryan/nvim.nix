@@ -30,6 +30,7 @@
       ripgrep
       fd
       tree-sitter
+      wl-clipboard # clipboard=unnamedplus provider; works under Hyprland and WSLg
     ];
 
     initLua = builtins.readFile ./configs/nvim/init.lua;

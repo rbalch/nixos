@@ -4,6 +4,19 @@ The flake output, Linux hostname, and WSL distro use `sparq-lappy`. Windows
 can keep its hostname. `wsl -d sparq-lappy` opens a shell in that distro;
 `-d` means distribution.
 
+## Import the distro
+
+Download the latest `nixos.wsl` from the
+[NixOS-WSL releases](https://github.com/nix-community/NixOS-WSL/releases),
+then name the distro so the commands below match:
+
+```powershell
+wsl --install --from-file .\nixos.wsl --name sparq-lappy
+```
+
+Older `wsl` builds without `--from-file` use
+`wsl --import sparq-lappy C:\wsl\sparq-lappy .\nixos.wsl` instead.
+
 ## First build
 
 Commit and push the changes first. These steps assume the default branch
@@ -51,9 +64,9 @@ Home Manager run installs Claude Code, Pi, and Grok outside the Nix store and
 needs network access. Those tools keep their own update paths. Codex and
 Gemini use the same npx wrappers as the desktop hosts.
 
-Home Manager links the shell files before running those installers. An
-installer failure prints a warning; later rebuilds retry missing tools.
-To inspect a first-boot failure, run
+Home Manager links the shell files before running those installers. Each
+installer has a 120 s limit; a failure or timeout prints a warning and later
+rebuilds retry missing tools. To inspect a first-boot failure, run
 `sudo journalctl -b -u home-manager-ryan.service --no-pager -n 100`.
 
 ## Shared tools
@@ -69,9 +82,9 @@ with `docker info`. `make test-docker` checks NVIDIA on the GPU hosts and
 does not apply here.
 
 The config does not copy personal Git identity, SSH keys or host settings,
-cloud login state, or the personal Google Cloud project. The shared `bd`
-shell alias still needs a matching SSH host or DNS name. Set work Git details
-in a writable global file:
+cloud login state, or the personal Google Cloud project. Home Manager owns
+`~/.config/git/config`, so `git config --global` cannot write there; set
+work Git details in `~/.gitconfig`, which Git reads afterwards:
 
 ```sh
 git config --file ~/.gitconfig user.name "Your Name"
@@ -80,7 +93,9 @@ git config --file ~/.gitconfig user.email "you@work.example"
 
 Install and select a Meslo Nerd Font in the Windows terminal app for the
 Powerlevel10k glyphs. Linux shell settings do not set its font or clipboard
-shortcuts.
+shortcuts. Neovim yanks reach the Windows clipboard through wl-clipboard,
+which needs WSLg (`WAYLAND_DISPLAY` set); inside tmux, yanks go to the tmux
+buffer instead.
 
 ## Tailscale
 
@@ -101,8 +116,8 @@ git pull
 make rebuild-sparq-lappy
 ```
 
-`make rebuild` also works once the Linux hostname is `sparq-lappy`.
-The `nix-update` alias uses `~/code/nixos` and the explicit flake output.
+`make rebuild` and the `nix-update` alias also work once the Linux hostname
+is `sparq-lappy`; the alias uses `~/code/nixos` and the explicit flake output.
 Keep the state versions fixed after the first install.
 
 The CLI module adds `~/.local/bin` to PATH. Use a fresh login after PATH

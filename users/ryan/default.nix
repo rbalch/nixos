@@ -6,8 +6,6 @@ let
         packageIndex = inputs.claude-desktop-repo;
     };
 in {
-    home.username = "ryan";
-    home.homeDirectory = "/home/ryan";
     home.stateVersion = "25.11";
 
     imports = [
@@ -125,9 +123,7 @@ in {
         # move so sessions that started with the old parser can still reload.
         ".config/hypr/hyprland.lua".source = configs/hyprland.lua;
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
-        ".config/nixpkgs/config.nix".source = configs/config.nix;
         ".pi/agent/models.json".source = configs/pi/models.json;
-        ".pi/agent/extensions/italic-yellow.ts".source = configs/pi/extensions/italic-yellow.ts;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
@@ -173,7 +169,6 @@ in {
                 allow_token_by_default = true
             }
         '';
-        ".config/tmux/tmux.conf".source = configs/tmux.conf;
         # Chrome's Auto Dark Mode has no user-facing per-site exception list.
         # This unpacked, CSS-only extension opts Google Docs/Slides out before
         # their page is rendered; load it once from chrome://extensions.
@@ -225,14 +220,15 @@ in {
         };
     };
 
-    programs.git = {
-        enable = true;
-        lfs.enable = true;
-        settings = {
-            user.email = "ryan@balch.io";
-            user.name = "Ryan Balch";
-            core.editor = "vim";
-        };
+    # Personal identity; enable/lfs/editor are shared in cli.nix.
+    programs.git.settings = {
+        user.email = "ryan@balch.io";
+        user.name = "Ryan Balch";
+    };
+
+    # Personal Google Cloud project; kept out of the work (WSL) profile.
+    programs.zsh.sessionVariables = {
+        GOOGLE_CLOUD_PROJECT = "gemini-code-assist-466218";
     };
 
     programs.password-store = {

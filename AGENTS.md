@@ -7,8 +7,8 @@ This flake manages five NixOS hosts for one user, `ryan`, using `nixpkgs-unstabl
 - `flake.nix` defines inputs and hosts. Inputs include nixpkgs, Home Manager, Hyprland, nixos-hardware, vscode-server, xremap, Tether, and the Claude Desktop apt index.
 - `lib/mkHost.nix` wires `hosts/<dir>` to `users/ryan`. Its interface is `mkHost hostname { system?, dir?, modules?, homeModule? }`; defaults are `x86_64-linux`, the host name, no extra modules, and `users/ryan` for Home Manager.
 - `mkHost` passes `inputs` and `hostName` to both NixOS and Home Manager. Home Manager uses system packages (`useGlobalPkgs = true`), `useUserPackages = true`, and the backup suffix `hm-backup`.
-- `hosts/common/default.nix` holds shared system settings; `hosts/common/optional/` holds modules that hosts choose to import.
-- `users/ryan/default.nix` holds desktop apps and file mappings. `cli.nix` holds shared CLI tools and install hooks. Other user modules hold editor, shell, SSH, and bar settings.
+- `hosts/common/base.nix` holds boot-free settings for every host; `hosts/common/default.nix` adds native-only settings on top; `hosts/common/optional/` holds modules that hosts choose to import.
+- `users/ryan/default.nix` holds desktop apps, file mappings, and personal identity. `cli.nix` holds shared CLI tools, shared dotfiles, and install hooks. Other user modules hold editor, shell, SSH, and bar settings.
 - `machines/balch-huge/` is a separate nix-darwin flake. Leave it alone unless the task concerns the Mac.
 - Root `configuration.nix` is outside this flake. `make get-config` downloads that file for recovery; don't edit it unless the task concerns that path.
 
@@ -47,11 +47,15 @@ Fresh install: `nixos-install --no-write-lock-file --impure --flake github:rbalc
 | razor | razor | Small host config with Docker and no NVIDIA module; still includes Hyprland and shared desktop apps; NetworkManager; Waybar |
 | sparq-lappy | sparq-lappy | NixOS-WSL on x86_64; CLI tools, Docker, Tailscale, vscode-server; uses `users/ryan/wsl.nix` |
 
-WSL uses its own system defaults. Do not import `hosts/common/default.nix`
-there: it enables a bootloader and desktop services. `users/ryan/cli.nix`
-shares CLI packages and install hooks across desktop and WSL users. Keep
-personal Git, SSH, and cloud settings out of the work profile. See
-`docs/wsl.md` for the first user change, which requires `boot` and WSL restarts.
+`hosts/common/base.nix` holds the boot-free settings every host shares (Nix
+settings, GC, scheduling, zsh, Tailscale, locale, sudo, core packages).
+`hosts/common/default.nix` imports it and adds the bootloader, user account,
+console, printing, and fonts for native hosts. WSL imports `base.nix`
+directly; do not import `default.nix` there. `users/ryan/cli.nix` shares CLI
+packages, dotfiles, Git defaults, and install hooks across desktop and WSL
+users. Keep personal Git identity, SSH hosts, and the Google Cloud project in
+`default.nix`, `ssh.nix`, and out of the work profile. See `docs/wsl.md` for
+the first user change, which requires `boot` and WSL restarts.
 
 Preserve `nix1`'s `dir = "x1"`; use `hostName == "nix1"` in host checks.
 
@@ -117,7 +121,7 @@ Keep `--ozone-platform=wayland`, `--password-store=gnome-libsecret`, and the run
 ### User tools
 
 - Claude Code installs to `~/.local/bin/claude` through a first-run Home Manager hook. Keep this native install and its own update path, rather than a nixpkgs package or npx launch wrapper.
-- Pi and Grok also have first-run install hooks outside the Nix store. Codex and Gemini use npx wrappers in `cli.nix`; their versions are not fixed by `flake.lock`.
+- Pi and Grok also have first-run install hooks outside the Nix store. Each installer is capped at 120 s and `mkHost` raises the Home Manager unit timeout to 15 min. Codex and Gemini use npx wrappers in `cli.nix`; their versions are not fixed by `flake.lock`.
 - `packages/herdr/default.nix` wraps a versioned binary with a fixed hash.
 - Handy excludes brain-dongle. Its override keeps ONNX Runtime on CPU to avoid the global CUDA rebuild, and a local patch adjusts its vLLM reasoning setting. Preserve the reasons in the adjacent comments.
 

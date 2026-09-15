@@ -1,76 +1,33 @@
 { config, lib, pkgs, hostName, ... }:
 
 {
+  imports = [ ./base.nix ];
+
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 5;
 
-  # Nix settings
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.auto-optimise-store = true;
-  nixpkgs.config.allowUnfree = lib.mkDefault true;
-
-  # Yield to interactive work — nix-daemon runs at idle CPU/IO priority,
-  # so big builds (orca-slicer, kernels, etc.) can't smother the desktop.
-  nix.daemonCPUSchedPolicy = "idle";
-  nix.daemonIOSchedClass = "idle";
-
-  # Garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 1w";
-  };
-
-  # User account
-  programs.zsh.enable = true;
   services.udisks2.enable = true;
 
-  # Join each host with `sudo tailscale up` after its first rebuild.
-  # State stays in /var/lib/tailscale, so later rebuilds keep the login.
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;
-  };
-
+  # User account
   users.users.ryan = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "docker" "input" "libvirtd" "kvm" ];
     shell = pkgs.zsh;
   };
 
-  # Locale
-  i18n.defaultLocale = "en_US.UTF-8";
+  # Console
   console = {
     packages = [ pkgs.terminus_font ];
     font = "${pkgs.terminus_font}/share/consolefonts/ter-i28b.psf.gz";
     useXkbConfig = true;
   };
 
-  # Timezone
-  time.timeZone = "America/New_York";
-
-  # Sudo
-  security.sudo.extraRules = [
-    {
-      users = [ "ryan" ];
-      commands = [
-        {
-          command = "ALL";
-          options = [ "NOPASSWD" ];
-        }
-      ];
-    }
-  ];
-
-  # Baseline system packages shared by every host
+  # Desktop-only system packages; the CLI baseline lives in base.nix
   environment.systemPackages = with pkgs; [
     bubblewrap
-    curl
-    htop
     imagemagick
-    jq
     nvtopPackages.full
   ];
 
