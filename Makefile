@@ -101,6 +101,9 @@ camera-list-controls: ## List all v4l2 camera controls
 camera-lighten: ## Brighten the webcam (brightness/backlight/gain up)
 	v4l2-ctl --set-ctrl=brightness=180 --set-ctrl=backlight_compensation=1 --set-ctrl=gain=50
 
+camera-darken: ## Darken the webcam (brightness down, backlight/gain off)
+	v4l2-ctl --set-ctrl=brightness=76 --set-ctrl=backlight_compensation=0 --set-ctrl=gain=0
+
 camera-reset: ## Reset the webcam controls to defaults
 	v4l2-ctl --set-ctrl=brightness=128 --set-ctrl=backlight_compensation=0 --set-ctrl=gain=0
 
@@ -124,5 +127,5 @@ restart-idle: ## Manually restart hypridle (screen off timer)
 .PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex rebuild-sparq-lappy \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
-	kill-share-picker camera-list-controls camera-lighten camera-reset mic-up mic-down \
+	kill-share-picker camera-list-controls camera-lighten camera-darken camera-reset mic-up mic-down \
 	check-kernel-bump restart-idle
