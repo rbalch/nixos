@@ -5,8 +5,50 @@ let
         inherit pkgs;
         packageIndex = inputs.claude-desktop-repo;
     };
+    # appimage-run's custom entry point does not forward arguments. Pass them
+    # as Bash-quoted words, then clear APPIMAGE so Grok leaves desktop setup
+    # to Home Manager and removes its old direct-AppImage menu entry.
+    grok-bot-entry = pkgs.writeShellScript "grok-bot-entry" ''
+        eval "set -- $GROK_BOT_ARGS"
+        unset APPIMAGE GROK_BOT_ARGS APPIMAGE_DEBUG_EXEC
+        exec "$APPDIR/grok-bot" "$@"
+    '';
+    # Keep the official app writable under ~/.local; appimage-run supplies
+    # its Linux runtime on NixOS. Check the first download before running it.
+    grok-bot = pkgs.writeShellScriptBin "grok-bot" ''
+        set -euo pipefail
+        app="$HOME/.local/share/grok-bot/Grok_Bot.AppImage"
+        if [ ! -f "$app" ]; then
+            ${pkgs.coreutils}/bin/mkdir -p "$(dirname "$app")"
+            download="$(${pkgs.coreutils}/bin/mktemp "$app.XXXXXX")"
+            trap 'rm -f "$download"' EXIT
+            ${pkgs.curl}/bin/curl -fL --connect-timeout 10 --max-time 300 \
+                https://downloads.cursor.com/grokbot/stable/c4074f405d36a56b406f11cc6485404ff8b395eb/linux/x64/Grok_Bot_0.57.1.AppImage \
+                -o "$download"
+            printf '%s  %s\n' \
+                1f3d8fd46125520b1b0eb6312c2cc1b3adf2c86c998c2e30a1bfed4f4c4c46f4 \
+                "$download" | ${pkgs.coreutils}/bin/sha256sum -c -
+            ${pkgs.coreutils}/bin/chmod +x "$download"
+            ${pkgs.coreutils}/bin/mv "$download" "$app"
+        fi
+        printf -v GROK_BOT_ARGS '%q ' \
+            --ozone-platform=wayland --password-store=gnome-libsecret "$@"
+        export GROK_BOT_ARGS
+        export APPIMAGE_DEBUG_EXEC=${grok-bot-entry}
+        exec ${pkgs.appimage-run}/bin/appimage-run "$app"
+    '';
 in {
     home.stateVersion = "25.11";
+
+    xdg.desktopEntries.grok-bot = lib.mkIf (lib.elem hostName [ "cortex" "nix1" ]) {
+        name = "Grok Bot";
+        comment = "Work with Grok agents on their cloud computer";
+        exec = "${grok-bot}/bin/grok-bot %U";
+        terminal = false;
+        categories = [ "Development" ];
+        mimeType = [ "x-scheme-handler/grokbot" "x-scheme-handler/sand" ];
+        settings.StartupWMClass = "grok-bot";
+    };
 
     imports = [
         ./cli.nix
@@ -73,6 +115,7 @@ in {
     # hostName is nix1 even though that host's config directory is x1.
     ++ lib.optionals (lib.elem hostName [ "cortex" "nix1" ]) [
         claude-desktop
+        grok-bot
     ]
     ++ [
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -217,6 +260,9 @@ in {
             "x-scheme-handler/claude" = "claude.desktop";
             "x-scheme-handler/slack" = "slack.desktop";
             "x-scheme-handler/figma" = "figma-linux.desktop";
+        } // lib.optionalAttrs (lib.elem hostName [ "cortex" "nix1" ]) {
+            "x-scheme-handler/grokbot" = "grok-bot.desktop";
+            "x-scheme-handler/sand" = "grok-bot.desktop";
         };
     };
 
