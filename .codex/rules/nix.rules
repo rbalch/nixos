@@ -4,8 +4,8 @@ prefix_rule(
     decision = "allow",
     justification = "This repository's Nix evaluations and builds are trusted.",
     match = [
-        "nix eval .#nixosConfigurations.cortex.config.system.build.toplevel.drvPath",
-        "nix build .#nixosConfigurations.cortex.config.system.build.toplevel",
+        "nix eval",
+        "nix build",
     ],
     not_match = [
         "nix flake update",
