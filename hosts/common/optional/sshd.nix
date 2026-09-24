@@ -6,6 +6,12 @@
         # require public key authentication for better security
         settings.PasswordAuthentication = false;
         settings.KbdInteractiveAuthentication = false;
+        # Reap sessions whose client vanished. Without this a dropped reverse
+        # tunnel (sparq-lappy sleeping or changing networks) leaves its
+        # forwarded port bound to the dead session, and every reconnect fails
+        # on ExitOnForwardFailure until the stale sshd is killed by hand.
+        settings.ClientAliveInterval = 30;
+        settings.ClientAliveCountMax = 3;
         #settings.PermitRootLogin = "yes";
     };
 

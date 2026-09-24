@@ -50,6 +50,17 @@
     };
   };
 
+  # Rendezvous key for sparq-lappy's reverse tunnel. That host cannot accept
+  # inbound SSH (the Hyper-V firewall blocks it and opening it needs admin
+  # rights the work account lacks), so it dials in here and binds port 2222
+  # on loopback. Kept out of common/optional/sshd.nix because cortex shares
+  # that file and has no reason to trust this key. `restrict` drops every
+  # privilege, then only port forwarding comes back, and permitlisten pins it
+  # to the one port: this key cannot open a shell.
+  users.users.ryan.openssh.authorizedKeys.keys = [
+    ''restrict,port-forwarding,permitlisten="2222" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDkxj6RgdQycayr0rL7WVVHHHRrxT6i5YrrRD8u42+oF ryan@sparq-lappy''
+  ];
+
   # stop google-chrome vscode scaling (looks blurry otherwise)
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
