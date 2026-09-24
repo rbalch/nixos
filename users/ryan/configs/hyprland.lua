@@ -6,8 +6,7 @@ hl.on("hyprland.start", function()
     -- No-op on Cortex, where Wayle owns awww. Other hosts still use Waybar.
     hl.exec_cmd("~/.config/hypr/start-wallpaper.sh")
     hl.exec_cmd("hyprctl setcursor GoogleDot-Blue 28")
-    hl.exec_cmd("code", { workspace = "1 silent" })
-    hl.exec_cmd("google-chrome-stable", { workspace = "1 silent" })
+    hl.exec_cmd("~/.config/hypr/start-session.sh lua")
     hl.exec_cmd("handy") -- dictation daemon; toggle recording with Hyper+Space
     hl.exec_cmd("~/.config/hypr/start-blueman-applet.sh")
     hl.exec_cmd("~/.config/hypr/portal-resize.sh")

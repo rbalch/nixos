@@ -8,7 +8,14 @@ case "$choice" in
   Lock)         loginctl lock-session ;;
   "Screen Off") loginctl lock-session && sleep 0.5 && hyprctl dispatch 'hl.dsp.dpms({ action = "off" })' ;;
   Suspend)      loginctl lock-session && sleep 0.5 && systemctl suspend ;;
-  Logout)       hyprctl dispatch exit ;;
-  Reboot)       systemctl reboot ;;
-  Shutdown)     systemctl poweroff ;;
+  Logout|Reboot|Shutdown)
+    # Keep a named copy from before windows close. The daemon's automatic
+    # 'last' save can catch only part of the logout sequence.
+    hypr-persist save before-exit || true
+    case "$choice" in
+      Logout)   hyprctl dispatch exit ;;
+      Reboot)   systemctl reboot ;;
+      Shutdown) systemctl poweroff ;;
+    esac
+    ;;
 esac
