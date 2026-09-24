@@ -5,8 +5,33 @@ let
         inherit pkgs;
         packageIndex = inputs.claude-desktop-repo;
     };
+    # appimage-run's custom entry point does not forward arguments. Pass them
+    # as Bash-quoted words, then clear APPIMAGE so Grok leaves desktop setup
+    # to Home Manager and removes its old direct-AppImage menu entry.
+    grok-bot-entry = pkgs.writeShellScript "grok-bot-entry" ''
+        eval "set -- $GROK_BOT_ARGS"
+        unset APPIMAGE GROK_BOT_ARGS APPIMAGE_DEBUG_EXEC
+        exec "$APPDIR/grok-bot" "$@"
+    '';
+    # Keep the official app writable under ~/.local; appimage-run supplies
+    # its Linux runtime on NixOS. The script also handles verified updates.
+    grok-bot = pkgs.writeShellScriptBin "grok-bot" ''
+        export PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.curl pkgs.jq pkgs.util-linux pkgs.appimage-run ]}:"$PATH"
+        export APPIMAGE_DEBUG_EXEC=${grok-bot-entry}
+        ${builtins.readFile ./configs/grok-bot.sh}
+    '';
 in {
     home.stateVersion = "25.11";
+
+    xdg.desktopEntries.grok-bot = lib.mkIf (lib.elem hostName [ "cortex" "nix1" ]) {
+        name = "Grok Bot";
+        comment = "Work with Grok agents on their cloud computer";
+        exec = "${grok-bot}/bin/grok-bot %U";
+        terminal = false;
+        categories = [ "Development" ];
+        mimeType = [ "x-scheme-handler/grokbot" "x-scheme-handler/sand" ];
+        settings.StartupWMClass = "grok-bot";
+    };
 
     imports = [
         ./cli.nix
@@ -73,6 +98,7 @@ in {
     # hostName is nix1 even though that host's config directory is x1.
     ++ lib.optionals (lib.elem hostName [ "cortex" "nix1" ]) [
         claude-desktop
+        grok-bot
     ]
     ++ [
         (pkgs.writeShellScriptBin "docker-stop" ''
@@ -217,6 +243,9 @@ in {
             "x-scheme-handler/claude" = "claude.desktop";
             "x-scheme-handler/slack" = "slack.desktop";
             "x-scheme-handler/figma" = "figma-linux.desktop";
+        } // lib.optionalAttrs (lib.elem hostName [ "cortex" "nix1" ]) {
+            "x-scheme-handler/grokbot" = "grok-bot.desktop";
+            "x-scheme-handler/sand" = "grok-bot.desktop";
         };
     };
 
