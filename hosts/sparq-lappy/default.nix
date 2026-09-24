@@ -60,7 +60,12 @@
   programs.nix-ld.enable = true;
   users.users.ryan.shell = pkgs.zsh;
 
-  environment.systemPackages = with pkgs; [ git gnumake vim ];
+  # ghostty.terminfo is for inbound SSH, not a local terminal: clients carry
+  # their own TERM, and a Ghostty client sends xterm-ghostty. Without the
+  # entry the prompt falls back to a minimal color set and Powerlevel10k
+  # draws its separators with no segment backgrounds. cortex and
+  # brain-dongle ship it for the same reason.
+  environment.systemPackages = with pkgs; [ ghostty.terminfo git gnumake vim ];
 
   # Keep this fixed after the first install; it controls state compatibility.
   system.stateVersion = "26.11";
