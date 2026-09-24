@@ -1,3 +1,5 @@
+{ hostName, lib, ... }:
+
 {
   # Personal hosts only; the work (WSL) profile does not import this file.
   programs.zsh.shellAliases.bd = "ssh bd";
@@ -10,6 +12,10 @@
       "*" = {
         forwardAgent = false;
         hashKnownHosts = true;
+        # Carry the truecolor hint to hosts that accept it; servers ignore
+        # variables they do not list in AcceptEnv, so this is safe to send
+        # everywhere. See hosts/common/optional/sshd.nix for the other end.
+        sendEnv = [ "COLORTERM" ];
         controlMaster = "auto";
         controlPath = "~/.ssh/master-%r@%h:%p";
         controlPersist = "10s";
@@ -24,6 +30,19 @@
         user = "ryan";
         identityFile = "~/.ssh/zxrbzx";
       };
+      # sparq-lappy cannot accept inbound SSH, so it holds a reverse tunnel
+      # open on bd's loopback port 2222. bd reaches that directly; everyone
+      # else hops through bd to get to it. The tunnel is up only while the
+      # WSL distro is running, and only on the home LAN.
+      "sparq-lappy" = {
+        hostname = "localhost";
+        port = 2222;
+        user = "ryan";
+        identityFile = "~/.ssh/zxrbzx";
+        # localhost:2222 would otherwise collide with unrelated known_hosts
+        # entries for the loopback address.
+        HostKeyAlias = "sparq-lappy";
+      } // lib.optionalAttrs (hostName != "brain-dongle") { proxyJump = "bd"; };
       "github.com" = {
         hostname = "github.com";
         user = "git";

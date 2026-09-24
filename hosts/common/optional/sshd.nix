@@ -6,6 +6,18 @@
         # require public key authentication for better security
         settings.PasswordAuthentication = false;
         settings.KbdInteractiveAuthentication = false;
+        # Reap sessions whose client vanished. Without this a dropped reverse
+        # tunnel (sparq-lappy sleeping or changing networks) leaves its
+        # forwarded port bound to the dead session, and every reconnect fails
+        # on ExitOnForwardFailure until the stale sshd is killed by hand.
+        settings.ClientAliveInterval = 30;
+        settings.ClientAliveCountMax = 3;
+        # Let clients carry their truecolor hint through. The ghostty
+        # terminfo already advertises 24-bit via Tc/setrgbf/setrgbb, but a
+        # good many tools read $COLORTERM instead of asking terminfo, and
+        # sshd drops the whole environment unless a variable is listed here.
+        # Paired with sendEnv in users/ryan/ssh.nix; both ends are required.
+        settings.AcceptEnv = [ "COLORTERM" ];
         #settings.PermitRootLogin = "yes";
     };
 
