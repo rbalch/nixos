@@ -14,28 +14,11 @@ let
         exec "$APPDIR/grok-bot" "$@"
     '';
     # Keep the official app writable under ~/.local; appimage-run supplies
-    # its Linux runtime on NixOS. Check the first download before running it.
+    # its Linux runtime on NixOS. The script also handles verified updates.
     grok-bot = pkgs.writeShellScriptBin "grok-bot" ''
-        set -euo pipefail
-        app="$HOME/.local/share/grok-bot/Grok_Bot.AppImage"
-        if [ ! -f "$app" ]; then
-            ${pkgs.coreutils}/bin/mkdir -p "$(dirname "$app")"
-            download="$(${pkgs.coreutils}/bin/mktemp "$app.XXXXXX")"
-            trap 'rm -f "$download"' EXIT
-            ${pkgs.curl}/bin/curl -fL --connect-timeout 10 --max-time 300 \
-                https://downloads.cursor.com/grokbot/stable/c4074f405d36a56b406f11cc6485404ff8b395eb/linux/x64/Grok_Bot_0.57.1.AppImage \
-                -o "$download"
-            printf '%s  %s\n' \
-                1f3d8fd46125520b1b0eb6312c2cc1b3adf2c86c998c2e30a1bfed4f4c4c46f4 \
-                "$download" | ${pkgs.coreutils}/bin/sha256sum -c -
-            ${pkgs.coreutils}/bin/chmod +x "$download"
-            ${pkgs.coreutils}/bin/mv "$download" "$app"
-        fi
-        printf -v GROK_BOT_ARGS '%q ' \
-            --ozone-platform=wayland --password-store=gnome-libsecret "$@"
-        export GROK_BOT_ARGS
+        export PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.curl pkgs.jq pkgs.util-linux pkgs.appimage-run ]}:"$PATH"
         export APPIMAGE_DEBUG_EXEC=${grok-bot-entry}
-        exec ${pkgs.appimage-run}/bin/appimage-run "$app"
+        ${builtins.readFile ./configs/grok-bot.sh}
     '';
 in {
     home.stateVersion = "25.11";

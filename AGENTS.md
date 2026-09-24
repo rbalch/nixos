@@ -120,6 +120,10 @@ Keep `--ozone-platform=wayland`, `--password-store=gnome-libsecret`, and the run
 
 ### User tools
 
+- Grok Bot is separate from the Grok coding CLI. Its local AppImage uses
+  `grok-bot update`; see `docs/grok-bot.md`. Keep its NixOS wrapper and
+  Home Manager menu entry: upstream AppImage menu setup bypasses the runtime.
+  Clearing `APPIMAGE` prevents that setup but also disables in-app updates.
 - Claude Code installs to `~/.local/bin/claude` through a first-run Home Manager hook. Keep this native install and its own update path, rather than a nixpkgs package or npx launch wrapper.
 - Pi and Grok also have first-run install hooks outside the Nix store. Each installer is capped at 120 s and `mkHost` raises the Home Manager unit timeout to 15 min. Codex and Gemini use npx wrappers in `cli.nix`; their versions are not fixed by `flake.lock`.
 - `packages/herdr/default.nix` wraps a versioned binary with a fixed hash.
