@@ -1,6 +1,10 @@
 { config, inputs, lib, pkgs, hostName, ... }:
 
 let
+    hypr-persist = import ../../packages/hypr-persist {
+        inherit pkgs;
+        src = inputs.hypr-persist;
+    };
     claude-desktop = import ../../packages/claude-desktop {
         inherit pkgs;
         packageIndex = inputs.claude-desktop-repo;
@@ -57,6 +61,7 @@ in {
         google-chrome
         google-cursor
         hyprlock
+        hypr-persist
         nwg-look
         slack
         zoom-us
@@ -153,6 +158,30 @@ in {
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
+        # Centered master is not handled by hypr-persist's layout restore.
+        # Workspaces and floating geometry still restore.
+        ".config/hypr/hypr-persist.toml".text = ''
+            [general]
+            restore_layout = false
+        '';
+        ".config/hypr/start-session.sh" = {
+            executable = true;
+            text = ''
+                #!${pkgs.runtimeShell}
+                # A fresh install has no saved session. Start the usual apps
+                # once; after that the daemon restores the saved windows.
+                if [ ! -s "$HOME/.local/share/hypr-persist/sessions/last.toml" ]; then
+                    if [ "''${1:-}" = lua ]; then
+                        hyprctl dispatch 'hl.dsp.exec_cmd("code", { workspace = "1 silent" })'
+                        hyprctl dispatch 'hl.dsp.exec_cmd("google-chrome-stable", { workspace = "1 silent" })'
+                    else
+                        hyprctl dispatch exec '[workspace 1 silent] code'
+                        hyprctl dispatch exec '[workspace 1 silent] google-chrome-stable'
+                    fi
+                fi
+                exec ${hypr-persist}/bin/hypr-persist
+            '';
+        };
         ".config/hypr/snap.sh" = { source = configs/hypr/snap.sh; executable = true; };
         ".config/hypr/power-menu.sh" = { source = configs/hypr/power-menu.sh; executable = true; };
         ".config/hypr/keybindings-menu.sh" = { source = configs/hypr/keybindings-menu.sh; executable = true; };

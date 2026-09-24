@@ -99,6 +99,23 @@
         "type": "github"
       }
     },
+    "hypr-persist": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785372293,
+        "narHash": "sha256-Nh2+JpQQW6qi2ULUGjJyqhN8/3AKRHjlpHOXiVeD6h0=",
+        "owner": "ngamber",
+        "repo": "hypr-persist",
+        "rev": "31836057e09b46d8d32645dbb75035f31164dd5f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ngamber",
+        "repo": "hypr-persist",
+        "rev": "31836057e09b46d8d32645dbb75035f31164dd5f",
+        "type": "github"
+      }
+    },
     "hyprland-pinned": {
       "locked": {
         "lastModified": 1787364730,
@@ -234,6 +251,7 @@
       "inputs": {
         "claude-desktop-repo": "claude-desktop-repo",
         "home-manager": "home-manager",
+        "hypr-persist": "hypr-persist",
         "hyprland-pinned": "hyprland-pinned",
         "nixos-hardware": "nixos-hardware",
         "nixos-wsl": "nixos-wsl",
