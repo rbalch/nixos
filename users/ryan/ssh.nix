@@ -12,6 +12,10 @@
       "*" = {
         forwardAgent = false;
         hashKnownHosts = true;
+        # Carry the truecolor hint to hosts that accept it; servers ignore
+        # variables they do not list in AcceptEnv, so this is safe to send
+        # everywhere. See hosts/common/optional/sshd.nix for the other end.
+        sendEnv = [ "COLORTERM" ];
         controlMaster = "auto";
         controlPath = "~/.ssh/master-%r@%h:%p";
         controlPersist = "10s";
