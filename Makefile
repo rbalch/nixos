@@ -124,8 +124,18 @@ update-claude-desktop: ## Fetch the latest version of claude desktop
 restart-idle: ## Manually restart hypridle (screen off timer)
 	systemctl --user restart hypridle
 
+# Restart=always means a stop is the only way to quiet the retry loop while
+# brain-dongle lacks the key; a start is otherwise unnecessary, since the
+# unit comes up with the distro.
+sparq-tunnel-start: ## Start the reverse SSH tunnel to brain-dongle (sparq-lappy)
+	sudo systemctl start reverse-tunnel
+	-@systemctl status reverse-tunnel --no-pager --lines=0
+
+sparq-tunnel-stop: ## Stop the reverse SSH tunnel to brain-dongle (sparq-lappy)
+	sudo systemctl stop reverse-tunnel
+
 .PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex rebuild-sparq-lappy \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
 	kill-share-picker camera-list-controls camera-lighten camera-darken camera-reset mic-up mic-down \
-	check-kernel-bump restart-idle
+	check-kernel-bump restart-idle sparq-tunnel-start sparq-tunnel-stop
