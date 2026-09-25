@@ -65,7 +65,7 @@
   # entry the prompt falls back to a minimal color set and Powerlevel10k
   # draws its separators with no segment backgrounds. cortex and
   # brain-dongle ship it for the same reason.
-  environment.systemPackages = with pkgs; [ ghostty.terminfo git gnumake vim ];
+  environment.systemPackages = with pkgs; [ ghostty.terminfo git gnumake python3 uv vim ];
 
   # Keep this fixed after the first install; it controls state compatibility.
   system.stateVersion = "26.11";
