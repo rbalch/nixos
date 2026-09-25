@@ -53,8 +53,9 @@ settings, GC, scheduling, zsh, Tailscale, locale, sudo, core packages).
 console, printing, and fonts for native hosts. WSL imports `base.nix`
 directly; do not import `default.nix` there. `users/ryan/cli.nix` shares CLI
 packages, dotfiles, Git defaults, and install hooks across desktop and WSL
-users. Keep personal Git identity, SSH hosts, and the Google Cloud project in
-`default.nix`, `ssh.nix`, and out of the work profile. See `docs/wsl.md` for
+users. `users/ryan/ssh.nix` is shared too, so every host gets the same
+`~/.ssh/config`. Keep personal Git identity and the Google Cloud project in
+`default.nix` and out of the work profile. See `docs/wsl.md` for
 the first user change, which requires `boot` and WSL restarts.
 
 Preserve `nix1`'s `dir = "x1"`; use `hostName == "nix1"` in host checks.

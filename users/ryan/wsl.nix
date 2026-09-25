@@ -1,10 +1,10 @@
 { pkgs, ... }:
 
-# Work profile for NixOS-WSL. Shares the CLI tools, shell, and editor with
-# the desktop profile but leaves out personal apps, SSH hosts, cloud
+# Work profile for NixOS-WSL. Shares the CLI tools, shell, editor, and SSH
+# hosts with the desktop profile but leaves out personal apps, the cloud
 # project, and Git identity.
 {
-  imports = [ ./cli.nix ./zsh.nix ./nvim.nix ];
+  imports = [ ./cli.nix ./zsh.nix ./nvim.nix ./ssh.nix ];
 
   home.stateVersion = "26.11";
 

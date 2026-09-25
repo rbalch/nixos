@@ -1,7 +1,8 @@
 { hostName, lib, ... }:
 
 {
-  # Personal hosts only; the work (WSL) profile does not import this file.
+  # Imported by the desktop profile and by the work (WSL) profile, so the
+  # same ~/.ssh/config reaches every host.
   programs.zsh.shellAliases.bd = "ssh bd";
 
   programs.ssh = {
@@ -49,10 +50,12 @@
         identityFile = "~/.ssh/github-eviltandem";
         identitiesOnly = true;
       };
-      "huge.github" = {
+      # Work GitHub account. Separate entry so the personal key above stays
+      # the default for github.com; clone with `git@github.sparq:org/repo`.
+      "github.sparq" = {
         hostname = "github.com";
         user = "git";
-        identityFile = "~/.ssh/github-huge";
+        identityFile = "~/.ssh/github-sparq";
         identitiesOnly = true;
       };
       "huggingface" = {

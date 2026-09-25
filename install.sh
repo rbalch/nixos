@@ -55,7 +55,7 @@ get_ssh() {
 
     get_doc "ssh/zxrbzx" "$HOME/.ssh/zxrbzx" 600
     get_doc "ssh/github-eviltandem" "$HOME/.ssh/github-eviltandem" 600
-    get_doc "ssh/github-huge" "$HOME/.ssh/github-huge" 600
+    get_doc "ssh/github-sparq" "$HOME/.ssh/github-sparq" 600
     get_doc "ssh/ngrok.yml" "$HOME/.config/ngrok/ngrok.yml"
     get_doc "ssh/huggingface" "$HOME/.ssh/huggingface" 600
 }
