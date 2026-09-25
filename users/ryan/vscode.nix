@@ -20,6 +20,12 @@
                 remote.autoForwardPorts = false;
                 python.terminal.shellIntegration.enabled = false;
                 python.terminal.useEnvFile = false;
+                # markdown-mermaid 1.32's pan/zoom wrapper centers the diagram
+                # before the preview has its real width, so the first render
+                # lands out of view (blank until the file is edited).
+                "markdown-mermaid.mouseNavigation.enabled" = "never";
+                "markdown-mermaid.controls.show" = "never";
+                "markdown-mermaid.resizable" = false;
                 # Super belongs to Hyprland; let VSCode handle the usual
                 # Linux edit keys instead of giving them to the Vim plugin.
                 vim.handleKeys = {
