@@ -24,7 +24,13 @@
       "bd"  = {
         hostname = "10.13.37.42";
         user = "ryan";
-        identityFile = "~/.ssh/zxrbzx";
+        # sparq-lappy is a work laptop and holds no copy of the personal key,
+        # so it reuses the key it already has for the reverse tunnel.
+        # hosts/brain-dongle/default.nix grants that key `pty` to allow it.
+        identityFile =
+          if hostName == "sparq-lappy"
+          then "~/.ssh/id_ed25519"
+          else "~/.ssh/zxrbzx";
       };
       "dgx" = {
         hostname = "dgx.braindongle.com";

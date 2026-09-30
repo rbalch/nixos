@@ -55,10 +55,13 @@
   # rights the work account lacks), so it dials in here and binds port 2222
   # on loopback. Kept out of common/optional/sshd.nix because cortex shares
   # that file and has no reason to trust this key. `restrict` drops every
-  # privilege, then only port forwarding comes back, and permitlisten pins it
-  # to the one port: this key cannot open a shell.
+  # privilege, then port forwarding and pty come back, and permitlisten pins
+  # the forward to the one port. pty is granted because sparq-lappy carries no
+  # copy of the personal key, so users/ryan/ssh.nix points its `bd` entry at
+  # this same key for interactive logins. Agent forwarding, X11 and user-rc
+  # stay off.
   users.users.ryan.openssh.authorizedKeys.keys = [
-    ''restrict,port-forwarding,permitlisten="2222" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDkxj6RgdQycayr0rL7WVVHHHRrxT6i5YrrRD8u42+oF ryan@sparq-lappy''
+    ''restrict,port-forwarding,pty,permitlisten="2222" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDkxj6RgdQycayr0rL7WVVHHHRrxT6i5YrrRD8u42+oF ryan@sparq-lappy''
   ];
 
   # stop google-chrome vscode scaling (looks blurry otherwise)

@@ -41,9 +41,14 @@
       # a dead link within ~90 s so Restart picks it up. ExitOnForwardFailure
       # matters because without it a refused port bind still yields a live
       # connection with no tunnel, which systemd would see as healthy.
+      # ControlPath=none opts out of the ControlMaster/ControlPersist settings
+      # in users/ryan/ssh.nix; sharing would make `ssh -N` fork into the
+      # background (ExecStart "succeeds", systemd restarts) and then tear the
+      # forward down once ControlPersist expired.
       ExecStart = ''
         ${pkgs.openssh}/bin/ssh -NT \
           -o ExitOnForwardFailure=yes \
+          -o ControlPath=none \
           -o ServerAliveInterval=30 \
           -o ServerAliveCountMax=3 \
           -o StrictHostKeyChecking=accept-new \
