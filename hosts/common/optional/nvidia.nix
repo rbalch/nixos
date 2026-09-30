@@ -30,10 +30,11 @@
   nixpkgs.config.cudaSupport = true;
 
   # Pre-built CUDA-enabled binaries — avoids local rebuilds of opencv/ffmpeg/etc.
+  # The old cuda-maintainers.cachix.org cache was deleted in Sept 2026 (HTTP 401).
   nix.settings = {
-    extra-substituters = [ "https://cuda-maintainers.cachix.org" ];
+    extra-substituters = [ "https://cache.nixos-cuda.org" ];
     extra-trusted-public-keys = [
-      "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
     ];
   };
 

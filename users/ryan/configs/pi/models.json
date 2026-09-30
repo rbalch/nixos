@@ -7,21 +7,23 @@
       "compat": {
         "supportsDeveloperRole": false,
         "supportsReasoningEffort": false,
-        "thinkingFormat": "chat-template",
-        "chatTemplateKwargs": {
-          "enable_thinking": { "$var": "thinking.enabled" },
-          "preserve_thinking": true,
-          "reasoning_effort": {
-            "$var": "thinking.effort",
-            "omitWhenOff": true
-          }
-        }
+        "thinkingFormat": "chat-template"
       },
       "models": [
         {
           "id": "qwen3.8-27b",
           "name": "Qwen3.8 27B on DGX",
           "reasoning": true,
+          "compat": {
+            "chatTemplateKwargs": {
+              "enable_thinking": { "$var": "thinking.enabled" },
+              "preserve_thinking": true,
+              "reasoning_effort": {
+                "$var": "thinking.effort",
+                "omitWhenOff": true
+              }
+            }
+          },
           "thinkingLevelMap": {
             "minimal": null,
             "low": "low",
@@ -40,6 +42,37 @@
             "min_p": 0.0,
             "presence_penalty": 0.0,
             "repetition_penalty": 1.0
+          },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "nemotron-3-nano",
+          "name": "Nemotron 3 Nano on DGX",
+          "reasoning": true,
+          "compat": {
+            "chatTemplateKwargs": {
+              "enable_thinking": { "$var": "thinking.enabled" }
+            }
+          },
+          "thinkingLevelMap": {
+            "minimal": null,
+            "low": "enabled",
+            "medium": null,
+            "high": null,
+            "xhigh": null,
+            "max": null
+          },
+          "input": ["text"],
+          "contextWindow": 262144,
+          "maxTokens": 32768,
+          "samplingParams": {
+            "temperature": 0.6,
+            "top_p": 0.95
           },
           "cost": {
             "input": 0,
