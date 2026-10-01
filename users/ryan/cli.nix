@@ -104,7 +104,26 @@ in {
         ".config/nixpkgs/config.nix".source = ./configs/config.nix;
         ".config/tmux/tmux.conf".source = ./configs/tmux.conf;
         ".pi/agent/extensions/italic-yellow.ts".source = ./configs/pi/extensions/italic-yellow.ts;
+        ".claude/statusline.sh".source = ./configs/claude/statusline.sh;
     };
+
+    # Claude Code rewrites settings.json itself, so merge only the statusLine
+    # key instead of linking a read-only file from the store.
+    home.activation.claudeStatusLine = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+        settings="$HOME/.claude/settings.json"
+        statusLine='{"type":"command","command":"cat | bash ~/.claude/statusline.sh"}'
+        run mkdir -p "$HOME/.claude"
+        [ -s "$settings" ] || run sh -c 'echo "{}" > "$1"' _ "$settings"
+        if ! ${pkgs.jq}/bin/jq -e --argjson s "$statusLine" '.statusLine == $s' "$settings" >/dev/null 2>&1; then
+            tmp="$(${pkgs.coreutils}/bin/mktemp)"
+            if ${pkgs.jq}/bin/jq --argjson s "$statusLine" '.statusLine = $s' "$settings" > "$tmp"; then
+                run mv "$tmp" "$settings"
+            else
+                rm -f "$tmp"
+                printf '%s\n' "Warning: could not merge statusLine into $settings (invalid JSON?)" >&2
+            fi
+        fi
+    '';
 
     # Identity (user.name/email) is per profile: users/ryan/default.nix for
     # personal hosts; ~/.gitconfig on work hosts (see docs/wsl.md).
