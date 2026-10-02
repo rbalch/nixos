@@ -3,30 +3,8 @@
 let
     herdr = pkgs.callPackage ../../packages/herdr { };
 
-    # Finish Home Manager's files and packages before downloading extra CLIs.
-    # Run each installer in its own shell with a hard time limit so a failed
-    # or stalled download cannot abort activation or hit the unit timeout.
-    installerTimeout = 120;
-    bootstrap = name: commands:
-        let installer = pkgs.writeShellScript "bootstrap-${name}" ''
-            set -euo pipefail
-            export PATH=${lib.makeBinPath [ pkgs.nodejs_24 pkgs.bash pkgs.coreutils ]}:"$PATH"
-            ${commands}
-        '';
-        in lib.hm.dag.entryAfter [ "linkGeneration" "installPackages" ] ''
-            if [ ! -x "$HOME/.local/bin/${name}" ]; then
-                if run ${pkgs.coreutils}/bin/timeout ${toString installerTimeout} ${installer}; then
-                    :
-                else
-                    status=$?
-                    if [ "$status" -eq 124 ]; then
-                        printf '%s\n' "Warning: ${name} install timed out after ${toString installerTimeout}s; the next rebuild will retry if it is still missing." >&2
-                    else
-                        printf '%s\n' "Warning: ${name} install failed (exit $status); the next rebuild will retry if it is still missing." >&2
-                    fi
-                fi
-            fi
-        '';
+    # Network installers for CLIs that update themselves; see lib/hm-bootstrap.nix.
+    bootstrap = import ../../lib/hm-bootstrap.nix { inherit lib pkgs; };
 
     # Codex calls this after a turn. BEL lets the active terminal choose how
     # to alert instead of tying Codex to a desktop sound player.
@@ -48,12 +26,12 @@ in {
     # Bootstrap claude-code into ~/.local/bin on first rebuild (or any rebuild
     # where the binary is missing). Subsequent rebuilds are silent no-ops.
     # Claude's own self-updater handles all upgrades after this.
-    home.activation.claudeCodeBootstrap = bootstrap "claude" ''
+    home.activation.claudeCodeBootstrap = bootstrap "claude" { } ''
         ${npx} --yes @anthropic-ai/claude-code@latest install latest
     '';
 
     # `pi update` handles later upgrades outside the Nix store.
-    home.activation.piBootstrap = bootstrap "pi" ''
+    home.activation.piBootstrap = bootstrap "pi" { } ''
         ${pkgs.nodejs_24}/bin/node \
             ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js \
             install -g --prefix "$HOME/.local" --ignore-scripts \
@@ -62,7 +40,7 @@ in {
 
     # Hide the managed shell so Grok does not try to edit Home Manager's .zshrc.
     # `grok update` handles later upgrades outside the Nix store.
-    home.activation.grokBootstrap = bootstrap "grok" ''
+    home.activation.grokBootstrap = bootstrap "grok" { } ''
         installer="$(${pkgs.coreutils}/bin/mktemp)"
         trap 'rm -f "$installer"' EXIT
         ${pkgs.curl}/bin/curl -fsSL --connect-timeout 10 --max-time 60 \

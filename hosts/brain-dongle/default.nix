@@ -9,6 +9,7 @@
     ../common/optional/docker.nix
     ../common/optional/sshd.nix
     ../common/optional/vim.nix
+    ../common/optional/openrig.nix
     # ./timers.nix  # moved to openclaw
   ];
 

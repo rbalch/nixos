@@ -32,6 +32,14 @@
           then "~/.ssh/id_ed25519"
           else "~/.ssh/zxrbzx";
       };
+      # OpenRig service account on bd (hosts/common/optional/openrig.nix).
+      # `herdr --remote rig-bd` attaches to the agent seats' herdr session.
+      # Uses the personal key, so this alias does not work from sparq-lappy.
+      "rig-bd" = {
+        hostname = "10.13.37.42";
+        user = "rig";
+        identityFile = "~/.ssh/zxrbzx";
+      };
       "dgx" = {
         hostname = "dgx.braindongle.com";
         user = "ryan";
