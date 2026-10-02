@@ -4,8 +4,10 @@
 # `ryan`, so a seat in full-bypass mode cannot read ryan's keys or cloud
 # credentials (/home/ryan is 0700), and `rig setup` can rewrite this user's
 # ~/.claude and ~/.tmux.conf without fighting Home Manager. Nobody logs in as
-# rig interactively; it is reached over SSH through the `rig-bd` alias in
-# users/ryan/ssh.nix (`ssh rig-bd`, `herdr --remote rig-bd`).
+# rig interactively; it is reached over SSH through the rig-* aliases in
+# users/ryan/ssh.nix (`ssh rig-bd`, `herdr --remote rig-bd`), and the rig
+# users reach each other through the aliases in users/rig.
+# Imported by brain-dongle and sparq-lappy.
 {
     users.users.rig = {
         isNormalUser = true;

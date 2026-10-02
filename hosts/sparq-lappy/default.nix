@@ -10,6 +10,8 @@
     # Inbound SSH from the LAN. Reaching it also needs WSL-side plumbing on
     # Windows (mirrored networking or a portproxy); see docs/wsl.md.
     ../common/optional/sshd.nix
+    # OpenRig agent seats run as `rig`, same as on brain-dongle.
+    ../common/optional/openrig.nix
     inputs.vscode-server.nixosModules.default
   ];
 

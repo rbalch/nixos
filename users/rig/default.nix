@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, hostName, ... }:
 
 # Lean profile for the OpenRig service account (hosts/common/optional/openrig.nix).
 # Deliberately unmanaged: ~/.tmux.conf and ~/.claude/settings.json. `rig setup`
@@ -41,6 +41,8 @@ in {
         ripgrep
         rsync
         tmux
+    ] ++ lib.optionals (hostName != "sparq-lappy") [
+        # Personal-token hosts only; work runs Claude alone on sparq-lappy.
         (pkgs.writeShellScriptBin "codex" ''
             exec ${npx} @openai/codex@latest "$@"
         '')
@@ -59,6 +61,36 @@ in {
     '';
 
     # TODO: pi and grok bootstraps (copy from users/ryan/cli.nix) when those seats are wanted.
+
+    # rig-to-rig SSH for OpenRig cross-host commands (`rig host add ... --target rig-*`).
+    # Each rig user needs its own key: `ssh-keygen -t ed25519` as rig, then add
+    # the public key to users.users.rig.openssh.authorizedKeys on the other host.
+    programs.ssh = {
+        enable = true;
+        enableDefaultConfig = false;
+        settings = {
+            "*" = {
+                forwardAgent = false;
+                hashKnownHosts = true;
+            };
+            "rig-bd" = {
+                # sparq-lappy resolves bd by name, the same way its reverse tunnel does.
+                hostname = if hostName == "sparq-lappy" then "bd.braindongle.com" else "10.13.37.42";
+                user = "rig";
+                identityFile = "~/.ssh/id_ed25519";
+            };
+            # sparq-lappy cannot accept inbound SSH; its reverse tunnel publishes
+            # its sshd on bd's loopback port 2222 (hosts/sparq-lappy/default.nix).
+            "rig-lappy" = {
+                hostname = "localhost";
+                port = 2222;
+                user = "rig";
+                identityFile = "~/.ssh/id_ed25519";
+                # localhost:2222 would otherwise collide with other loopback known_hosts entries.
+                HostKeyAlias = "sparq-lappy";
+            } // lib.optionalAttrs (hostName != "brain-dongle") { proxyJump = "rig-bd"; };
+        };
+    };
 
     programs.git = {
         enable = true;

@@ -40,6 +40,14 @@
         user = "rig";
         identityFile = "~/.ssh/zxrbzx";
       };
+      # OpenRig service account on sparq-lappy, through the same reverse tunnel.
+      "rig-lappy" = {
+        hostname = "localhost";
+        port = 2222;
+        user = "rig";
+        identityFile = "~/.ssh/zxrbzx";
+        HostKeyAlias = "sparq-lappy";
+      } // lib.optionalAttrs (hostName != "brain-dongle") { proxyJump = "bd"; };
       "dgx" = {
         hostname = "dgx.braindongle.com";
         user = "ryan";
