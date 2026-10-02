@@ -70,9 +70,19 @@ in {
             -o "$installer"
         ${pkgs.coreutils}/bin/env \
             SHELL=/bin/false \
-            GROK_BIN_DIR="$HOME/.local/bin" \
             PATH=${lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.gawk pkgs.gnugrep pkgs.gnused ]} \
             ${pkgs.bash}/bin/bash "$installer"
+    '';
+
+    # `grok update` relinks ~/.grok/bin, not GROK_BIN_DIR. Point ~/.local/bin
+    # at those links so updates take effect; this also repairs installs that
+    # linked ~/.local/bin straight to the first downloaded binary.
+    home.activation.grokLinks = lib.hm.dag.entryAfter [ "grokBootstrap" ] ''
+        for bin in grok agent; do
+            if [ -e "$HOME/.grok/bin/$bin" ]; then
+                run ${pkgs.coreutils}/bin/ln -sfn "$HOME/.grok/bin/$bin" "$HOME/.local/bin/$bin"
+            fi
+        done
     '';
 
     home.packages = with pkgs; [
