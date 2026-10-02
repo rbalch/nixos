@@ -73,6 +73,15 @@ in {
                 forwardAgent = false;
                 hashKnownHosts = true;
             };
+            # Work GitHub, same alias as ryan's (users/ryan/ssh.nix), but rig's own
+            # key so agent access can be revoked on its own. Clone work repos
+            # as git@github.sparq:org/repo.
+            "github.sparq" = {
+                hostname = "github.com";
+                user = "git";
+                identityFile = "~/.ssh/github-sparq";
+                identitiesOnly = true;
+            };
             "rig-bd" = {
                 # sparq-lappy resolves bd by name, the same way its reverse tunnel does.
                 hostname = if hostName == "sparq-lappy" then "bd.braindongle.com" else "10.13.37.42";
