@@ -11,15 +11,19 @@ let
     npm = "${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js";
     npx = "${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js";
 in {
+    # Same interactive shell as ryan (aliases, oh-my-zsh, p10k, fzf, direnv).
+    imports = [ ../ryan/zsh.nix ];
+
     home.username = "rig";
     home.homeDirectory = "/home/rig";
     home.stateVersion = "26.11";
 
     home.sessionPath = [ "$HOME/.local/bin" ];
 
-    # OpenRig reaches other hosts with `ssh <host> rig ...`, a non-interactive
-    # shell. bashrcExtra runs before Home Manager's interactive-only guard, so
-    # ~/.local/bin (claude, rig) is on PATH for those calls too.
+    # Login shell is zsh, whose ~/.zshenv sources home.sessionPath for every
+    # shell, interactive or not. Bash is kept for anything that calls it
+    # explicitly: bashrcExtra runs before Home Manager's interactive-only
+    # guard, so ~/.local/bin (claude, rig) is on PATH there too.
     programs.bash = {
         enable = true;
         bashrcExtra = ''

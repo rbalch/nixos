@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 # Service account for OpenRig agent seats. Agents run as `rig` instead of
 # `ryan`, so a seat in full-bypass mode cannot read ryan's keys or cloud
@@ -11,6 +11,8 @@
         isNormalUser = true;
         description = "OpenRig agent seats";
         homeMode = "700";
+        # zsh is enabled system-wide in hosts/common/base.nix.
+        shell = pkgs.zsh;
         # No wheel and no docker: the docker group is root-equivalent.
         openssh.authorizedKeys.keys = [
             # ryan's personal key (~/.ssh/zxrbzx), the same one

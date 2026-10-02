@@ -8,8 +8,10 @@ in
     autosuggestion.enable = true;
     shellAliases = {
       ll = "ls -lah";
+    } // lib.optionalAttrs (config.home.username == "ryan") {
       # Rebuild from the checked-out repo regardless of cwd. hostName comes
       # from mkHost and always matches the flake output (nix1 included).
+      # ryan only: users/rig imports this file but has no sudo or checkout.
       nix-update = "sudo nixos-rebuild switch --flake ${config.home.homeDirectory}/code/nixos#${hostName}";
     };
     history.size = 10000;
