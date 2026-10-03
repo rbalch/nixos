@@ -77,6 +77,42 @@
     pulse.enable = true;
   };
 
+  # Hard-freeze diagnostics (see TODO.md). A hard lockup panics instead of
+  # hanging, and a panic reboots after 10 s, so a freeze no longer needs a
+  # power cycle.
+  boot.kernel.sysctl = {
+    "kernel.hardlockup_panic" = 1;
+    "kernel.panic" = 10;
+  };
+
+  # Stream kernel messages to the LAN so the last words before a freeze
+  # survive; cortex logs them (netconsole-receiver). Netconsole needs a real
+  # NIC, not Tailscale. It broadcasts to the subnet so cortex's DHCP address
+  # can change. The source address comes from eno1 at start because eno1 also
+  # uses DHCP.
+  systemd.services.netconsole = {
+    description = "Send kernel messages to the LAN with netconsole";
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.iproute2 pkgs.kmod pkgs.gawk ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStop = "${pkgs.kmod}/bin/rmmod netconsole";
+    };
+    script = ''
+      for _ in $(seq 30); do
+        ip=$(ip -4 -o addr show dev eno1 | awk '{split($4, a, "/"); print a[1]; exit}')
+        [ -n "$ip" ] && break
+        sleep 2
+      done
+      [ -n "$ip" ] || { echo "eno1 has no IPv4 address" >&2; exit 1; }
+      modprobe netconsole \
+        netconsole=6665@"$ip"/eno1,6666@10.13.37.255/ff:ff:ff:ff:ff:ff
+    '';
+  };
+
   # Cat-proof: ignore physical power button presses
   services.logind.settings.Login.HandlePowerKey = "ignore";
 
