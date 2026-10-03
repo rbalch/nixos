@@ -3,7 +3,7 @@
     "claude-desktop-repo": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-ipNOrDOrcLPcLN7NxPiRPYXnHvJCv0lWyvK3NhLeARg=",
+        "narHash": "sha256-2vAnWKfCR5N/0RXseiKWXv1w4mn28zMS0Low6Q+MKT4=",
         "type": "file",
         "url": "https://downloads.claude.ai/claude-desktop/apt/stable/dists/stable/main/binary-amd64/Packages"
       },
