@@ -10,6 +10,7 @@
     ../common/optional/sshd.nix
     ../common/optional/vim.nix
     ../common/optional/openrig.nix
+    ../common/optional/unas.nix
     # ./timers.nix  # moved to openclaw
   ];
 

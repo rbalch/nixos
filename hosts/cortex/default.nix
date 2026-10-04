@@ -10,6 +10,7 @@
     ../common/optional/sshd.nix
     ../common/optional/vim.nix
     ../common/optional/bluetooth.nix
+    ../common/optional/unas.nix
   ];
 
   # Windows dual-boot
