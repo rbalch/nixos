@@ -80,10 +80,16 @@
 
   # Hard-freeze diagnostics (see TODO.md). A hard lockup panics instead of
   # hanging, and a panic reboots after 10 s, so a freeze no longer needs a
-  # power cycle.
+  # power cycle. A soft lockup panics too, so its trace reaches netconsole
+  # before the reboot.
   boot.kernel.sysctl = {
     "kernel.hardlockup_panic" = 1;
+    "kernel.softlockup_panic" = 1;
     "kernel.panic" = 10;
+    # Console log level 7: send everything but debug to the consoles,
+    # netconsole included. The default (4) dropped warnings and info, so
+    # cortex missed kernel lines the local journal kept.
+    "kernel.printk" = "7 4 1 7";
   };
 
   # Stream kernel messages to the LAN so the last words before a freeze
@@ -112,6 +118,34 @@
       modprobe netconsole \
         netconsole=6665@"$ip"/eno1,6666@10.13.37.255/ff:ff:ff:ff:ff:ff
     '';
+  };
+
+  # Start Docker only once the NAS answers, so Plex (restart=unless-stopped)
+  # finds /mnt/unas mounted. dhcpcd.wait = "background" means
+  # network-online.target does not wait for a lease: on 2026-10-04 dockerd
+  # touched the automount at 06:30:44, DNS failed, the mount failed, and Plex
+  # stayed down. The wait gives up after 3 minutes, so a dead NAS delays
+  # Docker but never blocks it; Docker only wants the mount.
+  systemd.services.unas-wait = {
+    description = "Wait for the UNAS SMB port";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "mnt-unas.mount" "docker.service" ];
+    path = [ pkgs.bash pkgs.coreutils ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      for _ in $(seq 90); do
+        timeout 2 bash -c '</dev/tcp/nas.braindongle.com/445' 2>/dev/null && exit 0
+        sleep 2
+      done
+      echo "nas.braindongle.com:445 unreachable after 3 minutes" >&2
+    '';
+  };
+  systemd.services.docker = {
+    wants = [ "unas-wait.service" "mnt-unas.mount" ];
+    after = [ "unas-wait.service" "mnt-unas.mount" ];
   };
 
   # Cat-proof: ignore physical power button presses
