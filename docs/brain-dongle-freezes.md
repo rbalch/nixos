@@ -1,9 +1,58 @@
 # Brain-dongle hard freezes
 
-Brain-dongle (ASUS Pro WS W790-ACE, Xeon w7-2595X, RTX 4070 Ti SUPER) hard
-freezes: SSH drops, the screen stops, and before 2026-10-02 it needed a power
-cycle. `TODO.md` tracks the open item; this file holds the history and the
-steps for the next freeze.
+Brain-dongle (ASUS Pro WS W790-ACE, Xeon w7-2595X, RTX 4070 Ti SUPER) keeps
+dying: every SSH session and VSCode tunnel drops at once, and the box comes
+back on a fresh boot. `TODO.md` tracks the open item; this file holds the
+history and the tests.
+
+## The Great Server Paws (leading theory, 2026-10-04)
+
+The likely culprit is the cat, not the kernel. The evidence:
+
+- The user never power-cycled brain-dongle, yet it came back by itself after
+  every death. Before 2026-10-02 the kernel had no panic-and-reboot setting,
+  so a real kernel freeze would have stayed frozen. Something outside the OS
+  turned it off and on again.
+- logind logged ignored power-key presses: 2026-09-11 18:04, 2026-09-25
+  06:14, and 2026-10-03 06:42. `HandlePowerKey = "ignore"` only stops a short
+  press. Holding the button for about 4 s forces a hardware power-off, and
+  the case's reset button bypasses the OS entirely. Journald only syncs to
+  disk every few minutes, so a press logged just before a hard power-off is
+  lost.
+- Brain-dongle's deaths compared with cortex's boots:
+
+  | Brain-dongle died | Back up | Cortex | Verdict |
+  |---|---|---|---|
+  | 2026-08-16 ~07:00 | 10:42 | up | bd alone |
+  | 2026-08-30 ~14:00 | 17:31:47 | down, back 17:31:34 | house power outage |
+  | 2026-09-08 ~17:14 | 17:36:44 | down, back 17:36:30 | house power outage |
+  | 2026-09-29 after 07:00 | 07:17 | up | bd alone |
+  | 2026-10-01 after 17:00 | 17:29 | up | bd alone |
+  | 2026-10-02 ~18:21 | 18:24 | up | bd alone |
+  | 2026-10-04 ~06:30 | ~06:30 | up | bd alone, back within about a minute |
+
+- Brain-dongle's sshd has never logged a client timeout, so the network
+  never dropped. The server end vanished. VSCode lost bd at 06:30:10 on
+  2026-10-04, and netconsole puts the new kernel at about 06:30:53.
+- Brain-dongle was not frozen for long: the journal's last line is the
+  hourly logrotate, which only bounds the time.
+
+**Test, started 2026-10-04:** a cover over the case's power and reset
+buttons. If no death occurs for one to two weeks, the cat did it. If deaths
+continue, escalate:
+
+1. Build a reboot alert on cortex: a user timer reads bd's
+   `/proc/sys/kernel/random/boot_id` over SSH every 60 s and sends a critical
+   notification when it changes ("brain-dongle rebooted, down ~45 s"), plus
+   one notification when bd is unreachable for 2 min and one when it
+   returns.
+2. Check the Anker Solix event log and UPS mode, and suspect bd's PSU (dips
+   that cortex rides through).
+3. Run the deliberate-panic test and the kernel steps below.
+
+If the cover works, remove the panic sysctls and netconsole from
+`hosts/brain-dongle/default.nix` and the receiver from
+`hosts/cortex/default.nix`, and close the TODO item.
 
 ## History
 
@@ -20,8 +69,9 @@ steps for the next freeze.
   that boot after 2026-10-03 20:46, so no panic message was sent. Pstore and
   the firmware's BERT table hold no records. The board has no BMC (the ASMB11
   card is absent), so no hardware event log exists. Nobody power-cycled it:
-  the box came back by itself, the first freeze to do so. Before the
-  2026-10-02 changes, every freeze needed a power cycle.
+  the box came back by itself, as it had every time (see the Great Server
+  Paws above; the earlier belief that freezes needed a power cycle was
+  wrong).
 - Two explanations fit. Either the hard-lockup panic fired and rebooted the
   box but wrote nothing to netconsole or pstore, or the firmware or hardware
   reset the box under the kernel. A kernel panic normally writes its log to
