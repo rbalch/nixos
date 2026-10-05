@@ -104,6 +104,10 @@ in {
     programs.git = {
         enable = true;
         lfs.enable = true;
-        # TODO: identity for agent commits, e.g. user.name = "ryan (rig@brain-dongle)".
+        # Agent commits name the box. Work email on sparq-lappy: its repos are work repos.
+        settings.user = {
+            name = "Ryan Balch (rig@${hostName})";
+            email = if hostName == "sparq-lappy" then "ryan.balch@teamsparq.com" else "ryan@balch.io";
+        };
     };
 }
