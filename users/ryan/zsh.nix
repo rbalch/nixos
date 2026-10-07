@@ -45,5 +45,10 @@ in
     enable = true;
     enableZshIntegration = true;
     nix-direnv.enable = true;
+    config = {
+      global.hide_env_diff = true;
+      # Trust every .envrc under ~/code without `direnv allow`.
+      whitelist.prefix = [ "${config.home.homeDirectory}/code/" ];
+    };
   };
 }
