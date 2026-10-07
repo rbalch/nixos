@@ -11,6 +11,7 @@
     ../common/optional/vim.nix
     ../common/optional/openrig.nix
     ../common/optional/unas.nix
+    ../common/optional/backup.nix
     # ./timers.nix  # moved to openclaw
   ];
 
