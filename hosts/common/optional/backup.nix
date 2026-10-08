@@ -37,6 +37,7 @@
       ".direnv"
       ".next"
       "target"
+      ".terraform"
       # Model weights: ~350 GB in 2026-10, all downloadable again
       "*.safetensors"
       "*.gguf"
@@ -44,7 +45,11 @@
       "*.pt"
       "*.pth"
       "*.onnx"
+      "*.torchscript"
       "ollama/models"
+      # ComfyUI also keeps .bin weights here (~27 GB in 2026-10)
+      "ComfyUI/models"
+      "ComfyUI/custom_nodes/*/ckpts"
     ];
     extraBackupArgs = [ "--exclude-caches" ];
     pruneOpts = [
