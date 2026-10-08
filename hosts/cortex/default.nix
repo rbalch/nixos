@@ -72,22 +72,6 @@
         to = 6129;
       }
     ];
-
-    # brain-dongle's netconsole broadcasts kernel messages here.
-    firewall.allowedUDPPorts = [ 6666 ];
-  };
-
-  # Log brain-dongle's netconsole stream so a hard freeze leaves its last
-  # kernel messages behind. Read with `journalctl -u netconsole-receiver`.
-  systemd.services.netconsole-receiver = {
-    description = "Log brain-dongle netconsole messages";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.socat}/bin/socat -u UDP-RECV:6666 STDOUT";
-      DynamicUser = true;
-      Restart = "always";
-    };
   };
 
   services.pipewire = {

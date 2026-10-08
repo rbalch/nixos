@@ -233,7 +233,7 @@ holds pending checks.
 
 - [docs/wsl.md](docs/wsl.md) — NixOS-WSL setup, SSH access, Tailscale
 - [docs/docker.md](docs/docker.md) — system Docker and NVIDIA GPU checks
-- [docs/brain-dongle-freezes.md](docs/brain-dongle-freezes.md) — brain-dongle freeze history and diagnosis
+- [docs/brain-dongle-freezes.md](docs/brain-dongle-freezes.md) — brain-dongle freeze history (resolved: the cat)
 - [docs/grok-bot.md](docs/grok-bot.md) — Grok Bot AppImage and updates
 - [docs/hypr-persist.md](docs/hypr-persist.md) — Hyprland session save and restore (hypr-persist)
 

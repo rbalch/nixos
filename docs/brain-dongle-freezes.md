@@ -2,12 +2,19 @@
 
 Brain-dongle (ASUS Pro WS W790-ACE, Xeon w7-2595X, RTX 4070 Ti SUPER) keeps
 dying: every SSH session and VSCode tunnel drops at once, and the box comes
-back on a fresh boot. `TODO.md` tracks the open item; this file holds the
-history and the tests.
+back on a fresh boot.
 
-## The Great Server Paws (leading theory, 2026-10-04)
+**Resolved 2026-10-07: it was the cat.** A cover went over the case's power
+and reset buttons on 2026-10-04. Brain-dongle had been dying every one to two
+days; with the cover on, it ran 3 days 15 hours with no death, and the user
+closed the case. The netconsole sender, cortex's receiver, and the panic and
+printk sysctls were removed the same day. To bring them back, see commits
+`b9f27e8` and `6120414`. The rest of this file is the history, kept in case
+the deaths return.
 
-The likely culprit is the cat, not the kernel. The evidence:
+## The Great Server Paws (2026-10-04)
+
+The culprit was the cat, not the kernel. The evidence:
 
 - The user never power-cycled brain-dongle, yet it came back by itself after
   every death. Before 2026-10-02 the kernel had no panic-and-reboot setting,
@@ -38,8 +45,8 @@ The likely culprit is the cat, not the kernel. The evidence:
   hourly logrotate, which only bounds the time.
 
 **Test, started 2026-10-04:** a cover over the case's power and reset
-buttons. If no death occurs for one to two weeks, the cat did it. If deaths
-continue, escalate:
+buttons. No deaths followed, so the case was closed on 2026-10-07. If deaths
+return, escalate:
 
 1. Build a reboot alert on cortex: a user timer reads bd's
    `/proc/sys/kernel/random/boot_id` over SSH every 60 s and sends a critical
@@ -48,11 +55,9 @@ continue, escalate:
    returns.
 2. Check the Anker Solix event log and UPS mode, and suspect bd's PSU (dips
    that cortex rides through).
-3. Run the deliberate-panic test and the kernel steps below.
-
-If the cover works, remove the panic sysctls and netconsole from
-`hosts/brain-dongle/default.nix` and the receiver from
-`hosts/cortex/default.nix`, and close the TODO item.
+3. Restore the netconsole and panic diagnostics from `b9f27e8` and
+   `6120414`, then run the deliberate-panic test and the kernel steps below.
+   Those sections assume the diagnostics are in place.
 
 ## History
 
