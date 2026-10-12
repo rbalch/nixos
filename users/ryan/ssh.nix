@@ -1,5 +1,14 @@
 { hostName, lib, ... }:
 
+let
+  # sparq-lappy is a work laptop and holds no copy of the personal key,
+  # so it reuses the key it already has for the reverse tunnel.
+  # hosts/brain-dongle/default.nix grants that key `pty` to allow it.
+  bdIdentityFile =
+    if hostName == "sparq-lappy"
+    then "~/.ssh/id_ed25519"
+    else "~/.ssh/zxrbzx";
+in
 {
   # Imported by the desktop profile and by the work (WSL) profile, so the
   # same ~/.ssh/config reaches every host.
@@ -24,13 +33,13 @@
       "bd"  = {
         hostname = "10.13.37.42";
         user = "ryan";
-        # sparq-lappy is a work laptop and holds no copy of the personal key,
-        # so it reuses the key it already has for the reverse tunnel.
-        # hosts/brain-dongle/default.nix grants that key `pty` to allow it.
-        identityFile =
-          if hostName == "sparq-lappy"
-          then "~/.ssh/id_ed25519"
-          else "~/.ssh/zxrbzx";
+        identityFile = bdIdentityFile;
+      };
+      # Same box over Tailscale (MagicDNS name), for when off the home LAN.
+      "brain-dongle" = {
+        hostname = "brain-dongle";
+        user = "ryan";
+        identityFile = bdIdentityFile;
       };
       # OpenRig service account on bd (hosts/common/optional/openrig.nix).
       # `herdr --remote rig-bd` attaches to the agent seats' herdr session.
