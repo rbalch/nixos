@@ -41,6 +41,12 @@ in
         user = "ryan";
         identityFile = bdIdentityFile;
       };
+      # Cortex over Tailscale (MagicDNS name).
+      "cortex" = {
+        hostname = "cortex";
+        user = "ryan";
+        identityFile = "~/.ssh/zxrbzx";
+      };
       # OpenRig service account on bd (hosts/common/optional/openrig.nix).
       # `herdr --remote rig-bd` attaches to the agent seats' herdr session.
       # Uses the personal key, so this alias does not work from sparq-lappy.
