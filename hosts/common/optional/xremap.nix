@@ -28,7 +28,6 @@
           "cursor-url-handler"
           "dev.zed.Zed"
           "zed"
-          "Wave"
           "dev.warp.Warp"
         ];
       }
@@ -41,14 +40,6 @@
           "Super-v" = "C-Shift-v";
         };
         application.only = [ "code" "code-url-handler" ];
-      }
-      {
-        name = "WaveTerm: SUPER -> Ctrl (terminal-safe)";
-        remap = {
-          "Super-c" = "C-Shift-c";
-          "Super-v" = "C-Shift-v";
-        };
-        application.only = [ "Wave" ];
       }
       {
         name = "Warp: SUPER -> Ctrl (terminal-safe)";

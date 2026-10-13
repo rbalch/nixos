@@ -97,7 +97,7 @@ The NVIDIA module selects the stable proprietary driver (`open = false`), enable
 
 ### Key rules
 
-`Super` controls the desktop, except clipboard copy and paste. xremap maps `Super+C/V` to `Ctrl+C/V` in normal apps. Ghostty, Cursor, and Zed handle these keys themselves; VSCode, Wave, and Warp get terminal-safe chords. Preserve those exceptions. `Ctrl+C` must remain SIGINT/cancel in terminals; `Ctrl+Shift+C/V` copies and pastes.
+`Super` controls the desktop, except clipboard copy and paste. xremap maps `Super+C/V` to `Ctrl+C/V` in normal apps. Ghostty, Cursor, and Zed handle these keys themselves; VSCode and Warp get terminal-safe chords. Preserve those exceptions. `Ctrl+C` must remain SIGINT/cancel in terminals; `Ctrl+Shift+C/V` copies and pastes.
 
 - Super alone navigates; Super+Shift moves windows; Super+Alt resizes.
 - `Super+Return` opens Ghostty; `Super+Shift+Return` opens Chrome; `Super+Shift+F` opens Cosmic Files.

@@ -37,8 +37,11 @@ get-config: ## Download configuration.nix from github (bare-install recovery)
 list-historical-versions: ## List system generation history
 	nix profile history --profile /nix/var/nix/profiles/system
 
-update: ## Update all flake inputs (sudo nix flake update)
+# The Claude Desktop apt index is a file+https input; --refresh skips Nix's
+# tarball cache so a new release in the index is always picked up.
+update: ## Update all flake inputs, including the Claude Desktop apt index
 	sudo nix flake update
+	$(MAKE) update-claude-desktop
 
 # Build new config without switching, then show package version diffs vs running system.
 # Run after `make update` to see exactly what would change before committing.
@@ -51,7 +54,7 @@ diff: ## Build (no switch) and show package diffs vs running system
 	@nix store diff-closures /run/current-system ./result
 
 update-diff: ## Update flake inputs then show the diff
-	sudo nix flake update
+	$(MAKE) update
 	$(MAKE) diff
 
 # Evaluation only: lists derivations that would be BUILT vs FETCHED. Builds nothing,
@@ -119,7 +122,7 @@ check-kernel-bump: ## Diff current system vs latest profile (spot kernel/driver 
 	nix store diff-closures /run/current-system /nix/var/nix/profiles/system
 
 update-claude-desktop: ## Fetch the latest version of claude desktop
-	nix flake lock --update-input claude-desktop-repo
+	nix flake update claude-desktop-repo --refresh
 
 restart-idle: ## Manually restart hypridle (screen off timer)
 	systemctl --user restart hypridle

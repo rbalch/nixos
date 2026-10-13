@@ -71,7 +71,6 @@ in {
         wofi
         obsidian
         warp-terminal
-        waveterm
         vlc
         grim
         slurp
