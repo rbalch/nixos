@@ -4,10 +4,16 @@ let
   # sparq-lappy is a work laptop and holds no copy of the personal key,
   # so it reuses the key it already has for the reverse tunnel.
   # hosts/brain-dongle/default.nix grants that key `pty` to allow it.
+  # hd-mac is a managed work Mac with its own key (authorized in
+  # hosts/common/optional/sshd.nix) rather than a copy of the personal one.
+  personalKey =
+    if hostName == "hd-mac"
+    then "~/.ssh/hd-mac"
+    else "~/.ssh/zxrbzx";
   bdIdentityFile =
     if hostName == "sparq-lappy"
     then "~/.ssh/id_ed25519"
-    else "~/.ssh/zxrbzx";
+    else personalKey;
 in
 {
   # Imported by the desktop profile and by the work (WSL) profile, so the
@@ -29,6 +35,10 @@ in
         controlMaster = "auto";
         controlPath = "~/.ssh/master-%r@%h:%p";
         controlPersist = "10s";
+      } // lib.optionalAttrs (hostName == "hd-mac") {
+        # Apple's ssh: remember key passphrases in the login Keychain.
+        addKeysToAgent = "yes";
+        UseKeychain = "yes";
       };
       "bd"  = {
         hostname = "10.13.37.42";
@@ -45,7 +55,7 @@ in
       "cortex" = {
         hostname = "cortex";
         user = "ryan";
-        identityFile = "~/.ssh/zxrbzx";
+        identityFile = personalKey;
       };
       # OpenRig service account on bd (hosts/common/optional/openrig.nix).
       # `herdr --remote rig-bd` attaches to the agent seats' herdr session.
