@@ -86,7 +86,7 @@
         # Managed work Mac. Build with:
         #   darwin-rebuild switch --flake .#hd-mac
         darwinConfigurations.hd-mac = nix-darwin.lib.darwinSystem {
-            specialArgs = { inherit inputs; hostName = "hd-mac"; };
+            specialArgs = { inherit self inputs; hostName = "hd-mac"; };
             modules = [
                 ./hosts/darwin/hd-mac.nix
                 home-manager.darwinModules.home-manager

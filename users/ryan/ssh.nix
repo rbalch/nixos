@@ -105,6 +105,14 @@ in
         identityFile = "~/.ssh/github-sparq";
         identitiesOnly = true;
       };
+      # Home Depot GitHub account. Same pattern as github.sparq; clone with
+      # `git@github.hd:org/repo`.
+      "github.hd" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/github-hd";
+        identitiesOnly = true;
+      };
       "huggingface" = {
         hostname = "hf.co";
         user = "git";
