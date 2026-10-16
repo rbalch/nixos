@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   programs.neovim = {
@@ -30,6 +30,7 @@
       ripgrep
       fd
       tree-sitter
+    ] ++ lib.optionals pkgs.stdenv.isLinux [
       wl-clipboard # clipboard=unnamedplus provider; works under Hyprland and WSLg
     ];
 

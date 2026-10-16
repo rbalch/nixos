@@ -39,6 +39,7 @@ in {
 
     imports = [
         ./cli.nix
+        ./ghostty.nix
         ./nvim.nix
         ./ssh.nix
         ./vscode.nix
@@ -293,31 +294,6 @@ in {
         settings = {
         PASSWORD_STORE_DIR = "${config.xdg.dataHome}/password-store";
         };
-    };
-
-    programs.ghostty = {
-    enable = true;
-    settings = {
-        font-family = "MesloLGS Nerd Font";
-        font-size = 14;
-        theme = "TokyoNight";
-        background-opacity = 0.95;
-        background-blur = true;
-        window-width = 160;
-        window-height = 70;
-        # Codex sends BEL with its turn notice, so Ghostty plays this sound
-        # beside the desktop popup.
-        bell-features = "audio";
-        bell-audio-path = "${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/complete.oga";
-        bell-audio-volume = 0.4;
-        # Super+C/V are free in Hyprland and avoid the longer terminal
-        # clipboard chords. Ctrl+C remains SIGINT/cancel.
-        keybind = [
-        "super+c=copy_to_clipboard"
-        "super+v=paste_from_clipboard"
-        "ctrl+alt+t=new_tab"
-        ];
-    };
     };
 
 }

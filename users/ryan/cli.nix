@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
+    isDarwin = pkgs.stdenv.isDarwin;
+
     herdr = pkgs.callPackage ../../packages/herdr { };
 
     # Network installers for CLIs that update themselves; see lib/hm-bootstrap.nix.
@@ -16,8 +18,10 @@ let
     # (missing /lib), which crashes npm's globalDir lookup with ENOENT.
     npx = "${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js";
 in {
-    home.username = "ryan";
-    home.homeDirectory = "/home/ryan";
+    # Defaults only: the Home Manager NixOS/nix-darwin modules set these from
+    # the system user, and the macOS work profile is not named "ryan".
+    home.username = lib.mkDefault "ryan";
+    home.homeDirectory = lib.mkDefault "/home/ryan";
 
     # Native claude install lives in ~/.local/bin; ensure it's on PATH and beats
     # any stale wrappers from /etc/profiles.
@@ -31,16 +35,16 @@ in {
     '';
 
     # `pi update` handles later upgrades outside the Nix store.
-    home.activation.piBootstrap = bootstrap "pi" { } ''
+    home.activation.piBootstrap = lib.mkIf (!isDarwin) (bootstrap "pi" { } ''
         ${pkgs.nodejs_24}/bin/node \
             ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js \
             install -g --prefix "$HOME/.local" --ignore-scripts \
             @earendil-works/pi-coding-agent
-    '';
+    '');
 
     # Hide the managed shell so Grok does not try to edit Home Manager's .zshrc.
     # `grok update` handles later upgrades outside the Nix store.
-    home.activation.grokBootstrap = bootstrap "grok" { } ''
+    home.activation.grokBootstrap = lib.mkIf (!isDarwin) (bootstrap "grok" { } ''
         installer="$(${pkgs.coreutils}/bin/mktemp)"
         trap 'rm -f "$installer"' EXIT
         ${pkgs.curl}/bin/curl -fsSL --connect-timeout 10 --max-time 60 \
@@ -50,18 +54,18 @@ in {
             SHELL=/bin/false \
             PATH=${lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.gawk pkgs.gnugrep pkgs.gnused ]} \
             ${pkgs.bash}/bin/bash "$installer"
-    '';
+    '');
 
     # `grok update` relinks ~/.grok/bin, not GROK_BIN_DIR. Point ~/.local/bin
     # at those links so updates take effect; this also repairs installs that
     # linked ~/.local/bin straight to the first downloaded binary.
-    home.activation.grokLinks = lib.hm.dag.entryAfter [ "grokBootstrap" ] ''
+    home.activation.grokLinks = lib.mkIf (!isDarwin) (lib.hm.dag.entryAfter [ "grokBootstrap" ] ''
         for bin in grok agent; do
             if [ -e "$HOME/.grok/bin/$bin" ]; then
                 run ${pkgs.coreutils}/bin/ln -sfn "$HOME/.grok/bin/$bin" "$HOME/.local/bin/$bin"
             fi
         done
-    '';
+    '');
 
     home.packages = with pkgs; [
         awscli2
@@ -69,11 +73,9 @@ in {
         fd
         gh
         google-cloud-sdk
-        herdr
         nodejs_24
         pay-respects
         ripgrep
-        sshfs
         terraform
         tmux
         # AI CLIs via npx; their versions are not fixed by flake.lock.
@@ -85,6 +87,9 @@ in {
         (pkgs.writeShellScriptBin "gemini" ''
           exec ${npx} @google/gemini-cli@latest "$@"
         '')
+        herdr
+    ] ++ lib.optionals (!isDarwin) [
+        sshfs
     ];
 
     home.file = {

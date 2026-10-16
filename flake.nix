@@ -19,6 +19,10 @@
             url = "github:ngamber/hypr-persist/31836057e09b46d8d32645dbb75035f31164dd5f";
             flake = false;
         };
+        nix-darwin = {
+            url = "github:nix-darwin/nix-darwin";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
         nixos-hardware.url = "github:NixOS/nixos-hardware";
         nixos-wsl = {
             url = "github:nix-community/NixOS-WSL/main";
@@ -38,7 +42,7 @@
         };
     };
 
-    outputs = { self, nixpkgs, home-manager, nixos-hardware, vscode-server, ... }@inputs:
+    outputs = { self, nixpkgs, home-manager, nixos-hardware, vscode-server, nix-darwin, ... }@inputs:
     let
         mkHost = import ./lib/mkHost.nix { inherit inputs; };
     in {
@@ -77,6 +81,23 @@
             sparq-lappy = mkHost "sparq-lappy" {
                 homeModule = ./users/ryan/wsl.nix;
             };
+        };
+
+        # Managed work Mac. Build with:
+        #   darwin-rebuild switch --flake .#hd-mac
+        darwinConfigurations.hd-mac = nix-darwin.lib.darwinSystem {
+            specialArgs = { inherit self inputs; hostName = "hd-mac"; };
+            modules = [
+                ./hosts/darwin/hd-mac.nix
+                home-manager.darwinModules.home-manager
+                {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.backupFileExtension = "hm-backup";
+                    home-manager.extraSpecialArgs = { inherit inputs; hostName = "hd-mac"; };
+                    home-manager.users.GYA8FUD = import ./users/ryan/darwin.nix;
+                }
+            ];
         };
     };
 }
