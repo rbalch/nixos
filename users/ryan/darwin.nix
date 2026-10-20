@@ -5,7 +5,7 @@
 # desktop, personal apps, the cloud project, and Git identity (set in
 # ~/.gitconfig, as on sparq-lappy).
 {
-  imports = [ ./cli.nix ./ghostty.nix ./zsh.nix ./nvim.nix ./ssh.nix ./vscode.nix ];
+  imports = [ ./cli.nix ./ghostty.nix ./zsh.nix ./nvim.nix ./ssh.nix ./vscode.nix ./sparq-hd.nix ];
 
   home.stateVersion = "26.11";
 

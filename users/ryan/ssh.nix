@@ -91,6 +91,16 @@ in
         # entries for the loopback address.
         HostKeyAlias = "sparq-lappy";
       } // lib.optionalAttrs (hostName != "brain-dongle") { proxyJump = "bd"; };
+      # hd-mac publishes a user-run sshd on bd's loopback port 2223 while
+      # `make sparq-hd-start` is up (users/ryan/sparq-hd.nix). Same hop as
+      # sparq-lappy; the login is the Mac's own account.
+      "sparq-hd" = {
+        hostname = "localhost";
+        port = 2223;
+        user = "GYA8FUD";
+        identityFile = "~/.ssh/zxrbzx";
+        HostKeyAlias = "sparq-hd";
+      } // lib.optionalAttrs (hostName != "brain-dongle") { proxyJump = "bd"; };
       "github.com" = {
         hostname = "github.com";
         user = "git";
