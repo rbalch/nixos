@@ -5,11 +5,28 @@
 # desktop, personal apps, the cloud project, and Git identity (set in
 # ~/.gitconfig, as on sparq-lappy).
 {
-  imports = [ ./cli.nix ./ghostty.nix ./zsh.nix ./nvim.nix ./ssh.nix ./vscode.nix ];
+  imports = [ ./cli.nix ./ghostty.nix ./zsh.nix ./nvim.nix ./ssh.nix ./vscode.nix ./sparq-hd.nix ];
 
   home.stateVersion = "26.11";
 
-  home.packages = with pkgs; [ unzip zip rsync ];
+  # Containers: macOS has no native Docker daemon, so Colima runs one in a
+  # Lima VM and the Nix-built CLI talks to it. Unlike Docker Desktop this needs
+  # no license, root helper, or MDM exception. Start it with
+  # `colima start --vm-type vz --vz-rosetta`.
+  home.packages = with pkgs; [ unzip zip rsync docker docker-compose docker-buildx colima ];
+
+  # OpenRig (agent seats), run locally as this user. No `rig` service account
+  # and no rig-* SSH hops: on this managed Mac it stands alone for now. The
+  # installer gets longer than the default 120 s because better-sqlite3 may
+  # compile; node-gyp uses Apple's clang from the Command Line Tools.
+  home.activation.openrigBootstrap =
+    let
+      bootstrap = import ../../lib/hm-bootstrap.nix { inherit lib pkgs; timeout = 300; };
+      npm = "${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npm-cli.js";
+    in
+    bootstrap "rig" { path = with pkgs; [ gnumake python3 ]; } ''
+      ${npm} install -g --prefix "$HOME/.local" @openrig/cli
+    '';
 
   programs.zsh.shellAliases.nix-update =
     # Full path: sudo on macOS does not keep the user's PATH.

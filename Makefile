@@ -137,8 +137,20 @@ sparq-tunnel-start: ## Start the reverse SSH tunnel to brain-dongle (sparq-lappy
 sparq-tunnel-stop: ## Stop the reverse SSH tunnel to brain-dongle (sparq-lappy)
 	sudo systemctl stop reverse-tunnel
 
+# hd-mac only: user-run sshd plus a reverse tunnel to bd, started by hand.
+# Reach it from elsewhere with `ssh sparq-hd`. See users/ryan/sparq-hd.nix.
+sparq-hd-start: ## Start the user sshd and reverse tunnel to bd (hd-mac)
+	sparq-hd start
+
+sparq-hd-stop: ## Stop the reverse tunnel and user sshd (hd-mac)
+	sparq-hd stop
+
+sparq-hd-status: ## Show whether the user sshd and tunnel are up (hd-mac)
+	sparq-hd status
+
 .PHONY: help sync-in install rebuild rebuild-braindongle rebuild-nix1 rebuild-cortex rebuild-sparq-lappy \
 	garbage get-config list-historical-versions update diff update-diff dry check-build \
 	cleanup check-docker restart-docker test-docker fix-vscode restart-xremap \
 	kill-share-picker camera-list-controls camera-lighten camera-darken camera-reset mic-up mic-down \
-	check-kernel-bump restart-idle sparq-tunnel-start sparq-tunnel-stop
+	check-kernel-bump restart-idle sparq-tunnel-start sparq-tunnel-stop \
+	sparq-hd-start sparq-hd-stop sparq-hd-status
