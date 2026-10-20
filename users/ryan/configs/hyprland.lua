@@ -121,6 +121,14 @@ hl.window_rule({
     suppress_event = "maximize",
 })
 
+-- Proton games without a Steam app ID share the steam_app_default class, so
+-- match SC2 by title. Tiling it would squeeze the game into a layout slot.
+hl.window_rule({
+    name = "starcraft2-fullscreen",
+    match = { class = "^(steam_app_default)$", title = "^(StarCraft II)$" },
+    fullscreen = true,
+})
+
 hl.window_rule({
     name = "float-gtk-portal-dialogs",
     match = { class = "^(xdg-desktop-portal-gtk)$" },

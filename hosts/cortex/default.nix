@@ -58,6 +58,9 @@
     uv
     quickemu
     figma-linux
+    # Battle.net (StarCraft 2) via Lutris's install script; winetricks for
+    # occasional prefix fixes (corefonts, vcrun)
+    (lutris.override { extraPkgs = p: [ p.winetricks ]; })
   ];
 
   networking = {
