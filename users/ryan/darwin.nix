@@ -11,9 +11,25 @@
 
   # Containers: macOS has no native Docker daemon, so Colima runs one in a
   # Lima VM and the Nix-built CLI talks to it. Unlike Docker Desktop this needs
-  # no license, root helper, or MDM exception. Start it with
-  # `colima start --vm-type vz --vz-rosetta`.
-  home.packages = with pkgs; [ unzip zip rsync docker docker-compose docker-buildx colima ];
+  # no license, root helper, or MDM exception. The VM was created with
+  # `colima start --vm-type vz --vz-rosetta`; those settings live in
+  # ~/.colima/default/colima.yaml.
+  home.packages = with pkgs; [ unzip zip rsync docker docker-compose docker-buildx ];
+
+  # A launchd agent starts the default VM at login and restarts it if it
+  # exits. Empty settings keep the existing colima.yaml as the source of
+  # truth. Pin the home directory so enabling xdg later does not move it to
+  # ~/.config/colima and orphan the VM. The `colima` Docker context already
+  # selects the socket, so skip DOCKER_HOST and its stale-session pitfalls.
+  services.colima = {
+    enable = true;
+    colimaHomeDir = ".colima";
+    profiles.default = {
+      isActive = true;
+      isService = true;
+      setDockerHost = false;
+    };
+  };
 
   # OpenRig (agent seats), run locally as this user. No `rig` service account
   # and no rig-* SSH hops: on this managed Mac it stands alone for now. The

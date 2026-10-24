@@ -78,6 +78,13 @@ in
 {
   home.packages = [ sparq-hd ];
 
+  # An SSH login gets no TERMINFO from Ghostty, and Apple's /bin/zsh looks
+  # up TERM before nix-darwin's set-environment exports TERMINFO_DIRS. Its
+  # ncurses 5 keeps that first failed lookup, so the later exports and
+  # `export TERM=$TERM` never recover and line editing breaks. ncurses always
+  # searches ~/.terminfo, so put Ghostty's entries there.
+  home.file.".terminfo".source = "${pkgs.ghostty-bin.terminfo}/share/terminfo";
+
   home.file.".ssh/sparq-hd/sshd_config".text = ''
     ListenAddress 127.0.0.1
     Port ${port}
