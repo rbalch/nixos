@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-    isDarwin = pkgs.stdenv.isDarwin;
+    isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
 
     herdr = pkgs.callPackage ../../packages/herdr { };
 

@@ -30,7 +30,7 @@
       ripgrep
       fd
       tree-sitter
-    ] ++ lib.optionals pkgs.stdenv.isLinux [
+    ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       wl-clipboard # clipboard=unnamedplus provider; works under Hyprland and WSLg
     ];
 
