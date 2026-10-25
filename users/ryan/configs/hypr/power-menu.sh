@@ -13,7 +13,7 @@ case "$choice" in
     # 'last' save can catch only part of the logout sequence.
     hypr-persist save before-exit || true
     case "$choice" in
-      Logout)   hyprctl dispatch exit ;;
+      Logout)   uwsm stop ;;
       Reboot)   systemctl reboot ;;
       Shutdown) systemctl poweroff ;;
     esac

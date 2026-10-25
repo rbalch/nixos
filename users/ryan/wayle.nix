@@ -49,6 +49,10 @@
 
       modules = {
         clock.format = "%Y-%m-%d  %H:%M - %a";
+        # The default runs `loginctl terminate-session $XDG_SESSION_ID`, but
+        # Wayle's user service has no XDG_SESSION_ID, so logout did nothing.
+        # Match power-menu.sh: save window state, then stop the UWSM session.
+        dashboard.dropdown-logout-command = "hypr-persist save before-exit || true; uwsm stop";
         notifications.popup-monitor = "DP-1";
       };
 
