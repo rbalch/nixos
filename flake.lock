@@ -116,22 +116,6 @@
         "type": "github"
       }
     },
-    "hyprland-pinned": {
-      "locked": {
-        "lastModified": 1787364730,
-        "narHash": "sha256-NcYt9QJfpJiF1lAyN8BDPB4EeScbPU+EwQqPiBElrpU=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "a831408e6378bc02ebf8cc09b52c96ca86f6bab4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "a831408e6378bc02ebf8cc09b52c96ca86f6bab4",
-        "type": "github"
-      }
-    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -272,7 +256,6 @@
         "claude-desktop-repo": "claude-desktop-repo",
         "home-manager": "home-manager",
         "hypr-persist": "hypr-persist",
-        "hyprland-pinned": "hyprland-pinned",
         "nix-darwin": "nix-darwin",
         "nixos-hardware": "nixos-hardware",
         "nixos-wsl": "nixos-wsl",

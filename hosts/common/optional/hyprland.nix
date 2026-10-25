@@ -1,12 +1,10 @@
 { config, pkgs, lib, inputs, ... }:
 
 let
-    hyprlandPackages = inputs.hyprland-pinned.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-    patchedPortal = hyprlandPackages.xdg-desktop-portal-hyprland.overrideAttrs (old: {
+    patchedPortal = pkgs.xdg-desktop-portal-hyprland.overrideAttrs (old: {
         # XDPH 1.4.1 can destroy a new frame callback while PipeWire changes
         # formats, which freezes or kills window sharing. These fixes landed
-        # upstream after 1.4.1. Keep them local while Hyprland stays pinned for
-        # the Cortex NVIDIA DPMS wake fix noted in TODO.md.
+        # upstream after 1.4.1. Keep them local until nixpkgs ships a newer XDPH.
         patches = (old.patches or [ ]) ++ [
             ./patches/xdph-out-of-buffers.patch
             ./patches/xdph-format-renegotiation.patch
@@ -28,7 +26,7 @@ in
 
     programs.hyprland = {
         enable = true;
-        package = hyprlandPackages.hyprland;
+        package = pkgs.hyprland;
         portalPackage = patchedPortal;
         xwayland.enable = true;
         withUWSM = true;
