@@ -90,7 +90,7 @@ The NVIDIA module selects the stable proprietary driver (`open = false`), enable
 
 - Cortex uses `wayle.nix` for the bar, notifications, and wallpaper. Wayle owns awww there. Other hosts use `waybar.nix` and the generated wallpaper startup script. Waybar shows a battery on nix1.
 - Home Manager owns one hypridle service. Its raw config is `configs/hypr/hypridle.conf`, and config changes trigger a restart.
-- Keep the 10-minute DPMS-off timer despite its documented NVIDIA failure risk. The user chose it; do not replace it with automatic suspend or DDC/CI. Read the dated notes in `hypridle.conf`.
+- Keep the 12-minute DPMS-off timer despite its documented NVIDIA failure risk. The user chose it; do not replace it with automatic suspend or DDC/CI. Read the dated notes in `hypridle.conf`.
 - Raw files live in `users/ryan/configs/`; `home.file` maps them into the home directory. Ghostty's active settings live in `programs.ghostty` in `default.nix`.
 - `configs/hypr/snap.sh` handles halves and corners. `portal-resize.sh` handles file dialogs; `power-menu.sh` handles power actions; `keybindings-menu.sh` reads named binds from the live session.
 - Start long-running daemons and later actions separately. Chaining `awww-daemon && awww img ...` waits for the daemon to exit.
