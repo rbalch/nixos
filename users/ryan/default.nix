@@ -130,6 +130,20 @@ in {
             "$src" "''${host}:''${dest_path}"
         '')
     ] ++ lib.optionals (hostName == "cortex") [
+        # Plex desktop client. It direct-plays MPEG-2/AC3 that Plex Web must
+        # transcode; a paused browser tab stops pinging and the server kills
+        # that transcode, leaving playback stuck when resumed.
+        # Its bundled Qt 6.2 draws its own Wayland cursor. GoogleDot ships 28 and
+        # 32 but not the session's XCURSOR_SIZE of 30, and at 30 the dot renders
+        # about twice as large over Plex. 28 matches `hyprctl setcursor`.
+        (pkgs.symlinkJoin {
+            name = "plex-desktop-${pkgs.plex-desktop.version}";
+            paths = [ pkgs.plex-desktop ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+                wrapProgram $out/bin/plex-desktop --set XCURSOR_SIZE 28
+            '';
+        })
         # orca-slicer on the native Wayland backend. Forcing GDK_BACKEND=x11 was a
         # 2.3.x workaround for a blank wxGLCanvas, but 2.4.2 ships wxWidgets 3.3.2
         # (wxGLCanvasEGL), and on XWayland the forced GLX path makes NVIDIA raise an
