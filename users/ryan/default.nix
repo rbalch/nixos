@@ -133,16 +133,28 @@ in {
         # Plex desktop client. It direct-plays MPEG-2/AC3 that Plex Web must
         # transcode; a paused browser tab stops pinging and the server kills
         # that transcode, leaving playback stuck when resumed.
-        # Its bundled Qt 6.2 draws its own Wayland cursor. GoogleDot ships 28 and
-        # 32 but not the session's XCURSOR_SIZE of 30, and at 30 the dot renders
-        # about twice as large over Plex. 28 matches `hyprctl setcursor`.
-        (pkgs.symlinkJoin {
-            name = "plex-desktop-${pkgs.plex-desktop.version}";
-            paths = [ pkgs.plex-desktop ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-                wrapProgram $out/bin/plex-desktop --set XCURSOR_SIZE 28
-            '';
+        # extraEnv is exported after the run script unsets QT_QPA_PLATFORM, so
+        # these survive; a wrapper around the FHS env would lose that one.
+        (pkgs.plex-desktop.override {
+            extraEnv = {
+                # The FHS sandbox replaces /etc and omits /etc/egl, so NVIDIA's
+                # EGL finds no platform and Qt falls back to Mesa llvmpipe:
+                # software rendering stutters, shows macroblock grids, or plays
+                # audio over a black frame. Use the copy under /run/opengl-driver.
+                __EGL_EXTERNAL_PLATFORM_CONFIG_DIRS = "/run/opengl-driver/share/egl/egl_external_platform.d";
+                # On NVIDIA, bundled Qt 6.2 shows a black window on native
+                # Wayland, and QtWebEngine fails with EGL_BAD_CONTEXT.
+                # XWayland with NVIDIA GLX renders the UI and video correctly.
+                # The bundle ignores DISABLE_WAYLAND.
+                QT_QPA_PLATFORM = "xcb";
+                # GoogleDot ships 28 and 32 but not the session's 30, and at 30
+                # the dot renders about twice as large. 28 matches `hyprctl setcursor`.
+                XCURSOR_SIZE = "28";
+                # Qt 6.2's xcb backend dlopens libXcursor for themed cursors.
+                # The bundle and FHS env lack it, so Qt falls back to X core
+                # cursors (the hand) instead of GoogleDot. Plex.sh appends this.
+                LD_LIBRARY_PATH = "${pkgs.libxcursor}/lib";
+            };
         })
         # orca-slicer on the native Wayland backend. Forcing GDK_BACKEND=x11 was a
         # 2.3.x workaround for a blank wxGLCanvas, but 2.4.2 ships wxWidgets 3.3.2
