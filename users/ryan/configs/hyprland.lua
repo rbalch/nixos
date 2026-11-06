@@ -35,11 +35,16 @@ hl.config({
         layout = "master",
     },
     master = {
-        -- Center master once there are at least two stack windows.
+        -- Always center master, even alone. Hyprland counts stack windows after
+        -- lifting a dragged window, so a threshold of 2 folds three-window
+        -- workspaces into two columns during every drag.
         orientation = "center",
+        slave_count_for_center_master = 0,
         new_status = "slave",
         mfact = 0.5,
     },
+    -- Without a threshold, Super+click lifts and re-drops a tiled window.
+    binds = { drag_threshold = 10 },
     decoration = { rounding = 10 },
     animations = { enabled = true },
 })
