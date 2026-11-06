@@ -37,6 +37,13 @@
     { device = "/var/lib/swapfile"; size = 16 * 1024; }  # MiB
   ];
 
+  # Logitech Lightspeed receiver (G502 X). The kernel binds it with
+  # hid-generic, so battery level is only readable over HID++ via Solaar.
+  # These udev rules let `solaar show` run without sudo; enableGraphical
+  # adds the solaar GUI/tray app.
+  hardware.logitech.wireless.enable = true;
+  hardware.logitech.wireless.enableGraphical = true;
+
   environment.systemPackages = with pkgs; [
     cmatrix
     dconf
