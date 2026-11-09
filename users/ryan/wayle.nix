@@ -66,7 +66,7 @@
         cycling-enabled = false;
         monitors = [{
           name = "DP-1";
-          wallpaper = "/home/ryan/Pictures/backgrounds/earth.jpg";
+          wallpaper = "/home/ryan/Pictures/backgrounds/tarantula-nebula-32x9.jpg";
           fit-mode = "fill";
         }];
       };

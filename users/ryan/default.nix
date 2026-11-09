@@ -182,6 +182,10 @@ in {
         ".config/hypr/hyprland.conf".source = configs/hyprland.conf;
         ".pi/agent/models.json".source = configs/pi/models.json;
         "Pictures/backgrounds/earth.jpg".source = backgrounds/earth.jpg;
+        # JWST Tarantula Nebula. The 32:9 strip is cropped for Cortex, where
+        # the centered master hides the middle half; other hosts use 16:9.
+        "Pictures/backgrounds/tarantula-nebula-32x9.jpg".source = backgrounds/tarantula-nebula-32x9.jpg;
+        "Pictures/backgrounds/tarantula-nebula-16x9.jpg".source = backgrounds/tarantula-nebula-16x9.jpg;
         ".config/hypr/hypridle.conf".source = configs/hypr/hypridle.conf;
         ".config/hypr/hyprlock.conf".source = configs/hypr/hyprlock.conf;
         # Centered master is not handled by hypr-persist's layout restore.
@@ -223,7 +227,7 @@ in {
                 #!/bin/sh
                 ${pkgs.awww}/bin/awww-daemon &
                 sleep 1
-                exec ${pkgs.awww}/bin/awww img /home/ryan/Pictures/backgrounds/earth.jpg
+                exec ${pkgs.awww}/bin/awww img /home/ryan/Pictures/backgrounds/tarantula-nebula-16x9.jpg
             '';
         };
         # Wayle has its own Bluetooth control on Cortex. Keep Blueman's tray
