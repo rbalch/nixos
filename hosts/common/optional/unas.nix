@@ -49,17 +49,42 @@ let
             (( $# >= 2 )) || usage
 
             dest="''${*: -1}"
-            srcs=("''${@:1:$#-1}")
+            # Skip Chrome's in-progress downloads rather than passing --exclude to
+            # rsync: an excluded file would still be removed by the delete below.
+            srcs=()
+            for src in "''${@:1:$#-1}"; do
+                if [[ $src == *.crdownload ]]; then
+                    echo "nas-mv: skipping unfinished download: $src" >&2
+                else
+                    srcs+=("$src")
+                fi
+            done
+            (( ''${#srcs[@]} > 0 )) || { echo "nas-mv: nothing to move" >&2; exit 1; }
 
             # Preflight: refuse anything the share would mangle or reject.
             fail=0
+            dest_real=$(realpath -m -- "$dest")
             for src in "''${srcs[@]}"; do
                 if [[ ! -e $src ]]; then
                     echo "nas-mv: no such file: $src" >&2; fail=1; continue
                 fi
+                # A source already in DEST, DEST itself, or containing DEST would
+                # be copied onto itself: rsync sends nothing, verify passes, and
+                # the delete below removes the only copy. 2026-11-15: running
+                # `nas-mv * /mnt/unas/media/movies` inside that directory deleted it.
+                src_real=$(realpath -- "$src")
+                if [[ $src_real == "$dest_real" || $(dirname -- "$src_real") == "$dest_real" \
+                    || $dest_real == "$src_real"/* ]]; then
+                    echo "nas-mv: $src is already in, or contains, $dest" >&2; fail=1; continue
+                fi
                 bad=$(find "$src" -name '*\\*')
                 if [[ -n $bad ]]; then
                     printf 'nas-mv: names with \\ (the share rejects them):\n%s\n' "$bad" >&2; fail=1
+                fi
+                # A directory can't be moved without deleting the download inside it.
+                partial=$(find "$src" -name '*.crdownload')
+                if [[ -n $partial ]]; then
+                    printf 'nas-mv: unfinished downloads (wait for them to finish):\n%s\n' "$partial" >&2; fail=1
                 fi
                 links=$(find "$src" -type l)
                 if [[ -n $links ]]; then
