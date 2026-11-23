@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, inputs, lib, pkgs, ... }:
 
 let
     isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
@@ -18,6 +18,15 @@ let
     # (missing /lib), which crashes npm's globalDir lookup with ENOENT.
     npx = "${pkgs.nodejs_24}/bin/node ${pkgs.nodejs_24}/lib/node_modules/npm/bin/npx-cli.js";
 in {
+    imports = [ inputs.ouija.homeManagerModules.default ];
+
+    # Yes/no, choice, and score questions against the System One decision
+    # server on dgx, reached by its Tailscale MagicDNS name.
+    programs.ouija = {
+        enable = true;
+        settings.url = "http://dgx:18440";
+    };
+
     # Defaults only: the Home Manager NixOS/nix-darwin modules set these from
     # the system user, and the macOS work profile is not named "ryan".
     home.username = lib.mkDefault "ryan";

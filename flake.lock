@@ -251,6 +251,26 @@
         "type": "github"
       }
     },
+    "ouija": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795465403,
+        "narHash": "sha256-d/MET1MikamKsXfvRECswQGkGKZB5lDKL/zP5S+gC2Y=",
+        "owner": "rbalch",
+        "repo": "ouija",
+        "rev": "6365366602ba5145715dd36f8c022dd21f5ad9c8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rbalch",
+        "repo": "ouija",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "claude-desktop-repo": "claude-desktop-repo",
@@ -260,6 +280,7 @@
         "nixos-hardware": "nixos-hardware",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_2",
+        "ouija": "ouija",
         "tether": "tether",
         "vscode-server": "vscode-server",
         "xremap-flake": "xremap-flake"

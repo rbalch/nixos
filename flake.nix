@@ -27,6 +27,10 @@
         };
         vscode-server.url = "github:nix-community/nixos-vscode-server";
         xremap-flake.url = "github:xremap/nix-flake";
+        ouija = {
+            url = "github:rbalch/ouija";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
         tether = {
             url = "github:zackb/tether";
             inputs.nixpkgs.follows = "nixpkgs";

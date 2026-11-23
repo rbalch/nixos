@@ -4,7 +4,7 @@
 
 This flake manages five NixOS hosts for one user, `ryan`, using `nixpkgs-unstable` and Home Manager as a NixOS module.
 
-- `flake.nix` defines inputs and hosts. Inputs include nixpkgs, Home Manager, Hyprland, nixos-hardware, vscode-server, xremap, Tether, and the Claude Desktop apt index.
+- `flake.nix` defines inputs and hosts. Inputs include nixpkgs, Home Manager, Hyprland, nixos-hardware, vscode-server, xremap, Tether, ouija, and the Claude Desktop apt index.
 - `lib/mkHost.nix` wires `hosts/<dir>` to `users/ryan`. Its interface is `mkHost hostname { system?, dir?, modules?, homeModule? }`; defaults are `x86_64-linux`, the host name, no extra modules, and `users/ryan` for Home Manager.
 - `mkHost` passes `inputs` and `hostName` to both NixOS and Home Manager. Home Manager uses system packages (`useGlobalPkgs = true`), `useUserPackages = true`, and the backup suffix `hm-backup`.
 - `hosts/common/base.nix` holds boot-free settings for every host; `hosts/common/default.nix` adds native-only settings on top; `hosts/common/optional/` holds modules that hosts choose to import.
@@ -128,6 +128,7 @@ Keep `--ozone-platform=wayland`, `--password-store=gnome-libsecret`, and the run
 - Claude Code installs to `~/.local/bin/claude` through a first-run Home Manager hook. Keep this native install and its own update path, rather than a nixpkgs package or npx launch wrapper.
 - Pi and Grok also have first-run install hooks outside the Nix store. Each installer is capped at 120 s and `mkHost` raises the Home Manager unit timeout to 15 min. Codex and Gemini use npx wrappers in `cli.nix`; their versions are not fixed by `flake.lock`.
 - `packages/herdr/default.nix` wraps a versioned binary with a fixed hash.
+- `cli.nix` enables ouija's Home Manager module on every profile and points it at `http://dgx:18440` (Tailscale MagicDNS). Hosts without Tailscale access to dgx get the binary but no server.
 - Handy excludes brain-dongle. Its override keeps ONNX Runtime on CPU to avoid the global CUDA rebuild, and a local patch adjusts its vLLM reasoning setting. Preserve the reasons in the adjacent comments.
 
 ### Session and app cautions
