@@ -279,6 +279,12 @@ in {
         '';
     };
 
+    # Qt menus and controls need a style as well as GNOME's dark preference.
+    qt = {
+        enable = true;
+        style.name = "adwaita-dark";
+    };
+
     home.pointerCursor = {
         enable = true;
         gtk.enable = true;

@@ -52,5 +52,6 @@
     curl
     htop
     jq
+    ladybird
   ];
 }
